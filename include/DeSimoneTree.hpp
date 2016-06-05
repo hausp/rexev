@@ -5,6 +5,7 @@
 #define DE_SIMONE_TREE_HPP
 
 #include <memory>
+#include <regex>
 #include <string>
 
 class FSMachine;
@@ -15,12 +16,14 @@ using node_ptr = std::shared_ptr<DSNode>;
 
 class DeSimoneTree {
  public:
-    DeSimoneTree(const string&);
+    DeSimoneTree(string);
     FSMachine to_fsm();
 
  private:
     std::shared_ptr<DSNode> root;
 
+    node_ptr init_tree(string);
+    void reasign_father(node_ptr, node_ptr);
 };
 
 #endif /* DE_SIMONE_TREE_HPP */

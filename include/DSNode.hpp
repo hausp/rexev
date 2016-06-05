@@ -15,6 +15,7 @@ class DSNode {
 
  private:
     char symbol;
+    node_ptr father;
     node_ptr left;
     node_ptr right;
     node_ptr th_link;
