@@ -8,9 +8,9 @@
 
 class SNode : public DSNode {
  public:
-
- private:
-
+    SNode();
+    void down_action();
+    void up_action();
 };
 
 #endif /* S_NODE_HPP */

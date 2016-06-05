@@ -81,6 +81,10 @@ node_ptr DeSimoneTree::init_tree(string regex) {
             throw 666;
         }
     }
+    while (current->father->get_symbol() != '~') {
+        current = current->father;
+    }
+    return current;
 }
 
 void DeSimoneTree::reasign_father(node_ptr temp, node_ptr current) {

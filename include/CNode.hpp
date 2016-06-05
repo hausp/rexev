@@ -8,9 +8,9 @@
 
 class CNode : public DSNode {
  public:
-
- private:
-
+    CNode();
+    void down_action();
+    void up_action();
 };
 
 #endif /* C_NODE_HPP */
