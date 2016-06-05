@@ -8,6 +8,7 @@
 
 class DSNode {
     friend class DeSimoneTree;
+    friend std::ostream& operator<<(std::ostream&, const DSNode&);
  public:
     virtual void down_action() = 0;
     virtual void up_action() = 0;
@@ -29,5 +30,14 @@ inline char DSNode::get_symbol() {
 }
 
 inline DSNode::DSNode(char c) : symbol(c) { }
+
+inline std::ostream& operator<<(std::ostream& out, const DSNode& node) {
+    if (node.left) out << *node.left;
+    out << " " << node.symbol;
+    if (node.right) out << *node.right;
+
+    //if (node.father) out << " Debug: " << node.father->symbol;
+    return out;
+}
 
 #endif /* DS_NODE_HPP */
