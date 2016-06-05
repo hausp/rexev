@@ -1,0 +1,4 @@
+*.[od]
+*.obj
+build/
+bin/
