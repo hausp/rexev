@@ -15,7 +15,7 @@ DeSimoneTree::DeSimoneTree(string regex) {
 
 node_ptr DeSimoneTree::init_tree(string regex) {
     std::regex symbols {"[a-z0-9_]"};
-    node_ptr current; = new FNode();
+    node_ptr current(new FNode());
     
     while (regex.size() > 0) {
         char entry = regex[0];
@@ -68,7 +68,7 @@ node_ptr DeSimoneTree::init_tree(string regex) {
             regex.erase(0,1);
             unsigned size = 0;
             while (entry != ')') size++;
-            auto temp = init_tree(regex.subst(0, size));
+            auto temp = init_tree(regex.substr(0, size));
             if (current->left) {
                 current->right = temp;
             } else {

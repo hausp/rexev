@@ -3,7 +3,7 @@
 
 #include "ONode.hpp"
 
-ONode::ONode() : public DSNode() { }
+ONode::ONode() : DSNode('?') { }
 
 void ONode::down_action() {
 
