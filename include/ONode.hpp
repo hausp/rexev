@@ -8,7 +8,9 @@
 
 class ONode : public DSNode {
  public:
-
+ 	ONode();
+ 	void down_action();
+ 	void up_action();
  private:
 
 };

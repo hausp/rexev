@@ -8,9 +8,13 @@
 
 class LNode : public DSNode {
  public:
+    LNode(char);
+    void down_action();
+    void up_action();    
 
  private:
 
 };
+
 
 #endif /* L_NODE_HPP */
