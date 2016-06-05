@@ -7,10 +7,11 @@
 #include <memory>
 #include <string>
 
-#include "DSNode.hpp"
-#include "FSMachine.hpp"
+class FSMachine;
+class DSNode;
 
 using string = std::string;
+using node_ptr = std::shared_ptr<DSNode>;
 
 class DeSimoneTree {
  public:
