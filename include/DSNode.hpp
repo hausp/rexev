@@ -28,4 +28,6 @@ inline char DSNode::get_symbol() {
     return symbol;
 }
 
+inline DSNode::DSNode(char c) : symbol(c) { }
+
 #endif /* DS_NODE_HPP */
