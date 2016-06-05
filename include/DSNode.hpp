@@ -13,6 +13,9 @@ class DSNode {
     virtual void up_action() = 0;
     char get_symbol();
 
+ protected:
+    DSNode(char);
+
  private:
     char symbol;
     node_ptr father;
