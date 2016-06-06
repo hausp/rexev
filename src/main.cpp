@@ -6,6 +6,6 @@
 #include "DeSimoneTree.hpp"
 
 int main(int argc, char** argv) {
-    DeSimoneTree tree("a.c|((b|a)|(b.c)*.d)");
+    DeSimoneTree tree("(a.c)|((b|a)|(b.c)*.d)");
     std::cout << tree << std::endl;
 }
