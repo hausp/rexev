@@ -37,7 +37,8 @@ node_ptr DeSimoneTree::init_tree(string regex) {
 
         if (std::isalnum(entry)) {
             if (std::isalnum(current->get_symbol())
-                || current->get_symbol() == '*') {
+                || current->get_symbol() == '*'
+                || current->get_symbol() == '?') {
                 put_concatenation(current);
             }
             put_leaf(current, entry);
