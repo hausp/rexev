@@ -35,7 +35,7 @@ node_ptr DeSimoneTree::init_tree(string regex) {
         regex.erase(0,1);
 
         if (std::isalpha(entry) || std::isdigit(entry)) {
-            ECHO("LNode insertion");
+            //ECHO("LNode insertion");
             node_ptr temp(new LNode(entry));
             if (current->left) {
                 current->right = temp;
@@ -45,7 +45,7 @@ node_ptr DeSimoneTree::init_tree(string regex) {
             temp->father = current;
             current = temp;
         } else if (entry == '|') {
-            ECHO("UNode insertion");
+            //ECHO("UNode insertion");
             node_ptr temp(new UNode());
             while (current->father->get_symbol() != '~'
                    || current->father->get_symbol() == '|') {
@@ -53,14 +53,14 @@ node_ptr DeSimoneTree::init_tree(string regex) {
             }
             reasign_father(temp, current);
         } else if (entry == '.') {
-            ECHO("CNode insertion");
+            //ECHO("CNode insertion");
             node_ptr temp(new CNode());
             if (current->father) {
                 current->father->right = temp;
             }
             reasign_father(temp, current);
         } else if (entry == '*') {
-            ECHO("SNode insertion");
+            //ECHO("SNode insertion");
             node_ptr temp(new SNode());
             if (current->father) {
                 if (current->father->left == current) {
@@ -71,7 +71,7 @@ node_ptr DeSimoneTree::init_tree(string regex) {
             }
             reasign_father(temp, current);
         } else if (entry == '?') {
-            ECHO("ONode insertion");
+            //ECHO("ONode insertion");
             node_ptr temp(new ONode());
             if (current->father) {
                 if (current->father->left == current) {
@@ -82,10 +82,15 @@ node_ptr DeSimoneTree::init_tree(string regex) {
             }
             reasign_father(temp, current);
         } else if (entry == '(') {
-            ECHO("Subtree detection");
+            //ECHO("Subtree detection");
             entry = regex[0];
             unsigned size = 0;
-            while (regex[size] != ')') size++;
+            unsigned branches = 0;
+            while (regex[size] != ')' || branches > 0) {
+                if (regex[size] != '(') branches++;
+                if (regex[size] != ')') branches--;
+                size++;
+            }
             auto temp = init_tree(regex.substr(0, size));
             if (current->left) {
                 current->right = temp;
