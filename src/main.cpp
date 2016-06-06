@@ -4,8 +4,9 @@
 #include <iostream>
 
 #include "DeSimoneTree.hpp"
+#include "LNode.hpp"
 
 int main(int argc, char** argv) {
-    DeSimoneTree tree("(a.c)|((b|a)|(b.c)*.d)");
+    DeSimoneTree tree("ab(a|bc)(cd|a)*");
     std::cout << tree << std::endl;
 }

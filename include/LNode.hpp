@@ -8,13 +8,10 @@
 
 class LNode : public DSNode {
  public:
-    LNode(char);
+    LNode();
     void down_action();
-    void up_action();    
-
- private:
-
+    void up_action();
+    bool is_leaf() override;
 };
-
 
 #endif /* L_NODE_HPP */

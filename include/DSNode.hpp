@@ -12,6 +12,7 @@ class DSNode {
  public:
     virtual void down_action() = 0;
     virtual void up_action() = 0;
+    virtual bool is_leaf();
     char get_symbol();
 
  protected:
@@ -25,19 +26,6 @@ class DSNode {
     node_ptr th_link;
 };
 
-inline char DSNode::get_symbol() {
-    return symbol;
-}
-
-inline DSNode::DSNode(char c) : symbol(c) { }
-
-inline std::ostream& operator<<(std::ostream& out, const DSNode& node) {
-    if (node.left) out << *node.left;
-    out << " " << node.symbol;
-    if (node.right) out << *node.right;
-
-    //if (node.father) out << " Debug: " << node.father->symbol;
-    return out;
-}
+std::ostream& operator<<(std::ostream&, const DSNode&);
 
 #endif /* DS_NODE_HPP */

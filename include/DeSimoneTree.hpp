@@ -25,6 +25,12 @@ class DeSimoneTree {
     node_ptr root;
 
     node_ptr init_tree(string);
+    void put_leaf(node_ptr&, const char);
+    void put_union(node_ptr&);
+    void put_concatenation(node_ptr&);
+    void put_kleene_star(node_ptr&);
+    void put_option(node_ptr&);
+    void put_subtree(node_ptr&, std::string&);
     void reasign_father(node_ptr&, node_ptr&);
 };
 

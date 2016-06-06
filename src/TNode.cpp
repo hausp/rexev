@@ -1,14 +1,14 @@
 /* created by Vinicius Freitas<vinicius.mctf@grad.ufsc.br> 
    and Marleson Graf<aszdrick@gmail.com> [2016] */
 
-#include "FNode.hpp"
+#include "TNode.hpp"
 
-FNode::FNode() : DSNode('~') { }
+TNode::TNode(char c) : DSNode(c) { }
 
-void FNode::down_action() {
+void TNode::up_action() {
 
 }
 
-void FNode::up_action() {
-    
+void TNode::down_action() {
+	
 }
