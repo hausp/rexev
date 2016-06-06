@@ -51,7 +51,9 @@ node_ptr DeSimoneTree::init_tree(string regex) {
         } else if (entry == '?') {
             put_option(current);
         } else if (entry == '(') {
-            if (std::isalnum(current->get_symbol())) {
+            if (std::isalnum(current->get_symbol())
+                || current->get_symbol() == '*'
+                || current->get_symbol() == '?') {
                 put_concatenation(current);
             }
             put_subtree(current, regex);
