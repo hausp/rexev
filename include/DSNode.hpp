@@ -6,7 +6,7 @@
 
 #include "DeSimoneTree.hpp"
 
-class DSNode : public std::enable_shared_from_this<DSNode> {    
+class DSNode {    
     friend class DeSimoneTree;
     friend std::ostream& operator<<(std::ostream&, const DSNode&);
  public:
@@ -17,7 +17,7 @@ class DSNode : public std::enable_shared_from_this<DSNode> {
 
  protected:
     DSNode(char);
-    node_ptr link_node();
+    DSNode* link_node();
 
  private:
     char symbol;

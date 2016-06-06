@@ -14,16 +14,16 @@ bool DSNode::is_leaf() {
     return false;
 }
 
-node_ptr DSNode::link_node() {
+DSNode* DSNode::link_node() {
     if (left) {
-        node_ptr temp = left->link_node();
-        temp->th_link = shared_from_this();
+        auto temp = left->link_node();
+        temp->th_link = node_ptr(this);
     }
 
     if (right) {
         return right->link_node();
     } else {
-        return shared_from_this();
+        return this;
     }
 }
 
