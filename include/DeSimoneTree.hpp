@@ -23,7 +23,6 @@ class DeSimoneTree {
 
  private:
     node_ptr root;
-
     node_ptr init_tree(string);
     void put_leaf(node_ptr&, const char);
     void put_union(node_ptr&);
