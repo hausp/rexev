@@ -4,11 +4,7 @@
 #include "DSNode.hpp"
 #include "LNode.hpp"
 
-DSNode::DSNode(char c) : symbol(c) {
-	left = node_ptr (new LNode());
-	right = node_ptr (new LNode());
-
-}
+DSNode::DSNode(char c) : symbol(c) { }
 
 char DSNode::get_symbol() {
     return symbol;
@@ -19,11 +15,12 @@ bool DSNode::is_leaf() {
 }
 
 node_ptr DSNode::link_node() {
-    node_ptr temp = left->link_node();
-    temp->th_link = shared_from_this();
-    // Check pls
-    threaded = true;
-    if (!right->is_leaf()) {
+    if (left) {
+        node_ptr temp = left->link_node();
+        temp->th_link = shared_from_this();
+    }
+
+    if (right) {
         return right->link_node();
     } else {
         return shared_from_this();
@@ -33,6 +30,9 @@ node_ptr DSNode::link_node() {
 std::ostream& operator<<(std::ostream& out, const DSNode& node) {
     if (node.left) out << *node.left;
     out << " " << node.symbol;
+    if (node.th_link) {
+        out << "(" << node.th_link->symbol << ")";
+    }
     if (node.right) out << *node.right;
 
     //if (node.father) out << " Debug: " << node.father->symbol;

@@ -1,6 +1,6 @@
 # Created by aszdrick graf <aszdrick@gmail.com>
 # Compiler
-CXX       :=gcc
+CXX       :=g++
 LDLIBS    :=-lstdc++ -lm `pkg-config --libs gtk+-3.0`
 LDFLAGS   :=
 CXXFLAGS  :=`pkg-config --cflags gtk+-3.0` -std=c++11 -Wall

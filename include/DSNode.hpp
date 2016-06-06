@@ -21,7 +21,6 @@ class DSNode : public std::enable_shared_from_this<DSNode> {
 
  private:
     char symbol;
-    bool threaded;
     node_ptr father;
     node_ptr left;
     node_ptr right;

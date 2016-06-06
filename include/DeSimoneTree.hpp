@@ -5,7 +5,6 @@
 #define DE_SIMONE_TREE_HPP
 
 #include <memory>
-#include <regex>
 #include <string>
 #include <ostream>
 
