@@ -1,6 +1,15 @@
 /* created by Vinicius Freitas<vinicius.mctf@grad.ufsc.br> 
    and Marleson Graf<aszdrick@gmail.com> [2016] */
 
+/**
+ *
+ * De Simone Tree class definition:
+ *  This is a data structure used to store a Regular Expression
+ *  as a tree, read from left to right, the terminal terms and
+ *  the regex operators form the tree, terminals are leaves and
+ *  non-terminal are used to make the path through tree.
+ *
+ **/
 #ifndef DE_SIMONE_TREE_HPP
 #define DE_SIMONE_TREE_HPP
 
