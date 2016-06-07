@@ -3,7 +3,7 @@
 
 #include "SNode.hpp"
 
-SNode::SNode() : DSNode('*') { }
+SNode::SNode() : Node('*') { }
 
 void SNode::down_action() {
 

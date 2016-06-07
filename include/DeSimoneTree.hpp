@@ -9,18 +9,18 @@
 #include <ostream>
 
 class FSMachine;
-class DSNode;
 
-using string = std::string;
-using node_ptr = std::shared_ptr<DSNode>;
+using std::string;
 
 class DeSimoneTree {
     friend std::ostream& operator<<(std::ostream&, const DeSimoneTree&);
  public:
+    class Node;
     DeSimoneTree(string);
     FSMachine to_fsm();
 
  private:
+    using node_ptr = std::shared_ptr<Node>;
     node_ptr root;
     node_ptr init_tree(string);
     void put_leaf(node_ptr&, const char);

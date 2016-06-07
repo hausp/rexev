@@ -3,7 +3,7 @@
 
 #include "UNode.hpp"
 
-UNode::UNode() : DSNode('|') { }
+UNode::UNode() : Node('|') { }
 
 void UNode::down_action() {
 

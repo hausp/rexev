@@ -4,15 +4,13 @@
 #ifndef O_NODE_HPP
 #define O_NODE_HPP
 
-#include "DSNode.hpp"
+#include "Node.hpp"
 
-class ONode : public DSNode {
+class ONode : public DeSimoneTree::Node {
  public:
  	ONode();
  	void down_action();
  	void up_action();
- private:
-
 };
 
 #endif /* O_NODE_HPP */

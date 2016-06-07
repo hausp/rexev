@@ -7,6 +7,6 @@
 #include "LNode.hpp"
 
 int main(int argc, char** argv) {
-    DeSimoneTree tree("ab(a|bc)*(cd|a)?(ab)?d");
+    DeSimoneTree tree("b*(ab*ab*)*ab*");
     std::cout << tree << std::endl;
 }

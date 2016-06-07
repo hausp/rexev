@@ -4,9 +4,9 @@
 #ifndef L_NODE_HPP
 #define L_NODE_HPP
 
-#include "DSNode.hpp"
+#include "Node.hpp"
 
-class LNode : public DSNode {
+class LNode : public DeSimoneTree::Node {
  public:
     LNode();
     void down_action();

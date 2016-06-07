@@ -4,16 +4,13 @@
 #ifndef T_NODE_HPP
 #define T_NODE_HPP
 
-#include "DSNode.hpp"
+#include "Node.hpp"
 
-class TNode : public DSNode {
+class TNode : public DeSimoneTree::Node {
  public:
     TNode(char);
     void down_action();
-    void up_action();    
-
- private:
-
+    void up_action();
 };
 
 

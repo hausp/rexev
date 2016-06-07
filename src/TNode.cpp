@@ -3,7 +3,7 @@
 
 #include "TNode.hpp"
 
-TNode::TNode(char c) : DSNode(c) { }
+TNode::TNode(char c) : Node(c) { }
 
 void TNode::up_action() {
 

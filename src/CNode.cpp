@@ -3,7 +3,7 @@
 
 #include "CNode.hpp"
 
-CNode::CNode() : DSNode('.') { }
+CNode::CNode() : Node('.') { }
 
 void CNode::down_action() {
 

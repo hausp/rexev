@@ -4,9 +4,9 @@
 #ifndef C_NODE_HPP
 #define C_NODE_HPP
 
-#include "DSNode.hpp"
+#include "Node.hpp"
 
-class CNode : public DSNode {
+class CNode : public DeSimoneTree::Node {
  public:
     CNode();
     void down_action();

@@ -4,9 +4,9 @@
 #ifndef U_NODE_HPP
 #define U_NODE_HPP
 
-#include "DSNode.hpp"
+#include "Node.hpp"
 
-class UNode : public DSNode {
+class UNode : public DeSimoneTree::Node {
  public:
     UNode();
     void down_action();

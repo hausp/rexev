@@ -4,7 +4,7 @@
 #include <iostream>
 
 #include "DeSimoneTree.hpp"
-#include "DSNode.hpp"
+#include "Node.hpp"
 #include "TNode.hpp"
 #include "LNode.hpp"
 #include "UNode.hpp"
@@ -28,7 +28,7 @@ DeSimoneTree::DeSimoneTree(string regex) {
     temp->th_link = std::make_shared<LNode>();
 }
 
-node_ptr DeSimoneTree::init_tree(string regex) {
+DeSimoneTree::node_ptr DeSimoneTree::init_tree(string regex) {
     node_ptr current(new LNode());
     
     while (regex.size() > 0) {
@@ -126,9 +126,9 @@ void DeSimoneTree::put_option(node_ptr& current) {
 
 void DeSimoneTree::put_subtree(node_ptr& current, std::string& regex) {
     //ECHO("Subtree insertion");
-    if (current->get_symbol() == '*') {
-        put_concatenation(current);
-    }
+    // if (current->get_symbol() == '*' || current->get_symbol() == '?') {
+    //     put_concatenation(current);
+    // }
     unsigned size = 0;
     unsigned branches = 0;
     while (regex[size] != ')' || branches > 0) {

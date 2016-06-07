@@ -3,10 +3,9 @@
 
 #include "ONode.hpp"
 
-ONode::ONode() : DSNode('?') { }
+ONode::ONode() : Node('?') { }
 
 void ONode::down_action() {
-
 
 }
 

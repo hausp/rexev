@@ -3,7 +3,7 @@
 
 #include "LNode.hpp"
 
-LNode::LNode() : DSNode('~') { }
+LNode::LNode() : Node('~') { }
 
 void LNode::down_action() {
 
