@@ -22,11 +22,11 @@ class FSMachine;
 using std::string;
 
 class DeSimoneTree {
-    friend std::ostream& operator<<(std::ostream&, const DeSimoneTree&);
  public:
     class Node;
     DeSimoneTree(string);
     FSMachine to_fsm();
+    operator string() const;
 
  private:
     using node_ptr = std::shared_ptr<Node>;
@@ -42,4 +42,5 @@ class DeSimoneTree {
 };
 
 std::ostream& operator<<(std::ostream&, const DeSimoneTree&);
+
 #endif /* DE_SIMONE_TREE_HPP */

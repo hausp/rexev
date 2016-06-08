@@ -17,13 +17,12 @@
 
 class DeSimoneTree::Node {    
     friend class DeSimoneTree;
-    friend std::ostream& operator<<(std::ostream&, const DeSimoneTree::Node&);
  public:
     virtual void down_action() = 0;
     virtual void up_action() = 0;
     virtual bool is_leaf();
     char get_symbol();
-    operator string();
+    operator string() const;
 
  protected:
     Node(char);

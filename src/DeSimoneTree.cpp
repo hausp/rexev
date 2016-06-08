@@ -158,7 +158,11 @@ void DeSimoneTree::reasign_father(node_ptr& temp, node_ptr& current) {
     current = temp;
 }
 
+DeSimoneTree::operator string() const {
+    return (string)*root;
+}
+
 std::ostream& operator<<(std::ostream& out, const DeSimoneTree& tree) {
-    out << *(tree.root);
+    out << (string)tree;
     return out;
 }

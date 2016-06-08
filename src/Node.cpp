@@ -27,14 +27,20 @@ DeSimoneTree::Node* DeSimoneTree::Node::link_node() {
     }
 }
 
-std::ostream& operator<<(std::ostream& out, const DeSimoneTree::Node& node) {
-    if (node.left) out << *node.left;
-    out << " " << node.symbol;
-    if (node.th_link) {
-        out << "(" << node.th_link->symbol << ")";
+DeSimoneTree::Node::operator string() const {
+    string out;
+    if (left) out += *left;
+    out += " ";
+    out += symbol;
+    if (th_link) {
+        out += "(";
+        out += th_link->symbol;
+        out += ")";
     }
-    if (node.right) out << *node.right;
-
-    //if (node.father) out << " Debug: " << node.father->symbol;
+    if (right) out += *right;
     return out;
+}
+
+std::ostream& operator<<(std::ostream& out, const DeSimoneTree::Node& node) {
+    return out << (string)node;
 }
