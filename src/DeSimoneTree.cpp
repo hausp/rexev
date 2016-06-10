@@ -28,6 +28,10 @@ DeSimoneTree::DeSimoneTree(string regex) {
     temp->th_link = std::make_shared<LNode>();
 }
 
+bool DeSimoneTree::is_terminal(char entry) {
+    return std::isalnum(entry) || alphabet.count(entry);
+}
+
 DeSimoneTree::node_ptr DeSimoneTree::init_tree(string regex) {
     node_ptr current(new LNode());
     
@@ -35,8 +39,9 @@ DeSimoneTree::node_ptr DeSimoneTree::init_tree(string regex) {
         char entry = regex[0];
         regex.erase(0,1);
 
-        if (std::isalnum(entry)) {
+        if (std::isalnum(entry) || entry == '&') {
             if (std::isalnum(current->get_symbol())
+                || current->get_symbol() == '&'
                 || current->get_symbol() == '*'
                 || current->get_symbol() == '?') {
                 put_concatenation(current);
@@ -61,8 +66,10 @@ DeSimoneTree::node_ptr DeSimoneTree::init_tree(string regex) {
             throw 666;
         }
     }
-    while (current->father->get_symbol() != '~') {
-        current = current->father;
+    if (current->father) {
+        while (current->father->get_symbol() != '~') {
+            current = current->father;
+        }    
     }
     return current;
 }
@@ -136,17 +143,21 @@ void DeSimoneTree::put_subtree(node_ptr& current, std::string& regex) {
         if (regex[size] != ')') branches--;
         size++;
     }
-    auto temp = init_tree(regex.substr(0, size));
-    if (current->left) {
-        current->right = temp;
+    if (size > 0) {
+        auto temp = init_tree(regex.substr(0, size));
+        if (current->left) {
+            current->right = temp;
+        } else {
+            current->left = temp;
+        }
+        temp->father = current;
+        current = temp;
+        regex.erase(0,size+1);
+        if (std::isalnum(regex[0]) || regex[0] == '(') {
+            put_concatenation(current);
+        }
     } else {
-        current->left = temp;
-    }
-    temp->father = current;
-    current = temp;
-    regex.erase(0,size+1);
-    if (std::isalnum(regex[0]) || regex[0] == '(') {
-        put_concatenation(current);
+        regex.erase(0,1);
     }
 }
 

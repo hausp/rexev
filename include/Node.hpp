@@ -34,6 +34,7 @@ class DeSimoneTree::Node {
     node_ptr left;
     node_ptr right;
     node_ptr th_link;
+    unsigned height;
 };
 
 std::ostream& operator<<(std::ostream&, const DeSimoneTree::Node&);
