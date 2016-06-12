@@ -6,9 +6,9 @@
 CNode::CNode() : Node('.') { }
 
 void CNode::down_action() {
-
+	left->down_action();
 }
 
 void CNode::up_action() {
-    
+    right->down_action();
 }

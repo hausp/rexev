@@ -6,7 +6,7 @@
 TNode::TNode(char c) : Node(c) { }
 
 void TNode::up_action() {
-
+	// Do link things
 }
 
 void TNode::down_action() {
