@@ -6,11 +6,11 @@
 SNode::SNode() : Node('*') { }
 
 void SNode::down_action() {
-	th_link->up_action();
-	left->down_action();
+	get_link()->up_action();
+	get_left()->down_action();
 }
 
 void SNode::up_action() {
-	th_link->up_action();
-	left->down_action();    
+	get_link()->up_action();
+	get_left()->down_action();    
 }

@@ -8,6 +8,7 @@
 
 class UNode : public DeSimoneTree::Node {
  public:
+using node_ptr = std::shared_ptr<Node>;
     UNode();
     void down_action();
     void up_action();

@@ -29,7 +29,7 @@ DeSimoneTree::DeSimoneTree(string regex) {
 }
 
 bool DeSimoneTree::is_terminal(char entry) {
-    return std::isalnum(entry) || alphabet.count(entry);
+return true;//    return std::isalnum(entry) || alphabet.count(entry); // This is not compiling
 }
 
 DeSimoneTree::node_ptr DeSimoneTree::init_tree(string regex) {

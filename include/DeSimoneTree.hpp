@@ -39,6 +39,7 @@ class DeSimoneTree {
     void put_option(node_ptr&);
     void put_subtree(node_ptr&, std::string&);
     void reasign_father(node_ptr&, node_ptr&);
+    bool is_terminal(char);
 };
 
 std::ostream& operator<<(std::ostream&, const DeSimoneTree&);

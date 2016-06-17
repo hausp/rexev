@@ -21,6 +21,10 @@ class DeSimoneTree::Node {
     virtual void down_action() = 0;
     virtual void up_action() = 0;
     virtual bool is_leaf();
+    node_ptr get_left();
+    node_ptr get_right();
+    node_ptr get_father();
+    node_ptr get_link();
     char get_symbol();
     operator string() const;
 
@@ -30,11 +34,11 @@ class DeSimoneTree::Node {
 
  private:
     char symbol;
+    unsigned height;
     node_ptr father;
     node_ptr left;
     node_ptr right;
     node_ptr th_link;
-    unsigned height;
 };
 
 std::ostream& operator<<(std::ostream&, const DeSimoneTree::Node&);

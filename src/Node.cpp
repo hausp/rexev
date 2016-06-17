@@ -27,6 +27,22 @@ DeSimoneTree::Node* DeSimoneTree::Node::link_node() {
     }
 }
 
+DeSimoneTree::node_ptr DeSimoneTree::Node::get_link() {
+    return th_link;
+}
+
+DeSimoneTree::node_ptr DeSimoneTree::Node::get_right() {
+    return right;
+}
+
+DeSimoneTree::node_ptr DeSimoneTree::Node::get_father() {
+    return father;
+}
+
+DeSimoneTree::node_ptr DeSimoneTree::Node::get_left() {
+    return left;
+}
+
 DeSimoneTree::Node::operator string() const {
     string out;
     if (left) out += *left;
