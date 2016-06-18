@@ -16,6 +16,13 @@
 #include <memory>
 #include <string>
 #include <ostream>
+#include <unordered_set>
+#include <iostream>
+
+#define RECENT_COMPILER 0
+#define TRACE(x) std::cout << (#x) << " = " << (x) << std::endl
+#define TRACE_L(x,y) std::cout << (x) << " = " << (y) << std::endl
+#define ECHO(x) std::cout << (x) << std::endl
 
 class FSMachine;
 
@@ -29,16 +36,19 @@ class DeSimoneTree {
     operator string() const;
 
  private:
-    using node_ptr = std::shared_ptr<Node>;
-    node_ptr root;
-    node_ptr init_tree(string);
-    void put_leaf(node_ptr&, const char);
-    void put_union(node_ptr&);
-    void put_concatenation(node_ptr&);
-    void put_kleene_star(node_ptr&);
-    void put_option(node_ptr&);
-    void put_subtree(node_ptr&, std::string&);
-    void reasign_father(node_ptr&, node_ptr&);
+    std::unordered_set<char> alphabet;
+    std::unique_ptr<Node> lambda;
+    std::unique_ptr<Node> root;
+
+    Node* init_tree(string);
+    void put_leaf(Node*&, const char);
+    void put_union(Node*&);
+    void put_concatenation(Node*&);
+    void put_kleene_star(Node*&);
+    void put_option(Node*&);
+    void put_subtree(Node*&, std::string&);
+    void reasign_father(Node*&, Node*&);
+    bool is_terminal(char);
 };
 
 std::ostream& operator<<(std::ostream&, const DeSimoneTree&);

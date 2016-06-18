@@ -1,8 +1,6 @@
 /* created by Vinicius Freitas<vinicius.mctf@grad.ufsc.br> 
    and Marleson Graf<aszdrick@gmail.com> [2016] */
 
-#include <iostream>
-
 #include "DeSimoneTree.hpp"
 #include "Node.hpp"
 #include "TNode.hpp"
@@ -12,40 +10,41 @@
 #include "SNode.hpp"
 #include "ONode.hpp"
 
-#define RECENT_COMPILER 0
-#define TRACE(x) std::cout << (#x) << " = " << (x) << std::endl
-#define TRACE_L(x,y) std::cout << (x) << " = " << (y) << std::endl
-#define TRACE_IT(x) \
-    unsigned counter = 0; \
-    for (auto& elem : (x)) { \
-        std::cout << (#x) << "[" << std::to_string(counter++) << "] = " << elem << std::endl; \
-    }
-#define ECHO(x) std::cout << (x) << std::endl
-
-DeSimoneTree::DeSimoneTree(string regex) {
-    root = init_tree(regex);
+DeSimoneTree::DeSimoneTree(string regex)
+: alphabet{'a','b','c','d','e','f','g','h','i','j','k','l',
+           'm','n','o','p','q','r','s','t','u','v','w','x',
+           'y','z','0','1','2','3','4','5','6','7','8','9','&'},
+  lambda(new LNode()),
+  root(init_tree(regex)) {
     auto temp = root->link_node();
-    temp->th_link = std::make_shared<LNode>();
+    temp->th_link = lambda.get();
 }
 
 bool DeSimoneTree::is_terminal(char entry) {
-    return std::isalnum(entry) || alphabet.count(entry);
+    return alphabet.count(entry);
 }
 
-DeSimoneTree::node_ptr DeSimoneTree::init_tree(string regex) {
-    node_ptr current(new LNode());
+DeSimoneTree::Node* DeSimoneTree::init_tree(string regex) {
+    /* A árvore é inicializada com lambda, a fim de simplificar
+       as verificações de ponteiros nulos no algoritmo.
+     */
+    Node* current = lambda.get();
     
+    /* Para cada caractere da expressão regular, verifica-se
+       se é um símbolo do alfabeto ou uma operação.
+       Para cada caso, é feita uma insersão diferente, por vezes
+       realizando-se rotações, montando, assim, a árvore com
+       apenas uma iteração completa sobre a string, exceto em
+       casos que há parênteses, pois são tratados como árvores
+       separadas.
+     */
     while (regex.size() > 0) {
+        /* Lê-se o primeiro caractere da string,
+           em seguida deletando-o da mesma. */
         char entry = regex[0];
         regex.erase(0,1);
 
-        if (std::isalnum(entry) || entry == '&') {
-            if (std::isalnum(current->get_symbol())
-                || current->get_symbol() == '&'
-                || current->get_symbol() == '*'
-                || current->get_symbol() == '?') {
-                put_concatenation(current);
-            }
+        if (alphabet.count(entry)) {
             put_leaf(current, entry);
         } else if (entry == '|') {
             put_union(current);
@@ -56,86 +55,115 @@ DeSimoneTree::node_ptr DeSimoneTree::init_tree(string regex) {
         } else if (entry == '?') {
             put_option(current);
         } else if (entry == '(') {
-            if (std::isalnum(current->get_symbol())
-                || current->get_symbol() == '*'
-                || current->get_symbol() == '?') {
-                put_concatenation(current);
-            }
             put_subtree(current, regex);
         } else {
             throw 666;
         }
     }
     if (current->father) {
+        /* Laço para buscar a raíz da árvore.
+           A raíz da árvore tem como pai o lambda.
+           Lambda é representado pelo símbolo '~'.
+         */
         while (current->father->get_symbol() != '~') {
             current = current->father;
-        }    
+        }
     }
+    /* As chamadas release() nos ponteiros garantem 
+       que lambda não tenha filhos, visto que ele é
+       utilizado como base para construir a árvore.
+     */
+    current->father->left.release();
+    current->father->right.release();
+    /* Retorna a raíz da árvore. */
     return current;
 }
 
-void DeSimoneTree::put_leaf(node_ptr& current, const char entry) {
+void DeSimoneTree::put_leaf(Node*& current, const char entry) {
     //ECHO("Leaf insertion");
-    node_ptr temp(new TNode(entry));
-    if (current->left) {
-        current->right = temp;
-    } else {
-        current->left = temp;
+    /* Novo nodo terminal, guardando o símbolo lido. */
+    Node* temp = new TNode(entry);
+    /* Verificação de possível concatenação implícita. */
+    auto next = current->get_symbol();
+    if (alphabet.count(next) || next == '*' || next == '?') {
+        put_concatenation(current);
     }
+    /* Insere folha onde estiver disponível, priorizando a esquerda. */
+    if (current->left) {
+        /* Chamar release() evita deletar um possível nodo no filho.
+           Não há risco de memory leak, pois se houver algum nodo
+           à direita, este será atribuído a algum outro nodo.
+           A chamada reset() deleta o conteúdo atual do ponteiro
+           e coloca temp em seu lugar.
+         */
+        current->right.release();
+        current->right.reset(temp);
+    } else {
+        current->right.release();
+        current->left.reset(temp);
+    }
+    /* Define o nodo atual como pai da folha recém-colocada. */
     temp->father = current;
+    /* Atualiza nodo atual. */
     current = temp;
 }
 
-void DeSimoneTree::put_union(node_ptr& current) {
+void DeSimoneTree::put_union(Node*& current) {
     //ECHO("Union insertion");
-    node_ptr temp(new UNode());
-    while (current->father->get_symbol() != '~'
-           || current->father->get_symbol() == '|') {
+    Node* temp = new UNode();
+    auto father_symbol = current->father->get_symbol();
+    while (father_symbol != '~' || father_symbol == '|') {
         current = current->father;
     }
     reasign_father(temp, current);
 }
 
-void DeSimoneTree::put_concatenation(node_ptr& current) {
+void DeSimoneTree::put_concatenation(Node*& current) {
     //ECHO("Concatenation insertion");
-    node_ptr temp(new CNode());
+    Node* temp = new CNode();
     if (current->father) {
-        current->father->right = temp;
+        current->father->right.release();
+        current->father->right.reset(temp);
     }
     reasign_father(temp, current);
 }
 
-void DeSimoneTree::put_kleene_star(node_ptr& current) {
+void DeSimoneTree::put_kleene_star(Node*& current) {
     //ECHO("Kleene star insertion");
-    node_ptr temp(new SNode());
+    Node* temp = new SNode();
     if (current->father) {
-        if (current->father->left == current) {
-            current->father->left = temp;
+        if (current->father->left.get() == current) {
+            current->father->left.release();
+            current->father->left.reset(temp);
         } else {
-            current->father->right = temp;
+            current->father->right.release();
+            current->father->right.reset(temp);
         }
     }
     reasign_father(temp, current);
 }
 
-void DeSimoneTree::put_option(node_ptr& current) {
+void DeSimoneTree::put_option(Node*& current) {
     //ECHO("Union insertion");
-    node_ptr temp(new ONode());
+    Node* temp = new ONode();
     if (current->father) {
-        if (current->father->left == current) {
-            current->father->left = temp;
+        if (current->father->left.get() == current) {
+            current->father->left.release();
+            current->father->left.reset(temp);
         } else {
-            current->father->right = temp;
+            current->father->right.release();
+            current->father->right.reset(temp);
         }
     }
     reasign_father(temp, current);
 }
 
-void DeSimoneTree::put_subtree(node_ptr& current, std::string& regex) {
+void DeSimoneTree::put_subtree(Node*& current, std::string& regex) {
     //ECHO("Subtree insertion");
-    // if (current->get_symbol() == '*' || current->get_symbol() == '?') {
-    //     put_concatenation(current);
-    // }
+    auto symbol = current->get_symbol();
+    if (alphabet.count(symbol) || symbol == '*' || symbol == '?') {
+        put_concatenation(current);
+    }
     unsigned size = 0;
     unsigned branches = 0;
     while (regex[size] != ')' || branches > 0) {
@@ -146,14 +174,16 @@ void DeSimoneTree::put_subtree(node_ptr& current, std::string& regex) {
     if (size > 0) {
         auto temp = init_tree(regex.substr(0, size));
         if (current->left) {
-            current->right = temp;
+            current->right.release();
+            current->right.reset(temp);
         } else {
-            current->left = temp;
+            current->left.release();
+            current->left.reset(temp);
         }
         temp->father = current;
         current = temp;
         regex.erase(0,size+1);
-        if (std::isalnum(regex[0]) || regex[0] == '(') {
+        if (alphabet.count(regex[0]) || regex[0] == '(') {
             put_concatenation(current);
         }
     } else {
@@ -161,16 +191,15 @@ void DeSimoneTree::put_subtree(node_ptr& current, std::string& regex) {
     }
 }
 
-
-void DeSimoneTree::reasign_father(node_ptr& temp, node_ptr& current) {
+void DeSimoneTree::reasign_father(Node*& temp, Node*& current) {
     temp->father = current->father;
-    temp->left = current;
+    temp->left.reset(current);
     current->father = temp;
     current = temp;
 }
 
 DeSimoneTree::operator string() const {
-    return (string)*root;
+    return *root;
 }
 
 std::ostream& operator<<(std::ostream& out, const DeSimoneTree& tree) {

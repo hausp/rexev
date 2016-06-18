@@ -6,10 +6,10 @@
 ONode::ONode() : Node('?') { }
 
 void ONode::down_action() {
-	father->up_action();
-	left->down_action();
+    // father->up_action();
+    // left->down_action();
 }
 
 void ONode::up_action() {
-	th_link->up_action();
+    // th_link->up_action();
 }
