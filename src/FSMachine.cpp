@@ -12,26 +12,18 @@ FSMachine::~FSMachine() {
 
 }
 
-FSMachine::FSMachine(state_vec all, std::vector<char> symbols, State* initial, state_vec final) {
+FSMachine::FSMachine(std::vector<State*> all, std::vector<char> symbols, State* initial, std::vector<State*> final) {
 	states = all;
 	final_states = final;
-	alphabet = new char[symbols.size()];
+	alphabet = (symbols);
 	ab_size = symbols.size();
-	int counter = 0;
-	for (auto it = symbols.begin(); it != symbols.end(); ++it) {
-		alphabet[counter] = (char)*it;
-		counter++;
-	}
-	if (counter != ab_size - 1) {
-		std::cout << "Deu ruim" << std::endl;
-	}
 	initial_state = initial;
 }
 
 std::string FSMachine::to_string() {
-
+	return "Not implemented";
 }
 
 void FSMachine::terminal_print_table() {
-	
+
 }

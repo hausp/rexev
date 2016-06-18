@@ -12,15 +12,14 @@
  *	to show the automata to the user, through GUI.
  *
  **/
- 
+
 #ifndef FS_MACHINE_HPP
 #define FS_MACHINE_HPP
 
 #include "State.hpp"
-#include "Transition.hpp"
 #include <string>
-
-using state_vec = std::vector<State>
+#include <utility>
+#include <vector>
 
 class FSMachine {
  public:
@@ -30,15 +29,15 @@ class FSMachine {
  	// Formal Definition
  	// Transitions exist inside States
   	// Finite State Set, Input Alphabet, Initial State, Final States Set 
- 	FSMachine(state_vec, std::vector<char>, State*, state_vec);
+ 	FSMachine(std::vector<State*>, std::vector<char>, State*, std::vector<State*>);
  	std::string to_string();
  	void terminal_print_table();
  private:
  	State* initial_state;
- 	state_vec states;
- 	unsigned int ab_size;
- 	char alphabet[];
- 	state_vec final_states;
+ 	std::vector<State*> states;
+ 	int ab_size;
+ 	std::vector<char> alphabet;
+ 	std::vector<State*> final_states;
 };
 
 #endif /* FS_MACHINE_HPP */

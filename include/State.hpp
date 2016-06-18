@@ -15,7 +15,7 @@
 #ifndef STATE_HPP
 #define STATE_HPP
 
-using trans_map = std::unordered_map<char,State*>
+#include <unordered_map>
 
 class State {
  public:
@@ -27,7 +27,7 @@ class State {
  	void new_transition(char, State*);
  private:
  	char label;
- 	trans_map transitions;
+ 	std::unordered_map<char,State*> transitions;
 
 };
 
