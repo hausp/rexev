@@ -23,17 +23,17 @@ class DeSimoneTree::Node {
     virtual bool is_leaf();
     char get_symbol();
     operator string() const;
-
+    ~Node() { ECHO("Node destroyed"); }
  protected:
     Node(char);
     Node* link_node();
 
  private:
     char symbol;
-    node_ptr father;
-    node_ptr left;
-    node_ptr right;
-    node_ptr th_link;
+    Node* father;
+    std::unique_ptr<Node> left;
+    std::unique_ptr<Node> right;
+    Node* th_link;
     unsigned height;
 };
 

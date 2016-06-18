@@ -4,7 +4,9 @@
 #include "Node.hpp"
 #include "LNode.hpp"
 
-DeSimoneTree::Node::Node(char c) : symbol(c) { }
+DeSimoneTree::Node::Node(char c)
+: symbol(c), father(nullptr), th_link(nullptr) {
+}
 
 char DeSimoneTree::Node::get_symbol() {
     return symbol;
@@ -17,14 +19,13 @@ bool DeSimoneTree::Node::is_leaf() {
 DeSimoneTree::Node* DeSimoneTree::Node::link_node() {
     if (left) {
         auto temp = left->link_node();
-        temp->th_link = node_ptr(this);
+        temp->th_link = this;
     }
 
     if (right) {
         return right->link_node();
-    } else {
-        return this;
     }
+    return this;
 }
 
 DeSimoneTree::Node::operator string() const {
