@@ -3,12 +3,13 @@
 
 #include "State.hpp"
 
-State::State() {
-	label = 'Z';	
+State::State()
+ : label('&') {	
 }
 
-State::State(char l) {
-	label = l;
+State::State(char l)
+ : label(l) {
+
 }
 
 State::~State() {
@@ -19,11 +20,11 @@ char State::get_label() {
 	return label;
 }
 
-State* State::get_transition(char transition_label) {
+State State::get_transition(char transition_label) {
 	return std::get<1>(*(transitions.find(transition_label)));
 }
 
-void State::new_transition(char transition_label, State* destination) {
-	std::pair<char, State*> new_transition (label, destination);
+void State::new_transition(char transition_label, State destination) {
+	std::pair<char, State> new_transition (label, destination);
 	transitions.insert(new_transition);
 }

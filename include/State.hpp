@@ -23,11 +23,12 @@ class State {
  	State(char);
  	~State();
  	char get_label();
- 	State* get_transition(char);
- 	void new_transition(char, State*);
+ 	State get_transition(char);
+ 	void new_transition(char, State);
+ 
  private:
  	char label;
- 	std::unordered_map<char,State*> transitions;
+ 	std::unordered_map<char,State> transitions;
 
 };
 

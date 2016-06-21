@@ -19,25 +19,28 @@
 #include "State.hpp"
 #include <string>
 #include <utility>
-#include <vector>
+#include <map>
+#include <set>
+
 
 class FSMachine {
  public:
  	FSMachine();
- 	~FSMachine();
-
  	// Formal Definition
  	// Transitions exist inside States
   	// Finite State Set, Input Alphabet, Initial State, Final States Set 
- 	FSMachine(std::vector<State*>, std::vector<char>, State*, std::vector<State*>);
+ 	FSMachine(const std::map<char,State>&, const std::set<char>&, char, const std::set<char>&);
+ 	~FSMachine();
  	std::string to_string();
  	void terminal_print_table();
+ 	void put_state(char);
+ 	void put_transition(char,char,char);
+
  private:
- 	State* initial_state;
- 	std::vector<State*> states;
- 	int ab_size;
- 	std::vector<char> alphabet;
- 	std::vector<State*> final_states;
+ 	std::map<char,State> states;
+ 	std::set<char> alphabet;
+ 	char initial_state;
+ 	std::set<char> final_states;
 };
 
 #endif /* FS_MACHINE_HPP */

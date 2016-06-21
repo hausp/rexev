@@ -12,12 +12,9 @@ FSMachine::~FSMachine() {
 
 }
 
-FSMachine::FSMachine(std::vector<State*> all, std::vector<char> symbols, State* initial, std::vector<State*> final) {
-	states = all;
-	final_states = final;
-	alphabet = (symbols);
-	ab_size = symbols.size();
-	initial_state = initial;
+FSMachine::FSMachine(const std::map<char,State>& k, const std::set<char>& sigma, char q0, const std::set<char>& f)
+ : states(k), alphabet(sigma), initial_state(q0), final_states(f) {
+
 }
 
 std::string FSMachine::to_string() {
@@ -26,4 +23,14 @@ std::string FSMachine::to_string() {
 
 void FSMachine::terminal_print_table() {
 
+}
+
+void FSMachine::put_state(char label) {
+	states[label] = State(label);
+}
+
+void FSMachine::put_transition(char from, char to, char label) {
+	if (states.count(from) && states.count(to)) {
+		states.at(from).new_transition(label, states.at(to));
+	}
 }
