@@ -16,6 +16,7 @@ void Controller::add_regex() {
             tree = result.second;
             ECHO(tree);
         } catch (...) {
+            ECHO("CATCH");
             add_regex();
         }
         ui.hide_add_dialog();

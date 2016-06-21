@@ -47,8 +47,9 @@ class DeSimoneTree {
     void put_union(Node*&);
     void put_concatenation(Node*&);
     void put_kleene_star(Node*&);
+    void put_transitive_closure(Node*&);
     void put_option(Node*&);
-    void put_subtree(Node*&, std::string&);
+    bool put_subtree(Node*&, std::string&);
     void reasign_father(Node*&, Node*&);
     bool is_terminal(char);
 };

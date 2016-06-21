@@ -8,6 +8,7 @@
 #include "UNode.hpp"
 #include "CNode.hpp"
 #include "SNode.hpp"
+#include "PNode.hpp"
 #include "ONode.hpp"
 
 DeSimoneTree::DeSimoneTree()
@@ -59,12 +60,18 @@ DeSimoneTree::Node* DeSimoneTree::init_tree(string regex) {
             put_concatenation(current);
         } else if (entry == '*') {
             put_kleene_star(current);
+        } else if (entry == '+') {
+            put_transitive_closure(current);
         } else if (entry == '?') {
             put_option(current);
         } else if (entry == '(') {
-            put_subtree(current, regex);
+            if (!put_subtree(current, regex)) {
+                throw 1;
+            }
+        } else if (entry == ' ') {
+        } else if (entry == '\n') {
         } else {
-            throw 666;
+            throw 1;
         }
     }
     if (current->father) {
@@ -92,7 +99,7 @@ void DeSimoneTree::put_leaf(Node*& current, const char entry) {
     Node* temp = new TNode(entry);
     /* Verificação de possível concatenação implícita. */
     auto next = current->get_symbol();
-    if (alphabet.count(next) || next == '*' || next == '?') {
+    if (alphabet.count(next) || next == '*' || next == '+' || next == '?') {
         put_concatenation(current);
     }
     /* Insere folha onde estiver disponível, priorizando a esquerda. */
@@ -150,6 +157,21 @@ void DeSimoneTree::put_kleene_star(Node*& current) {
     reasign_father(temp, current);
 }
 
+void DeSimoneTree::put_transitive_closure(Node*& current) {
+    //ECHO("Transitive closure insertion");
+    Node* temp = new PNode();
+    if (current->father) {
+        if (current->father->left.get() == current) {
+            current->father->left.release();
+            current->father->left.reset(temp);
+        } else {
+            current->father->right.release();
+            current->father->right.reset(temp);
+        }
+    }
+    reasign_father(temp, current);   
+}
+
 void DeSimoneTree::put_option(Node*& current) {
     //ECHO("Union insertion");
     Node* temp = new ONode();
@@ -165,36 +187,43 @@ void DeSimoneTree::put_option(Node*& current) {
     reasign_father(temp, current);
 }
 
-void DeSimoneTree::put_subtree(Node*& current, std::string& regex) {
+bool DeSimoneTree::put_subtree(Node*& current, std::string& regex) {
     //ECHO("Subtree insertion");
-    auto symbol = current->get_symbol();
-    if (alphabet.count(symbol) || symbol == '*' || symbol == '?') {
-        put_concatenation(current);
-    }
-    unsigned size = 0;
-    unsigned branches = 0;
-    while (regex[size] != ')' || branches > 0) {
-        if (regex[size] != '(') branches++;
-        if (regex[size] != ')') branches--;
-        size++;
-    }
-    if (size > 0) {
-        auto temp = init_tree(regex.substr(0, size));
-        if (current->left) {
-            current->right.release();
-            current->right.reset(temp);
-        } else {
-            current->left.release();
-            current->left.reset(temp);
-        }
-        temp->father = current;
-        current = temp;
-        regex.erase(0,size+1);
-        if (alphabet.count(regex[0]) || regex[0] == '(') {
+    if (regex.size() > 0) {
+        auto symbol = current->get_symbol();
+        if (alphabet.count(symbol) || symbol == '*' || symbol == '+' || symbol == '?') {
             put_concatenation(current);
         }
+        unsigned size = 0;
+        unsigned branches = 0;
+        
+        while (regex[size] != ')' || branches > 0) {
+            if (regex[size] != '(') branches++;
+            if (regex[size] != ')') branches--;
+            if (++size == regex.size()) return false;
+        }
+
+        if (size > 0) {
+            auto temp = init_tree(regex.substr(0, size));
+            if (current->left) {
+                current->right.release();
+                current->right.reset(temp);
+            } else {
+                current->left.release();
+                current->left.reset(temp);
+            }
+            temp->father = current;
+            current = temp;
+            regex.erase(0,size+1);
+            if (alphabet.count(regex[0]) || regex[0] == '(') {
+                put_concatenation(current);
+            }
+        } else {
+            regex.erase(0,1);
+        }
+        return true;
     } else {
-        regex.erase(0,1);
+        return false;
     }
 }
 
