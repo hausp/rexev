@@ -26,6 +26,7 @@
 class FSMachine {
  public:
     FSMachine();
+    FSMachine(const std::set<char>&);
     // Formal Definition
     // Transitions exist inside States
     // Finite State Set, Input Alphabet, Initial State, Final States Set 
@@ -34,6 +35,9 @@ class FSMachine {
     void make_transition(const std::string&, const char, const std::string&);
     State operator[](const std::string&);
     const State operator[](const std::string&) const;
+
+    void remove_dead_states();
+    void remove_unreachable_states();
 
  private:
     std::map<std::string, State> states;

@@ -5,7 +5,7 @@
 #include "LNode.hpp"
 
 DeSimoneTree::Node::Node(char c)
-: symbol(c), father(nullptr), th_link(nullptr) {
+: father(nullptr), th_link(nullptr), symbol(c) {
 }
 
 char DeSimoneTree::Node::get_symbol() {

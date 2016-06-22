@@ -26,6 +26,20 @@ bool State::is_final() const {
     return final;
 }
 
+bool State::is_dead() const {
+    if (final) {
+        return false;
+    }
+    for (auto t : transitions) {
+        for (auto s : t.second) {
+            if (!s->is_dead()) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 bool State::is_rejector() const {
     return false;
 }

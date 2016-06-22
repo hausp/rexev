@@ -16,14 +16,14 @@
 
 
 DeSimoneTree::DeSimoneTree()
-: alphabet{'a','b','c','d','e','f','g','h','i','j','k','l',
+: valid_entries{'a','b','c','d','e','f','g','h','i','j','k','l',
            'm','n','o','p','q','r','s','t','u','v','w','x',
            'y','z','0','1','2','3','4','5','6','7','8','9','&'},
   lambda(new LNode()) {
 }
 
 DeSimoneTree::DeSimoneTree(string regex)
-: alphabet{'a','b','c','d','e','f','g','h','i','j','k','l',
+: valid_entries{'a','b','c','d','e','f','g','h','i','j','k','l',
            'm','n','o','p','q','r','s','t','u','v','w','x',
            'y','z','0','1','2','3','4','5','6','7','8','9','&'},
   lambda(new LNode()),
@@ -33,7 +33,7 @@ DeSimoneTree::DeSimoneTree(string regex)
 }
 
 bool DeSimoneTree::is_terminal(char entry) {
-    return alphabet.count(entry);
+    return valid_entries.count(entry);
 }
 
 DeSimoneTree::Node* DeSimoneTree::init_tree(string regex) {
@@ -53,7 +53,7 @@ DeSimoneTree::Node* DeSimoneTree::init_tree(string regex) {
     for (unsigned i = 0; i < regex.size(); i++) {
         char entry = regex[i];
 
-        if (alphabet.count(entry)) {
+        if (valid_entries.count(entry)) {
             put_leaf(current, entry);
         } else if (entry == '|') {
             if (current->get_symbol() == '|') {
@@ -116,9 +116,11 @@ void DeSimoneTree::put_leaf(Node*& current, const char entry) {
     ECHO("Leaf insertion");
     /* Novo nodo terminal, guardando o símbolo lido. */
     Node* temp = new TNode(entry);
+    /* Adiciona entrada ao alfabeto */
+    alphabet.insert(entry);
     /* Verificação de possível concatenação implícita. */
     auto symbol = current->get_symbol();
-    if (alphabet.count(symbol) || symbol == '*' || symbol == '+' || symbol == '?') {
+    if (valid_entries.count(symbol) || symbol == '*' || symbol == '+' || symbol == '?') {
         put_concatenation(current);
     }
     /* Insere folha onde estiver disponível, priorizando a esquerda. */
@@ -216,7 +218,7 @@ unsigned DeSimoneTree::put_subtree(Node*& current, std::string& regex, unsigned 
     ECHO("Subtree insertion");
     if (pos < regex.size()-1) {
         auto symbol = current->get_symbol();
-        if (alphabet.count(symbol) || symbol == '*' || symbol == '+' || symbol == '?') {
+        if (valid_entries.count(symbol) || symbol == '*' || symbol == '+' || symbol == '?') {
             put_concatenation(current);
         }
         unsigned size = pos;
@@ -242,7 +244,7 @@ unsigned DeSimoneTree::put_subtree(Node*& current, std::string& regex, unsigned 
             }
             temp->father = current;
             current = temp;
-            if (alphabet.count(regex[pos]) || regex[pos] == '(') {
+            if (valid_entries.count(regex[pos]) || regex[pos] == '(') {
                 put_concatenation(current);
             }
         }

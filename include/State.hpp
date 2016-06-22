@@ -38,6 +38,8 @@ class State {
     /* Verifica se estado é final */
     bool is_final() const;
 
+    bool is_dead() const;
+
     /* Verifica se estado é de rejeição */
     virtual bool is_rejector() const;
 

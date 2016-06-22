@@ -6,6 +6,10 @@
 
 FSMachine::FSMachine() { }
 
+FSMachine::FSMachine(const std::set<char>& alphabet) : alphabet(alphabet) {
+
+}
+
 // FSMachine::FSMachine(const std::map<char,State>& k, const std::set<char>& sigma, char q0, const std::set<char>& f)
 //  : states(k), alphabet(sigma), initial_state(q0), final_states(f) {
 
@@ -34,4 +38,22 @@ State FSMachine::operator[](const std::string& entry) {
 
 const State FSMachine::operator[](const std::string& entry) const {
     return states.at(entry);
+}
+
+void FSMachine::remove_dead_states() {
+    unsigned i = 0;
+    auto state = states.begin();
+    while (i < states.size()) {
+        if (state->second.is_dead()) {
+            states.erase(state);
+            state = states.begin();
+        } else {
+            i++;
+            state++;
+        }
+    }
+}
+
+void FSMachine::remove_unreachable_states() {
+    auto state = states[initial_state];
 }

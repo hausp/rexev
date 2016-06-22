@@ -39,9 +39,10 @@ class DeSimoneTree {
     operator string() const;
 
  private:
-    std::unordered_set<char> alphabet;
+    std::set<char> valid_entries;
     std::unique_ptr<Node> lambda;
     std::unique_ptr<Node> root;
+    std::set<char> alphabet;
 
     Node* init_tree(string);
     void put_leaf(Node*&, const char);
