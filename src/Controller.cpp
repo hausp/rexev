@@ -15,8 +15,8 @@ void Controller::add_regex() {
         try {
             tree = result.second;
             ECHO(tree);
-        } catch (...) {
-            ECHO("CATCH");
+        } catch (std::exception& e) {
+            ECHO(e.what());
             add_regex();
         }
         ui.hide_add_dialog();

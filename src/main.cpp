@@ -13,9 +13,14 @@
 int main(int argc, char** argv) {
 
     gtk::init(argc, argv);
+    DeSimoneTree tree;
 
-    DeSimoneTree tree("a&b");
-    std::cout << tree << std::endl;
+    try {
+        tree = std::string("a(b*cd");
+        std::cout << tree << std::endl;
+    } catch (std::exception& e) {
+        ECHO(e.what());
+    }
 
     Interface ui;
     Controller controller(ui);

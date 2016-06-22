@@ -5,5 +5,9 @@
 
 Regex::Regex(const string& r)
 : regex(r), regex_tree(r) {
-
+    try {
+        regex_tree = r;
+    } catch(...) {
+        throw 10;
+    }
 }

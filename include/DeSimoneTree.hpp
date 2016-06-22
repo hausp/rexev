@@ -49,7 +49,7 @@ class DeSimoneTree {
     void put_kleene_star(Node*&);
     void put_transitive_closure(Node*&);
     void put_option(Node*&);
-    bool put_subtree(Node*&, std::string&);
+    unsigned put_subtree(Node*&, std::string&, unsigned);
     void reasign_father(Node*&, Node*&);
     bool is_terminal(char);
 };

@@ -22,12 +22,17 @@ void Interface::show() {
 }
 
 std::pair<std::string,std::string> Interface::show_add_dialog() {
+    ECHO(1);
     dialog = GTK_WIDGET(gtk_builder_get_object(builder, "add_regex"));
+    ECHO(2);
     std::pair<std::string,std::string> result = std::make_pair("","");
+    ECHO(3);
     gtk_widget_show_all(dialog);
-    
+    ECHO(4);
     while (result.second.size() == 0) {
+        ECHO(5);
         auto response = gtk_dialog_run(GTK_DIALOG(dialog));
+        ECHO(6);
         if (response == GTK_RESPONSE_OK) {
             ECHO("ok");
             result = extract_add_dialog_entries();
@@ -37,7 +42,9 @@ std::pair<std::string,std::string> Interface::show_add_dialog() {
             break;
         }
     }
+    ECHO(7);
     gtk_widget_hide(dialog);
+    ECHO(8);
     return result;
 }
 
@@ -64,9 +71,8 @@ std::pair<std::string,std::string> Interface::extract_add_dialog_entries() {
 void Interface::clean_add_dialog() {
     auto name_entry = GTK_WIDGET(gtk_builder_get_object(builder, "regex_name_entry"));
     auto regex_text = GTK_WIDGET(gtk_builder_get_object(builder, "regex_text"));
-    auto buffer = gtk_entry_get_buffer(GTK_ENTRY(name_entry));
     auto text_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(regex_text));
-    gtk_entry_buffer_delete_text(buffer, 0, -1);
+    gtk_entry_set_text(GTK_ENTRY(name_entry), "");
     gtk_text_buffer_set_text(text_buffer, "\0", -1);
 }
 
