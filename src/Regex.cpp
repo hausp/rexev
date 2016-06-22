@@ -3,11 +3,19 @@
 
 #include "Regex.hpp"
 
+Regex::Regex() { }
+
 Regex::Regex(const string& r)
-: regex(r), regex_tree(r) {
-    try {
-        regex_tree = r;
-    } catch(...) {
-        throw 10;
-    }
+: regex(r), automaton(DeSimoneTree(r).to_fsm()) { }
+
+FSMachine& Regex::get_automaton() {
+    return automaton;
+}
+
+std::string Regex::get_regex() {
+    return regex;
+}
+
+Regex::operator std::string() {
+    return (std::string)DeSimoneTree(regex);
 }

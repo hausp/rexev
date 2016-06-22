@@ -13,19 +13,22 @@
 #include "SNode.hpp"
 #include "PNode.hpp"
 #include "ONode.hpp"
+#include "FSMachine.hpp"
 
 
 DeSimoneTree::DeSimoneTree()
-: valid_entries{'a','b','c','d','e','f','g','h','i','j','k','l',
-           'm','n','o','p','q','r','s','t','u','v','w','x',
-           'y','z','0','1','2','3','4','5','6','7','8','9','&'},
+: alphabet{},
+  valid_entries{'a','b','c','d','e','f','g','h','i','j','k','l',
+                'm','n','o','p','q','r','s','t','u','v','w','x',
+                'y','z','0','1','2','3','4','5','6','7','8','9','&'},
   lambda(new LNode()) {
 }
 
 DeSimoneTree::DeSimoneTree(string regex)
-: valid_entries{'a','b','c','d','e','f','g','h','i','j','k','l',
-           'm','n','o','p','q','r','s','t','u','v','w','x',
-           'y','z','0','1','2','3','4','5','6','7','8','9','&'},
+: alphabet{},
+  valid_entries{'a','b','c','d','e','f','g','h','i','j','k','l',
+                'm','n','o','p','q','r','s','t','u','v','w','x',
+                'y','z','0','1','2','3','4','5','6','7','8','9','&'},
   lambda(new LNode()),
   root(init_tree(regex)) {
     auto temp = root->link_node();
@@ -57,39 +60,41 @@ DeSimoneTree::Node* DeSimoneTree::init_tree(string regex) {
             put_leaf(current, entry);
         } else if (entry == '|') {
             if (current->get_symbol() == '|') {
-                throw std::runtime_error("Expressão regular inválida próxima ao caractere " + std::to_string(i+1));
+                throw std::runtime_error("Expressão regular inválida.");
             }
             put_union(current);
         } else if (entry == '.') {
             if (current->get_symbol() == '.') {
-                throw std::runtime_error("Expressão regular inválida próxima ao caractere " + std::to_string(i+1));
+                throw std::runtime_error("Expressão regular inválida.");
             }
             put_concatenation(current);
         } else if (entry == '*') {
             if (current->get_symbol() == '*') {
-                throw std::runtime_error("Expressão regular inválida próxima ao caractere " + std::to_string(i+1));
+                throw std::runtime_error("Expressão regular inválida.");
             }
             put_kleene_star(current);
         } else if (entry == '+') {
             if (current->get_symbol() == '+') {
-                throw std::runtime_error("Expressão regular inválida próxima ao caractere " + std::to_string(i+1));
+                throw std::runtime_error("Expressão regular inválida.");
             }
             put_transitive_closure(current);
         } else if (entry == '?') {
             if (current->get_symbol() == '?') {
-                throw std::runtime_error("Expressão regular inválida próxima ao caractere " + std::to_string(i+1));
+                throw std::runtime_error("Expressão regular inválida.");
             }
             put_option(current);
         } else if (entry == '(') {
             try {
+                ECHO(i);
                 i += put_subtree(current, regex, ++i);
+                ECHO(i);
             } catch (...) {
                 throw;
             }
         } else if (entry == ' ') {
         } else if (entry == '\n') {
         } else {
-            throw std::runtime_error("Expressão regular próxima ao caractere " + std::to_string(i+1));
+            throw std::runtime_error("Expressão regular inválida.");
         }
     }
 
@@ -221,19 +226,20 @@ unsigned DeSimoneTree::put_subtree(Node*& current, std::string& regex, unsigned 
         if (valid_entries.count(symbol) || symbol == '*' || symbol == '+' || symbol == '?') {
             put_concatenation(current);
         }
-        unsigned size = pos;
+        unsigned size = 0;
         unsigned branches = 0;
         
-        while (regex[size] != ')' || branches > 0) {
-            if (regex[size] != '(') branches++;
-            if (regex[size] != ')') branches--;
-            if (++size == regex.size()) {
-                throw std::runtime_error("Expressão regular inválida próxima ao caractere " + std::to_string(pos));
-                break;
+        while (regex[pos + size] != ')' || branches > 0) {
+            if (regex[pos + size] == '(') branches++;
+            if (regex[pos + size] == ')') branches--;
+            if (++size + pos == regex.size()) {
+                throw std::runtime_error("Expressão regular inválida.");
             }
         }
 
-        if (size > pos) {
+        if (size > 0) {
+            ECHO(pos);
+            ECHO(regex.substr(pos, size));
             auto temp = init_tree(regex.substr(pos, size));
             if (current->left) {
                 current->right.release();
@@ -244,13 +250,13 @@ unsigned DeSimoneTree::put_subtree(Node*& current, std::string& regex, unsigned 
             }
             temp->father = current;
             current = temp;
-            if (valid_entries.count(regex[pos]) || regex[pos] == '(') {
+            if (valid_entries.count(regex[pos + size+1]) || regex[pos + size+1] == '(') {
                 put_concatenation(current);
             }
         }
-        return size - pos;
+        return size;
     } else {
-        throw std::runtime_error("Regex inválida.");
+        throw std::runtime_error("Expressão regular inválida.");
     }
 }
 
@@ -265,6 +271,10 @@ void DeSimoneTree::reasign_father(Node*& temp, Node*& current) {
     //     current->left.reset(temp);
     //     current = temp;
     // }    
+}
+
+FSMachine DeSimoneTree::to_fsm() {
+    return FSMachine(alphabet);
 }
 
 DeSimoneTree::operator string() const {
