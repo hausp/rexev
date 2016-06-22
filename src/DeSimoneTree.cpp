@@ -4,6 +4,7 @@
 #include "DeSimoneTree.hpp"
 
 #include <exception>
+#include <utility>
 
 #include "Node.hpp"
 #include "TNode.hpp"
@@ -274,7 +275,88 @@ void DeSimoneTree::reasign_father(Node*& temp, Node*& current) {
 }
 
 FSMachine DeSimoneTree::to_fsm() {
-    return FSMachine(alphabet);
+    // DOWN ACTION ON ROOT -> set chars
+    // CRIA O STATE LABEL S (inicial)
+    // FOR verifica símbolos vistos e define as transições
+    // WHILE:
+    FSMachine machine (alphabet);
+    bool final;
+    char state_label = 'A';
+    std::vector<char> labels;
+    std::map<char, std::vector<Node*>> reach;
+    std::multimap<std::pair<char, State*>, std::vector<Node*> related_nodes;
+    std::vector<State*> states, fsm_states;
+
+    std::set<Node*> reachable_from_root = root.down_action();
+    
+    // Verifica se o estado inicial é aceitador
+    for (auto node : reachable_from_root) {
+        if (node.get_symbol() == '~') final = true;
+    }
+    State* s = new State ('S', true, final);
+    states.push_back(s);
+
+    for (auto node : reachable_from_root) {
+        labels.push_back(node.get_symbol());
+        reach.at(node.get_symbol()).push_back(node);
+    }
+
+    int i = 0;
+    for (auto t : alphabet) {
+        if (t == *(labels.begin()+i)) {
+
+            //State* a = new State (state_label++);
+            //s->new_transition(t,a);
+            //states.push_back(a);
+            //related_nodes.at(a) = reach;
+        }
+        i++;
+    }
+
+    for (int is = 1; is != -1; is++) {
+        final = false;
+        reach.empty();
+        labels.empty();
+        reachable_from_root.empty();
+        reachable_from_root = states[is]->up_action();
+        for (auto node : reachable_from_root) {
+            labels.push_back(node.get_symbol());
+            // Talvez tenha que iniciar o vetores antes.
+            reach.at(node.get_symbol()).push_back(node);
+        }
+
+        i = 0;
+        bool state_exists = false;
+        for (auto t : alphabet) {
+            if (t == *(labels.begin()+i)) {
+                if (t == '~') final = true;
+                for (auto st : states) {
+                    if (related_nodes.at(t).at(st) == related_nodes.at(t).at(s)) {
+                        // Estado já existente
+                        State* old = st;
+                        states[is]->new_transition(t,old);
+                        related_nodes.at(t).at(states[is]) = reach;
+                        state_exists = true;
+                        break;
+                    }
+                }
+                if (!state_exists) {
+                    State *a = new State (state_label++, final, false);
+                    states[is]->new_transition(t,a);
+                    states.push_back(a);
+                    related_nodes.at(t).at(a) = reach;
+                }
+                state_exists = false;
+            }
+            i++;
+        }
+    }
+
+
+
+
+
+    return machine;
 }
 
 DeSimoneTree::operator string() const {
