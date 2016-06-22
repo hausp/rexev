@@ -5,10 +5,10 @@
 
 TNode::TNode(char c) : Node(c) { }
 
-void TNode::up_action() {
-    // Do link things
+std::set<DeSimoneTree::Node*> TNode::up_action() {
+    return th_link->up_action();
 }
 
-void TNode::down_action() {
-    
+std::set<DeSimoneTree::Node*> TNode::down_action() {
+    return {this};
 }

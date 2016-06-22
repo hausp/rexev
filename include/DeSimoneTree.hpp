@@ -18,6 +18,7 @@
 #include <ostream>
 #include <unordered_set>
 #include <iostream>
+#include <set>
 
 #define RECENT_COMPILER 0
 #define TRACE(x) std::cout << (#x) << " = " << (x) << std::endl
@@ -59,23 +60,29 @@ std::ostream& operator<<(std::ostream&, const DeSimoneTree&);
 class DeSimoneTree::Node {    
     friend class DeSimoneTree;
  public:
-    virtual void down_action() = 0;
-    virtual void up_action() = 0;
-    virtual bool is_leaf();
     char get_symbol();
+    virtual bool is_leaf();
+
+    Node* left_child();
+    Node* right_child();
+    
+    virtual std::set<Node*> down_action() = 0;
+    virtual std::set<Node*> up_action() = 0;
+    
     operator string() const;
     ~Node() { ECHO("Node destroyed"); }
+
  protected:
     Node(char);
     Node* link_node();
 
- private:
-    char symbol;
     Node* father;
     std::unique_ptr<Node> left;
     std::unique_ptr<Node> right;
     Node* th_link;
-    unsigned height;
+
+ private:
+    char symbol;
 };
 
 std::ostream& operator<<(std::ostream&, const DeSimoneTree::Node&);

@@ -17,6 +17,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 class RState;
 
@@ -50,10 +51,13 @@ class State {
     bool accepts(const char) const;
 
     /* Cria uma nova transição ou redefine uma já existente. */
-    void set_transition(const char, State* const);
+    void add_transition(const char, const std::vector<State*>&);
 
     /* Acesso const a uma transição existente. */
-    const State* operator[](const char) const;
+    std::vector<State*>& operator[](const char);
+
+    /* Acesso const a uma transição existente. */
+    const std::vector<State*>& operator[](const char) const;
 
     operator std::string() const;
 
@@ -62,12 +66,9 @@ class State {
     std::string label;
 
     /* Mapa de transições */
-    std::map<char, State*> transitions;
+    std::map<char, std::vector<State*>> transitions;
     
-    /* Estado de rejeição.
-     * Todas as transições indefinidas retornam
-     * o estado de rejeição..
-     */
+    /* Estado de rejeição. */
     RState* rejection_state;
 
     /* Identifica se estado é inicial.

@@ -5,12 +5,20 @@
 
 SNode::SNode() : Node('*') { }
 
-void SNode::down_action() {
-    // th_link->up_action();
-    // left->down_action();
+std::set<DeSimoneTree::Node*> SNode::down_action() {
+    auto cousins = th_link->up_action();
+    auto grandsons = left->down_action();
+    for (auto node : cousins) {
+        grandsons.insert(node);
+    }
+    return grandsons;
 }
 
-void SNode::up_action() {
-    // th_link->up_action();
-    // left->down_action();    
+std::set<DeSimoneTree::Node*> SNode::up_action() {
+    auto cousins = th_link->up_action();
+    auto grandsons = left->down_action();
+    for (auto node : cousins) {
+        grandsons.insert(node);
+    }
+    return grandsons;
 }

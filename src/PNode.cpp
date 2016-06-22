@@ -5,12 +5,15 @@
 
 PNode::PNode() : Node('+') { }
 
-void PNode::down_action() {
-    // th_link->up_action();
-    // left->down_action();
+std::set<DeSimoneTree::Node*> PNode::down_action() {
+    return left->down_action();
 }
 
-void PNode::up_action() {
-    // th_link->up_action();
-    // left->down_action();    
+std::set<DeSimoneTree::Node*> PNode::up_action() {
+    auto cousins = th_link->up_action();
+    auto grandsons = left->down_action();
+    for (auto node : cousins) {
+        grandsons.insert(node);
+    }
+    return grandsons;
 }

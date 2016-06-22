@@ -9,8 +9,8 @@
 class UNode : public DeSimoneTree::Node {
  public:
     UNode();
-    void down_action();
-    void up_action();
+    std::set<Node*> down_action();
+    std::set<Node*> up_action();
 };
 
 #endif /* U_NODE_HPP */

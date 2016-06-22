@@ -38,16 +38,18 @@ bool State::accepts(const char entry) const {
     return transitions.count(entry);
 }
 
-void State::set_transition(const char entry, State* const target) {
-    transitions[entry] = target;
+void State::add_transition(const char entry, const std::vector<State*>& targets) {
+    for (auto target : targets) {
+        transitions[entry].push_back(target);
+    }
 }
 
-const State* State::operator[](const char entry) const {
-    try {
-        return transitions.at(entry);
-    } catch (...) {
-        return rejection_state;
-    }
+std::vector<State*>& State::operator[](const char entry) {
+    return transitions[entry];
+}
+
+const std::vector<State*>& State::operator[](const char entry) const {
+    return transitions.at(entry);
 }
 
 State::operator std::string() const {

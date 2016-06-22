@@ -16,6 +16,15 @@ bool DeSimoneTree::Node::is_leaf() {
     return false;
 }
 
+DeSimoneTree::Node* DeSimoneTree::Node::left_child() {
+    return left.get();
+}
+
+DeSimoneTree::Node* DeSimoneTree::Node::right_child() {
+    return right.get();
+}
+
+
 DeSimoneTree::Node* DeSimoneTree::Node::link_node() {
     if (left) {
         auto temp = left->link_node();

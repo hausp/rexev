@@ -5,10 +5,10 @@
 
 CNode::CNode() : Node('.') { }
 
-void CNode::down_action() {
-    // left->down_action();
+std::set<DeSimoneTree::Node*> CNode::down_action() {
+    return left->down_action();
 }
 
-void CNode::up_action() {
-    // right->down_action();
+std::set<DeSimoneTree::Node*> CNode::up_action() {
+    return right->down_action();
 }

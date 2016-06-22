@@ -9,8 +9,8 @@
 class TNode : public DeSimoneTree::Node {
  public:
     TNode(char);
-    void down_action();
-    void up_action();
+    std::set<Node*> down_action();
+    std::set<Node*> up_action();
 };
 
 

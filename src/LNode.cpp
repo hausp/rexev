@@ -5,12 +5,12 @@
 
 LNode::LNode() : Node('~') { }
 
-void LNode::down_action() {
-
+std::set<DeSimoneTree::Node*> LNode::down_action() {
+    return {this};
 }
 
-void LNode::up_action() {
-    
+std::set<DeSimoneTree::Node*> LNode::up_action() {
+    return {this};
 }
 
 bool LNode::is_leaf() {

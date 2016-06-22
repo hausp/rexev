@@ -9,8 +9,8 @@
 class LNode : public DeSimoneTree::Node {
  public:
     LNode();
-    void down_action();
-    void up_action();
+    std::set<Node*> down_action();
+    std::set<Node*> up_action();
     bool is_leaf() override;
 };
 

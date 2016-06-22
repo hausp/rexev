@@ -25,7 +25,7 @@ void FSMachine::make_transition(const std::string& from, char label,
     if (!states.count(to)) {
         insert(to);
     }
-    states.at(from).set_transition(label, &states.at(to));
+    states.at(from).add_transition(label, {&states.at(to)});
 }
 
 State FSMachine::operator[](const std::string& entry) {

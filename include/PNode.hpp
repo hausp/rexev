@@ -9,8 +9,8 @@
 class PNode : public DeSimoneTree::Node {
  public:
     PNode();
-    void down_action();
-    void up_action();
+    std::set<Node*> down_action();
+    std::set<Node*> up_action();
 };
 
 #endif /* P_NODE_HPP */

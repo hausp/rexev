@@ -5,13 +5,17 @@
 
 UNode::UNode() : Node('|') { }
 
-void UNode::down_action() {
-    // left->down_action();
-    // right->down_action();
+std::set<DeSimoneTree::Node*> UNode::down_action() {
+    auto lefty = left->down_action();
+    auto righty = right->down_action();
+    for (auto node : righty) {
+        lefty.insert(node);
+    }
+    return lefty;
 }
 
-void UNode::up_action() {
-    // node_ptr tmp = left;
-    // while(tmp->left) tmp = tmp->left;
-    // tmp->up_action();
+std::set<DeSimoneTree::Node*> UNode::up_action() {
+    auto temp = right.get();
+    while (temp->right_child()) temp = temp->right_child();
+    return temp->up_action();
 }
