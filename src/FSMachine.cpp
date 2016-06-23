@@ -55,5 +55,12 @@ void FSMachine::remove_dead_states() {
 }
 
 void FSMachine::remove_unreachable_states() {
-    auto state = states[initial_state];
+    std::map<std::string, State> reachable_states;
+    reachable_states.at(initial_state) = states.at(initial_state);
+    for (auto st : reachable_states) {
+        for (auto t : alphabet) {
+            for (auto s : st.second[t]) reachable_states.at(s->get_label()) = *s;
+        }
+    }
+    states = reachable_states;
 }

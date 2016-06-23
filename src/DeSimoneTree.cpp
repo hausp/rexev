@@ -280,7 +280,7 @@ FSMachine DeSimoneTree::to_fsm() {
     // FOR verifica símbolos vistos e define as transições
     // WHILE:
     FSMachine machine (alphabet);
-    bool final;
+/*    bool final;
     char state_label = 'A';
     std::vector<char> labels;
     std::map<char, std::vector<Node*>> reach;
@@ -354,7 +354,7 @@ FSMachine DeSimoneTree::to_fsm() {
 
 
 
-
+*/
 
     return machine;
 }
