@@ -30,148 +30,52 @@
     <property name="default_height">600</property>
     <property name="type_hint">utility</property>
     <child>
-      <object class="GtkBox">
+      <object class="GtkBox" id="window_box">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkMenuBar">
+          <object class="GtkMenuBar" id="menu">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkMenuItem">
+              <object class="GtkMenuItem" id="file_menu">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">_Arquivo</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
-                  <object class="GtkMenu">
+                  <object class="GtkMenu" id="file_submenu">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <child>
-                      <object class="GtkImageMenuItem">
-                        <property name="label">gtk-new</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkImageMenuItem">
-                        <property name="label">gtk-open</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkImageMenuItem">
-                        <property name="label">gtk-save</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkImageMenuItem">
-                        <property name="label">gtk-save-as</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkSeparatorMenuItem">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkImageMenuItem">
-                        <property name="label">gtk-quit</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                      </object>
-                    </child>
                   </object>
                 </child>
               </object>
             </child>
             <child>
-              <object class="GtkMenuItem">
+              <object class="GtkMenuItem" id="edit_menu">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">_Editar</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
-                  <object class="GtkMenu">
+                  <object class="GtkMenu" id="edit_submenu">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <child>
-                      <object class="GtkImageMenuItem">
-                        <property name="label">gtk-cut</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkImageMenuItem">
-                        <property name="label">gtk-copy</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkImageMenuItem">
-                        <property name="label">gtk-paste</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkImageMenuItem">
-                        <property name="label">gtk-delete</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                      </object>
-                    </child>
                   </object>
                 </child>
               </object>
             </child>
             <child>
-              <object class="GtkMenuItem">
+              <object class="GtkMenuItem" id="help_menu">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">_Ajuda</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
-                  <object class="GtkMenu">
+                  <object class="GtkMenu" id="help_submenu">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <child>
-                      <object class="GtkImageMenuItem">
-                        <property name="label">gtk-about</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                      </object>
-                    </child>
                   </object>
                 </child>
               </object>
@@ -184,7 +88,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox">
+          <object class="GtkBox" id="inner_box">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="margin_left">10</property>
@@ -193,13 +97,13 @@
             <property name="margin_bottom">10</property>
             <property name="spacing">10</property>
             <child>
-              <object class="GtkPaned">
+              <object class="GtkPaned" id="view_paned">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="orientation">vertical</property>
                 <property name="wide_handle">True</property>
                 <child>
-                  <object class="GtkPaned">
+                  <object class="GtkPaned" id="inner_paned">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="orientation">vertical</property>
@@ -207,13 +111,13 @@
                     <property name="position_set">True</property>
                     <property name="wide_handle">True</property>
                     <child>
-                      <object class="GtkBox">
+                      <object class="GtkBox" id="regex_view_box">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="orientation">vertical</property>
                         <property name="spacing">2</property>
                         <child>
-                          <object class="GtkLabel">
+                          <object class="GtkLabel" id="regex_label">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
@@ -226,7 +130,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkScrolledWindow">
+                          <object class="GtkScrolledWindow" id="regex_view_scwin">
                             <property name="height_request">50</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -255,14 +159,14 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkBox">
+                      <object class="GtkBox" id="automaton_view_box">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="margin_top">2</property>
                         <property name="orientation">vertical</property>
                         <property name="spacing">2</property>
                         <child>
-                          <object class="GtkLabel">
+                          <object class="GtkLabel" id="automaton_label">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
@@ -275,7 +179,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkScrolledWindow">
+                          <object class="GtkScrolledWindow" id="automaton_view_scwin">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="shadow_type">in</property>
@@ -310,14 +214,14 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox">
+                  <object class="GtkBox" id="console_box">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_top">2</property>
                     <property name="orientation">vertical</property>
                     <property name="spacing">2</property>
                     <child>
-                      <object class="GtkLabel">
+                      <object class="GtkLabel" id="console_label">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
@@ -330,7 +234,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkScrolledWindow">
+                      <object class="GtkScrolledWindow" id="console_scwin">
                         <property name="height_request">80</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -370,19 +274,19 @@
               </packing>
             </child>
             <child>
-              <object class="GtkBox">
+              <object class="GtkBox" id="sidebox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
                 <property name="spacing">5</property>
                 <child>
-                  <object class="GtkFrame">
+                  <object class="GtkFrame" id="regex_frame">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label_xalign">0.5</property>
                     <property name="label_yalign">1</property>
                     <child>
-                      <object class="GtkAlignment">
+                      <object class="GtkAlignment" id="regex_frame_align">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="top_padding">5</property>
@@ -390,7 +294,7 @@
                         <property name="left_padding">5</property>
                         <property name="right_padding">5</property>
                         <child>
-                          <object class="GtkBox">
+                          <object class="GtkBox" id="regex_boX">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="orientation">vertical</property>
@@ -438,7 +342,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkScrolledWindow">
+                              <object class="GtkScrolledWindow" id="regex_list_scwin">
                                 <property name="width_request">200</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -450,7 +354,7 @@
                                     <property name="can_focus">True</property>
                                     <property name="model">exp_table</property>
                                     <child internal-child="selection">
-                                      <object class="GtkTreeSelection"/>
+                                      <object class="GtkTreeSelection" id="exp_list_intsel"/>
                                     </child>
                                     <child>
                                       <object class="GtkTreeViewColumn" id="expname_column">
@@ -459,7 +363,7 @@
                                         <property name="title" translatable="yes">Nome</property>
                                         <property name="expand">True</property>
                                         <child>
-                                          <object class="GtkCellRendererText"/>
+                                          <object class="GtkCellRendererText" id="expname_column_text"/>
                                           <attributes>
                                             <attribute name="text">0</attribute>
                                           </attributes>
@@ -470,7 +374,7 @@
                                       <object class="GtkTreeViewColumn" id="expid_column">
                                         <property name="title" translatable="yes">ID</property>
                                         <child>
-                                          <object class="GtkCellRendererText"/>
+                                          <object class="GtkCellRendererText" id="expid_column_text"/>
                                           <attributes>
                                             <attribute name="text">1</attribute>
                                           </attributes>
@@ -491,7 +395,7 @@
                       </object>
                     </child>
                     <child type="label">
-                      <object class="GtkLabel">
+                      <object class="GtkLabel" id="regex_frame_label">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="margin_bottom">2</property>
@@ -506,13 +410,13 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkFrame">
+                  <object class="GtkFrame" id="automata_frame">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label_xalign">0.5</property>
                     <property name="label_yalign">1</property>
                     <child>
-                      <object class="GtkAlignment">
+                      <object class="GtkAlignment" id="automata_frame_align">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="top_padding">5</property>
@@ -520,7 +424,7 @@
                         <property name="left_padding">5</property>
                         <property name="right_padding">5</property>
                         <child>
-                          <object class="GtkBox">
+                          <object class="GtkBox" id="automata_box">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="orientation">vertical</property>
@@ -554,7 +458,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkScrolledWindow">
+                              <object class="GtkScrolledWindow" id="automata_list_scwin">
                                 <property name="width_request">200</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -566,7 +470,7 @@
                                     <property name="can_focus">True</property>
                                     <property name="model">automata_table</property>
                                     <child internal-child="selection">
-                                      <object class="GtkTreeSelection"/>
+                                      <object class="GtkTreeSelection" id="automata_list_intsel"/>
                                     </child>
                                     <child>
                                       <object class="GtkTreeViewColumn" id="autname_column">
@@ -574,7 +478,7 @@
                                         <property name="title" translatable="yes">Nome</property>
                                         <property name="expand">True</property>
                                         <child>
-                                          <object class="GtkCellRendererText"/>
+                                          <object class="GtkCellRendererText" id="autname_column_text"/>
                                           <attributes>
                                             <attribute name="text">0</attribute>
                                           </attributes>
@@ -585,7 +489,7 @@
                                       <object class="GtkTreeViewColumn" id="autid_column">
                                         <property name="title" translatable="yes">ID</property>
                                         <child>
-                                          <object class="GtkCellRendererText"/>
+                                          <object class="GtkCellRendererText" id="autid_column_text"/>
                                           <attributes>
                                             <attribute name="text">1</attribute>
                                           </attributes>
@@ -606,7 +510,7 @@
                       </object>
                     </child>
                     <child type="label">
-                      <object class="GtkLabel">
+                      <object class="GtkLabel" id="automata_frame_label">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="margin_bottom">2</property>
@@ -646,7 +550,7 @@
     <property name="type_hint">dialog</property>
     <property name="transient_for">window</property>
     <child internal-child="vbox">
-      <object class="GtkBox">
+      <object class="GtkBox" id="add_regex_box">
         <property name="can_focus">False</property>
         <property name="margin_left">10</property>
         <property name="margin_right">10</property>
@@ -655,7 +559,7 @@
         <property name="orientation">vertical</property>
         <property name="spacing">5</property>
         <child internal-child="action_area">
-          <object class="GtkButtonBox">
+          <object class="GtkButtonBox" id="add_regex_action_area">
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
@@ -695,7 +599,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkLabel">
+          <object class="GtkLabel" id="exp_name_label">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">start</property>
@@ -723,14 +627,14 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox">
+          <object class="GtkBox" id="add_regex_inner_box">
             <property name="name">0</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
             <property name="spacing">2</property>
             <child>
-              <object class="GtkLabel">
+              <object class="GtkLabel" id="exp_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
@@ -744,7 +648,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkScrolledWindow">
+              <object class="GtkScrolledWindow" id="exp_input_scwin">
                 <property name="height_request">150</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
