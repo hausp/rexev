@@ -17,5 +17,5 @@ std::set<DeSimoneTree::Node*> UNode::down_action() {
 std::set<DeSimoneTree::Node*> UNode::up_action() {
     auto temp = right.get();
     while (temp->right_child()) temp = temp->right_child();
-    return temp->up_action();
+    return temp->get_link()->up_action();
 }

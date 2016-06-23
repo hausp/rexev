@@ -20,6 +20,9 @@ DeSimoneTree::Node* DeSimoneTree::Node::right_child() {
     return right.get();
 }
 
+DeSimoneTree::Node* DeSimoneTree::Node::get_link() {
+    return th_link;
+}
 
 DeSimoneTree::Node* DeSimoneTree::Node::link_node() {
     if (left) {
