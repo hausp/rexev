@@ -40,6 +40,7 @@ class FSMachine {
     void remove_unreachable_states();
     FSMachine complement();
     FSMachine union_operation(const FSMachine&);
+    FSMachine minimize();
 
     operator std::string() const;
 

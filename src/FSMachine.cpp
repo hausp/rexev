@@ -121,6 +121,41 @@ FSMachine FSMachine::union_operation(const FSMachine& fsm) {
     return united_machine;
 }
 
+FSMachine FSMachine::minimize() {
+    FSMachine minimezed_automata = *this;
+    minimezed_automata.remove_unreachable_states();
+    minimezed_automata.remove_dead_states();
+    for (auto t : minimezed_automata.alphabet) {
+        for (auto st : minimezed_automata.states) {
+            if (!st.second.accepts(t)) st.second[t].push_back(&minimezed_automata.rejection_state);
+        }
+    }
+    std::map<std::string, std::vector<State>> state_set;
+    state_set["\u03D5"].push_back(minimezed_automata.rejection_state);
+    std::string state_count = "A";
+    for (auto st : final_states) {
+        state_set[state_count].push_back(minimezed_automata[st]);
+    }
+    state_count.at(0)++;
+    while (true) {
+        for (auto st : state_set) {
+            if (st.second.size() > 1) {
+                unsigned i = 1;
+                for (i : st.second.size()-1) {
+                    for (auto a : minimezed_automata.alphabet) {
+                        // PAREI AQUI!!!
+                        std::string destiny = (*st.begin()).get_transition(a).get_label();
+                        if (destiny == state_set[]
+                            && (*st.begin()+i).get_transition(a))
+                    }
+                }
+            }
+        }
+    }
+
+    return minimezed_automata;
+}
+
 FSMachine::operator std::string() const {
     std::string out = "      ";
     for (auto entry : alphabet) {
