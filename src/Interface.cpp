@@ -80,3 +80,18 @@ void Interface::destroy() {
     gtk_widget_destroy(window);
 
 }
+
+void Interface::show_error_message(const char* primary, const char* secondary) {
+    auto message = gtk_message_dialog_new(GTK_WINDOW(dialog),
+                                          GTK_DIALOG_DESTROY_WITH_PARENT,
+                                          GTK_MESSAGE_ERROR,
+                                          GTK_BUTTONS_CLOSE,
+                                          primary,
+                                          NULL);
+    gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(message), secondary);
+    gtk_window_set_transient_for(GTK_WINDOW(message), GTK_WINDOW(dialog));
+    gtk_window_set_modal(GTK_WINDOW(message), true);
+    gtk_widget_show_all(message);
+    gtk_dialog_run(GTK_DIALOG(message));
+    gtk_widget_destroy(message);
+}

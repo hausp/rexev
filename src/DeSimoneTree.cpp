@@ -4,6 +4,7 @@
 #include "DeSimoneTree.hpp"
 
 #include <exception>
+#include <list>
 
 #include "Node.hpp"
 #include "TNode.hpp"
@@ -274,7 +275,129 @@ void DeSimoneTree::reasign_father(Node*& temp, Node*& current) {
 }
 
 FSMachine DeSimoneTree::to_fsm() {
-    return FSMachine(alphabet);
+    // DOWN ACTION ON ROOT -> set chars
+    // CRIA O STATE LABEL S (inicial)
+    // FOR verifica símbolos vistos e define as transições
+    // WHILE:
+    FSMachine machine(alphabet);
+    std::vector<std::set<Node*>> compositions;
+    std::map<std::set<Node*>,State*> state_compositions;
+    std::string state_label = "A";
+    unsigned i = 0;
+
+    compositions.push_back(root->down_action());
+    machine.insert("S", true, has_lambda(compositions[i]));
+    state_compositions[compositions[i]] = &machine["S"];
+    std::list<State*> new_states = {&machine["S"]};
+
+    ECHO(*this);
+    while (new_states.size() > 0) {
+        ECHO("begin of while");
+        auto current = new_states.front();
+        new_states.pop_front();
+        for (auto entry : alphabet) {
+            std::set<Node*> entry_nodes;
+            for (auto node : compositions[i]) {
+                if (node->get_symbol() == entry) {
+                    entry_nodes.insert(node);
+                }
+            }
+            if (entry_nodes.size() > 0) {
+                std::set<Node*> new_composition;
+                for (auto node : entry_nodes) {
+                    auto portion = node->up_action();
+                    for (auto p : portion) {
+                        new_composition.insert(p);
+                    }
+                }
+                bool is_new = true;
+                for (auto c : compositions) {
+                    if (new_composition == c) {
+                        is_new = false;
+                        break;
+                    }
+                }
+                if (is_new) {
+                    compositions.push_back(new_composition);
+                    machine.insert(state_label, false, has_lambda(new_composition));
+                    current->add_transition(entry, {&machine[state_label]});
+                    state_compositions[compositions[++i]] = &machine[state_label];
+                    new_states.push_back(&machine[state_label]);
+                    state_label.at(0)++;
+                } else {
+                    current->add_transition(entry,
+                                            {state_compositions.at(new_composition)});
+                }
+            }
+        }
+    }
+
+    return machine;
+    // for (auto node : reachable_from_root) {
+    //     labels.push_back(node.get_symbol());
+    //     reach.at(node.get_symbol()).push_back(node);
+    // }
+
+    // int i = 0;
+    // for (auto t : alphabet) {
+    //     if (t == *(labels.begin()+i)) {
+
+    //         //State* a = new State (state_label++);
+    //         //s->new_transition(t,a);
+    //         //states.push_back(a);
+    //         //related_nodes.at(a) = reach;
+    //     }
+    //     i++;
+    // }
+
+    // for (int is = 1; is != -1; is++) {
+    //     final = false;
+    //     reach.empty();
+    //     labels.empty();
+    //     reachable_from_root.empty();
+    //     reachable_from_root = states[is]->up_action();
+    //     for (auto node : reachable_from_root) {
+    //         labels.push_back(node.get_symbol());
+    //         // Talvez tenha que iniciar o vetores antes.
+    //         reach.at(node.get_symbol()).push_back(node);
+    //     }
+
+    //     i = 0;
+    //     bool state_exists = false;
+    //     for (auto t : alphabet) {
+    //         if (t == *(labels.begin()+i)) {
+    //             if (t == '~') final = true;
+    //             for (auto st : states) {
+    //                 if (related_nodes.at(t).at(st) == related_nodes.at(t).at(s)) {
+    //                     // Estado já existente
+    //                     State* old = st;
+    //                     states[is]->new_transition(t,old);
+    //                     related_nodes.at(t).at(states[is]) = reach;
+    //                     state_exists = true;
+    //                     break;
+    //                 }
+    //             }
+    //             if (!state_exists) {
+    //                 State *a = new State (state_label++, final, false);
+    //                 states[is]->new_transition(t,a);
+    //                 states.push_back(a);
+    //                 related_nodes.at(t).at(a) = reach;
+    //             }
+    //             state_exists = false;
+    //         }
+    //         i++;
+    //     }
+    // }
+
+}
+
+bool DeSimoneTree::has_lambda(const std::set<Node*>& nodes) {
+        for (auto node : nodes) {
+        if (node->get_symbol() == '~') {
+            return true;
+        }
+    }
+    return false;
 }
 
 DeSimoneTree::operator string() const {

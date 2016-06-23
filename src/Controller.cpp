@@ -21,6 +21,7 @@ void Controller::add_regex() {
             ECHO((std::string)regex);
             } catch (std::exception& e) {
                 ECHO(e.what());
+                ui.show_error_message("Erro!", e.what());
                 success = false;
             }
         }

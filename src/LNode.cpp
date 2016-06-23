@@ -12,7 +12,3 @@ std::set<DeSimoneTree::Node*> LNode::down_action() {
 std::set<DeSimoneTree::Node*> LNode::up_action() {
     return {this};
 }
-
-bool LNode::is_leaf() {
-    return true;
-}

@@ -14,6 +14,7 @@ class Interface {
     void show();
     std::pair<std::string,std::string> show_add_dialog();
     void hide_add_dialog();
+    void show_error_message(const char*, const char*);
     void destroy();
 
  private:

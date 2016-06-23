@@ -54,6 +54,7 @@ class DeSimoneTree {
     unsigned put_subtree(Node*&, std::string&, unsigned);
     void reasign_father(Node*&, Node*&);
     bool is_terminal(char);
+    bool has_lambda(const std::set<Node*>&);
 };
 
 std::ostream& operator<<(std::ostream&, const DeSimoneTree&);
@@ -61,8 +62,7 @@ std::ostream& operator<<(std::ostream&, const DeSimoneTree&);
 class DeSimoneTree::Node {    
     friend class DeSimoneTree;
  public:
-    char get_symbol();
-    virtual bool is_leaf();
+    char get_symbol() const;
 
     Node* left_child();
     Node* right_child();

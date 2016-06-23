@@ -11,7 +11,6 @@ class LNode : public DeSimoneTree::Node {
     LNode();
     std::set<Node*> down_action();
     std::set<Node*> up_action();
-    bool is_leaf() override;
 };
 
 #endif /* L_NODE_HPP */

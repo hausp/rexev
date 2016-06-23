@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Generated with glade 3.20.0 -->
 <interface>
-  <requires lib="gtk+" version="3.00"/>
+  <requires lib="gtk+" version="3.20"/>
   <object class="GtkListStore" id="automata_table">
     <columns>
       <!-- column-name name -->
@@ -639,14 +639,12 @@
   </object>
   <object class="GtkDialog" id="add_regex">
     <property name="name">add_regex</property>
-    <property name="width_request">0</property>
     <property name="can_focus">False</property>
-    <property name="type">popup</property>
-    <property name="window_position">center</property>
+    <property name="modal">True</property>
+    <property name="window_position">center-on-parent</property>
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">window</property>
-    <property name="attached_to">window</property>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can_focus">False</property>

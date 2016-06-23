@@ -33,11 +33,13 @@ class FSMachine {
     //FSMachine(const std::map<char,State>&, const std::set<char>&, char, const std::set<char>&);
     void insert(const std::string&, bool = false, bool = false);
     void make_transition(const std::string&, const char, const std::string&);
-    State operator[](const std::string&);
-    const State operator[](const std::string&) const;
+    State& operator[](const std::string&);
+    const State& operator[](const std::string&) const;
 
     void remove_dead_states();
     void remove_unreachable_states();
+
+    operator std::string() const;
 
  private:
     std::map<std::string, State> states;

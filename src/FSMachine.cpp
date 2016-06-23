@@ -32,11 +32,11 @@ void FSMachine::make_transition(const std::string& from, char label,
     states.at(from).add_transition(label, {&states.at(to)});
 }
 
-State FSMachine::operator[](const std::string& entry) {
+State& FSMachine::operator[](const std::string& entry) {
     return states.at(entry);
 }
 
-const State FSMachine::operator[](const std::string& entry) const {
+const State& FSMachine::operator[](const std::string& entry) const {
     return states.at(entry);
 }
 
@@ -56,4 +56,35 @@ void FSMachine::remove_dead_states() {
 
 void FSMachine::remove_unreachable_states() {
     auto state = states[initial_state];
+}
+
+FSMachine::operator std::string() const {
+    std::string out = "      ";
+    for (auto entry : alphabet) {
+        out += "| ";
+        out += entry;
+        out += " ";
+    }
+    out += "\n";
+    for (auto s : states) {
+        out += " ";
+        if (s.second.is_final()) out += "*";
+        else out += " ";
+        if (s.second.is_initial()) out += "->";
+        else out += "  ";
+        out += s.second.get_label();
+        out += " ";
+        for (auto entry : alphabet) {
+            bool test = true;
+            out += "| ";
+            for (auto t : s.second[entry]) {
+                test = false;
+                out += t->get_label();
+            }
+            if (test) out += " ";
+            out += " ";
+        }
+        out += "\n";
+    }
+    return out;
 }

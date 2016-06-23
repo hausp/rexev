@@ -17,5 +17,5 @@ std::string Regex::get_regex() {
 }
 
 Regex::operator std::string() {
-    return (std::string)DeSimoneTree(regex);
+    return (std::string)automaton;
 }

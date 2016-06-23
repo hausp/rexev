@@ -8,12 +8,8 @@ DeSimoneTree::Node::Node(char c)
 : father(nullptr), th_link(nullptr), symbol(c) {
 }
 
-char DeSimoneTree::Node::get_symbol() {
+char DeSimoneTree::Node::get_symbol() const {
     return symbol;
-}
-
-bool DeSimoneTree::Node::is_leaf() {
-    return false;
 }
 
 DeSimoneTree::Node* DeSimoneTree::Node::left_child() {
