@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Generated with glade 3.20.0 -->
 <interface>
-  <requires lib="gtk+" version="3.20"/>
+  <requires lib="gtk+" version="3.10"/>
   <object class="GtkListStore" id="automata_table">
     <columns>
       <!-- column-name name -->
@@ -101,7 +101,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="orientation">vertical</property>
-                <property name="wide_handle">True</property>
                 <child>
                   <object class="GtkPaned" id="inner_paned">
                     <property name="visible">True</property>
@@ -109,7 +108,6 @@
                     <property name="orientation">vertical</property>
                     <property name="position">150</property>
                     <property name="position_set">True</property>
-                    <property name="wide_handle">True</property>
                     <child>
                       <object class="GtkBox" id="regex_view_box">
                         <property name="visible">True</property>
@@ -142,7 +140,6 @@
                                 <property name="can_focus">True</property>
                                 <property name="editable">False</property>
                                 <property name="cursor_visible">False</property>
-                                <property name="monospace">True</property>
                               </object>
                             </child>
                           </object>
@@ -190,7 +187,7 @@
                                 <property name="can_focus">True</property>
                                 <property name="model">dfa_table</property>
                                 <child internal-child="selection">
-                                  <object class="GtkTreeSelection"/>
+                                  <object class="GtkTreeSelection" id="dfa_tree_intsel"/>
                                 </child>
                               </object>
                             </child>
@@ -250,7 +247,6 @@
                             <property name="left_margin">5</property>
                             <property name="right_margin">5</property>
                             <property name="cursor_visible">False</property>
-                            <property name="monospace">True</property>
                           </object>
                         </child>
                       </object>
