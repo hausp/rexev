@@ -137,7 +137,7 @@ FSMachine FSMachine::minimize() {
         state_set[state_count].push_back(minimezed_automata[st]);
     }
     state_count.at(0)++;
-    while (true) {
+    /*while (true) {
         for (auto st : state_set) {
             if (st.second.size() > 1) {
                 for (unsigned i = 1; i < st.second.size()-1; i++) {
@@ -162,7 +162,7 @@ FSMachine FSMachine::minimize() {
             }
         }
         state_count.at(0)++;
-    }
+    }*/
 
     return minimezed_automata;
 }
