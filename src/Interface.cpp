@@ -22,29 +22,19 @@ void Interface::show() {
 }
 
 std::pair<std::string,std::string> Interface::show_add_dialog() {
-    ECHO(1);
     dialog = GTK_WIDGET(gtk_builder_get_object(builder, "add_regex"));
-    ECHO(2);
     std::pair<std::string,std::string> result = std::make_pair("","");
-    ECHO(3);
     gtk_widget_show_all(dialog);
-    ECHO(4);
     while (result.second.size() == 0) {
-        ECHO(5);
         auto response = gtk_dialog_run(GTK_DIALOG(dialog));
-        ECHO(6);
         if (response == GTK_RESPONSE_OK) {
-            ECHO("ok");
             result = extract_add_dialog_entries();
         } else {
-            ECHO("cancel");
             clean_add_dialog();
             break;
         }
     }
-    ECHO(7);
     gtk_widget_hide(dialog);
-    ECHO(8);
     return result;
 }
 
@@ -94,4 +84,11 @@ void Interface::show_error_message(const char* primary, const char* secondary) {
     gtk_widget_show_all(message);
     gtk_dialog_run(GTK_DIALOG(message));
     gtk_widget_destroy(message);
+}
+
+void Interface::put_regex(const std::string& name, unsigned id) {
+    auto model = GTK_LIST_STORE(gtk_builder_get_object(builder, "exp_table"));
+    GtkTreeIter iter;
+    gtk_list_store_insert(model, &iter, -1);
+    gtk_list_store_set(model, &iter, 0, name.c_str(), 1, id, -1);
 }

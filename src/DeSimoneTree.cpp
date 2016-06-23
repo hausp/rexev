@@ -61,41 +61,35 @@ DeSimoneTree::Node* DeSimoneTree::init_tree(string regex) {
             put_leaf(current, entry);
         } else if (entry == '|') {
             if (current->get_symbol() == '|') {
-                throw std::runtime_error("Expressão regular inválida.");
+                throw i+1;
             }
             put_union(current);
         } else if (entry == '.') {
             if (current->get_symbol() == '.') {
-                throw std::runtime_error("Expressão regular inválida.");
+                throw i+1;
             }
             put_concatenation(current);
         } else if (entry == '*') {
             if (current->get_symbol() == '*') {
-                throw std::runtime_error("Expressão regular inválida.");
+                throw i+1;
             }
             put_kleene_star(current);
         } else if (entry == '+') {
             if (current->get_symbol() == '+') {
-                throw std::runtime_error("Expressão regular inválida.");
+                throw i+1;
             }
             put_transitive_closure(current);
         } else if (entry == '?') {
             if (current->get_symbol() == '?') {
-                throw std::runtime_error("Expressão regular inválida.");
+                throw i+1;
             }
             put_option(current);
         } else if (entry == '(') {
-            try {
-                ECHO(i);
-                i += put_subtree(current, regex, ++i);
-                ECHO(i);
-            } catch (...) {
-                throw;
-            }
+            i += put_subtree(current, regex, ++i);
         } else if (entry == ' ') {
         } else if (entry == '\n') {
         } else {
-            throw std::runtime_error("Expressão regular inválida.");
+            throw i+1;
         }
     }
 
@@ -234,14 +228,19 @@ unsigned DeSimoneTree::put_subtree(Node*& current, std::string& regex, unsigned 
             if (regex[pos + size] == '(') branches++;
             if (regex[pos + size] == ')') branches--;
             if (++size + pos == regex.size()) {
-                throw std::runtime_error("Expressão regular inválida.");
+                throw pos;
             }
         }
 
         if (size > 0) {
             ECHO(pos);
             ECHO(regex.substr(pos, size));
-            auto temp = init_tree(regex.substr(pos, size));
+            Node* temp;
+            try {
+                temp = init_tree(regex.substr(pos, size));
+            } catch (unsigned& e) {
+                throw pos + e;
+            }
             if (current->left) {
                 current->right.release();
                 current->right.reset(temp);
@@ -257,43 +256,33 @@ unsigned DeSimoneTree::put_subtree(Node*& current, std::string& regex, unsigned 
         }
         return size;
     } else {
-        throw std::runtime_error("Expressão regular inválida.");
+        throw pos;
     }
 }
 
 void DeSimoneTree::reasign_father(Node*& temp, Node*& current) {
-    // if (current->get_symbol() != '~') {
     temp->father = current->father;
     temp->left.reset(current);
     current->father = temp;
     current = temp;
-    // } else {
-    //     temp->father = current;
-    //     current->left.reset(temp);
-    //     current = temp;
-    // }    
 }
 
 FSMachine DeSimoneTree::to_fsm() {
-    // DOWN ACTION ON ROOT -> set chars
-    // CRIA O STATE LABEL S (inicial)
-    // FOR verifica símbolos vistos e define as transições
-    // WHILE:
-    FSMachine machine(alphabet);
+    FSMachine automaton(alphabet);
     std::vector<std::set<Node*>> compositions;
-    std::map<unsigned,State*> state_compositions;
+    std::vector<std::string> states;
+    std::list<State*> new_states;
     std::string state_label = "B";
     unsigned i = 0;
-    unsigned j = 0;
 
+    states.push_back("A");
     compositions.push_back(root->down_action());
-    machine.insert("A", true, has_lambda(compositions[i]));
-    state_compositions[i] = &machine["A"];
-    std::list<State*> new_states = {&machine["A"]};
+    automaton.insert("A", true, has_lambda(compositions[i]));
+    new_states.push_back(&automaton["A"]);
 
     ECHO(*this);
+    ECHO("-----------------------------------------------------");
     while (new_states.size() > 0) {
-        ECHO("begin of while");
         auto current = new_states.front();
         new_states.pop_front();
         for (auto entry : alphabet) {
@@ -311,97 +300,32 @@ FSMachine DeSimoneTree::to_fsm() {
                         new_composition.insert(p);
                     }
                 }
-                unsigned key = 0;
-                bool is_new = true;
-                for (auto c : compositions) { 
-                    if (new_composition == c) {
-                        is_new = false;
+                int key = -1;
+                for (unsigned i = 0; i < compositions.size(); i++) { 
+                    if (new_composition == compositions[i]) {
+                        key = i;
                         break;
                     }
-                    key++;
                 }
-                if (is_new) {
-                    j++;
+                if (key == -1) {
+                    states.push_back(state_label);
                     compositions.push_back(new_composition);
-                    machine.insert(state_label, false, has_lambda(new_composition));
-                    ECHO(j);
-                    ECHO("state composition");
-                    ECHO(state_label);
-                    state_compositions[j] = &machine[state_label];
-                    current->add_transition(entry, {&machine[state_label]});
-                    ECHO("transição criada:");
-                    ECHO(current->get_label() + ", " + entry + " -> " + state_label);
-                    new_states.push_back(&machine[state_label]);
-                    state_label.at(0)++;
+                    automaton.insert(state_label, false, has_lambda(new_composition));
+                    new_states.push_back(&automaton[state_label]);
+                    automaton.make_transition(current->get_label(), entry, state_label);
+                    ECHO("\u03B4(" + current->get_label() + ", " + entry + ") -> " + state_label);
+                    state_label[0]++;
                 } else {
-                    ECHO("about to tretar");
-                    current->add_transition(entry,{state_compositions.at(key)});
-                    ECHO("transição criada:");
-                    ECHO(current->get_label() + ", " + entry + " -> " 
-                         + state_compositions.at(key)->get_label());
+                    automaton.make_transition(current->get_label(), entry, states[key]);
+                    ECHO("\u03B4(" + current->get_label() + ", " + entry + ") -> " 
+                         + states[key]);
                 }
             }
         }
         i++;
     }
-
-    return machine;
-    // for (auto node : reachable_from_root) {
-    //     labels.push_back(node.get_symbol());
-    //     reach.at(node.get_symbol()).push_back(node);
-    // }
-
-    // int i = 0;
-    // for (auto t : alphabet) {
-    //     if (t == *(labels.begin()+i)) {
-
-    //         //State* a = new State (state_label++);
-    //         //s->new_transition(t,a);
-    //         //states.push_back(a);
-    //         //related_nodes.at(a) = reach;
-    //     }
-    //     i++;
-    // }
-
-    // for (int is = 1; is != -1; is++) {
-    //     final = false;
-    //     reach.empty();
-    //     labels.empty();
-    //     reachable_from_root.empty();
-    //     reachable_from_root = states[is]->up_action();
-    //     for (auto node : reachable_from_root) {
-    //         labels.push_back(node.get_symbol());
-    //         // Talvez tenha que iniciar o vetores antes.
-    //         reach.at(node.get_symbol()).push_back(node);
-    //     }
-
-    //     i = 0;
-    //     bool state_exists = false;
-    //     for (auto t : alphabet) {
-    //         if (t == *(labels.begin()+i)) {
-    //             if (t == '~') final = true;
-    //             for (auto st : states) {
-    //                 if (related_nodes.at(t).at(st) == related_nodes.at(t).at(s)) {
-    //                     // Estado já existente
-    //                     State* old = st;
-    //                     states[is]->new_transition(t,old);
-    //                     related_nodes.at(t).at(states[is]) = reach;
-    //                     state_exists = true;
-    //                     break;
-    //                 }
-    //             }
-    //             if (!state_exists) {
-    //                 State *a = new State (state_label++, final, false);
-    //                 states[is]->new_transition(t,a);
-    //                 states.push_back(a);
-    //                 related_nodes.at(t).at(a) = reach;
-    //             }
-    //             state_exists = false;
-    //         }
-    //         i++;
-    //     }
-    // }
-
+    ECHO("-----------------------------------------------------");
+    return automaton;
 }
 
 bool DeSimoneTree::has_lambda(const std::set<Node*>& nodes) {

@@ -71,7 +71,6 @@ class DeSimoneTree::Node {
     virtual std::set<Node*> up_action() = 0;
     
     operator string() const;
-    ~Node() { ECHO("Node destroyed"); }
 
  protected:
     Node(char);

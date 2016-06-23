@@ -5,27 +5,36 @@
 #include "DeSimoneTree.hpp"
 #include "Regex.hpp"
 
-Controller::Controller(Interface& ui) : ui(ui) {
+Controller::Controller(Interface& ui)
+ : ui(ui), number_of_expressions(0) {
 
 }
 
 void Controller::add_regex() {
     Regex regex;
     bool success = false;
+    std::pair<std::string,std::string> result;
     while(!success) {
-        auto result = ui.show_add_dialog();
+        result = ui.show_add_dialog();
         success = true;
         if (result.second.size() > 0) {
             try {
             regex = result.second;
-            ECHO((std::string)regex);
             } catch (std::exception& e) {
-                ECHO(e.what());
                 ui.show_error_message("Erro!", e.what());
                 success = false;
             }
         }
+        if (success) {
+            ECHO((std::string)regex);
+            if (result.first.size() == 0) {
+                result.first = "RGX" + std::to_string(number_of_expressions);
+            }
+            ui.put_regex(result.first, number_of_expressions);
+            expressions[number_of_expressions++] = std::make_pair(result.first, regex);
+        }
     }
+
     ui.hide_add_dialog();
 }
 

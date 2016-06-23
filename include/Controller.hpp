@@ -4,7 +4,10 @@
 #ifndef CONTROLLER_HPP
 #define CONTROLLER_HPP
 
+#include <map>
+
 #include "Interface.hpp"
+#include "Regex.hpp"
 
 class Controller {
  public:
@@ -14,6 +17,8 @@ class Controller {
 
  private:
     Interface& ui;
+    std::map<unsigned,std::pair<std::string,Regex>> expressions;
+    unsigned number_of_expressions;
 };
 
 #endif /* CONTROLLER_HPP */
