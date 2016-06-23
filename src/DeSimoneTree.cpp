@@ -282,14 +282,14 @@ FSMachine DeSimoneTree::to_fsm() {
     FSMachine machine(alphabet);
     std::vector<std::set<Node*>> compositions;
     std::map<unsigned,State*> state_compositions;
-    std::string state_label = "A";
+    std::string state_label = "B";
     unsigned i = 0;
     unsigned j = 0;
 
     compositions.push_back(root->down_action());
-    machine.insert("S", true, has_lambda(compositions[i]));
-    state_compositions[i] = &machine["S"];
-    std::list<State*> new_states = {&machine["S"]};
+    machine.insert("A", true, has_lambda(compositions[i]));
+    state_compositions[i] = &machine["A"];
+    std::list<State*> new_states = {&machine["A"]};
 
     ECHO(*this);
     while (new_states.size() > 0) {
@@ -324,10 +324,10 @@ FSMachine DeSimoneTree::to_fsm() {
                     j++;
                     compositions.push_back(new_composition);
                     machine.insert(state_label, false, has_lambda(new_composition));
-                    ECHO(i+j);
+                    ECHO(j);
                     ECHO("state composition");
                     ECHO(state_label);
-                    state_compositions[i+j] = &machine[state_label];
+                    state_compositions[j] = &machine[state_label];
                     current->add_transition(entry, {&machine[state_label]});
                     ECHO("transição criada:");
                     ECHO(current->get_label() + ", " + entry + " -> " + state_label);
