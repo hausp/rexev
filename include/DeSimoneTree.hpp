@@ -66,6 +66,7 @@ class DeSimoneTree::Node {
 
     Node* left_child();
     Node* right_child();
+    Node* get_link();
     
     virtual std::set<Node*> down_action() = 0;
     virtual std::set<Node*> up_action() = 0;
