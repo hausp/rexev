@@ -5,6 +5,7 @@
 
 #include <exception>
 #include <list>
+#include <cmath>
 
 #include "Node.hpp"
 #include "TNode.hpp"
@@ -301,9 +302,9 @@ FSMachine DeSimoneTree::to_fsm() {
                     }
                 }
                 int key = -1;
-                for (unsigned i = 0; i < compositions.size(); i++) { 
-                    if (new_composition == compositions[i]) {
-                        key = i;
+                for (unsigned k = 0; k < compositions.size(); k++) { 
+                    if (new_composition == compositions[k]) {
+                        key = k;
                         break;
                     }
                 }
@@ -314,7 +315,10 @@ FSMachine DeSimoneTree::to_fsm() {
                     new_states.push_back(&automaton[state_label]);
                     automaton.make_transition(current->get_label(), entry, state_label);
                     ECHO("\u03B4(" + current->get_label() + ", " + entry + ") -> " + state_label);
-                    state_label[0]++;
+                    state_label = 65 + ((states.size()) % 26);
+                    for (int p = floor(states.size()/26); p > 0; p--) {
+                        state_label += "'";
+                    }
                 } else {
                     automaton.make_transition(current->get_label(), entry, states[key]);
                     ECHO("\u03B4(" + current->get_label() + ", " + entry + ") -> " 

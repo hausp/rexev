@@ -141,14 +141,14 @@ FSMachine FSMachine::minimize() {
         for (auto st : state_set) {
             if (st.second.size() > 1) {
                 unsigned i = 1;
-                for (i : st.second.size()-1) {
-                    for (auto a : minimezed_automata.alphabet) {
+                //for (i : st.second.size()-1) {
+                    //for (auto a : minimezed_automata.alphabet) {
                         // PAREI AQUI!!!
-                        std::string destiny = (*st.begin()).get_transition(a).get_label();
-                        if (destiny == state_set[]
-                            && (*st.begin()+i).get_transition(a))
-                    }
-                }
+                    //    std::string destiny = (*st.begin()).get_transition(a).get_label();
+                        //if (destiny == state_set[]
+                        //    && (*st.begin()+i).get_transition(a))
+                    //}
+                //}
             }
         }
     }

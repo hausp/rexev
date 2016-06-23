@@ -13,8 +13,11 @@ void Interface::init() {
     builder = gtk_builder_new_from_file("view_simpl.ui");
     window = GTK_WIDGET(gtk_builder_get_object(builder, "window"));
     auto add_button = gtk_builder_get_object(builder, "add_button");
+    auto text_area = GTK_WIDGET(gtk_builder_get_object(builder, "regex_view"));
     g_signal_connect(window, "delete-event", G_CALLBACK(signals::close), nullptr);
     g_signal_connect(add_button, "clicked", G_CALLBACK(signals::add_regex), nullptr);
+    //g_signal_connect(text_area, "row-activated", G_CALLBACK(signals::regex_selected), nullptr);
+
 }
 
 void Interface::show() {
@@ -53,8 +56,6 @@ std::pair<std::string,std::string> Interface::extract_add_dialog_entries() {
     gtk_text_buffer_get_end_iter(regex_buffer, &end);
     std::string name = gtk_entry_get_text(GTK_ENTRY(name_entry));
     std::string regex = gtk_text_buffer_get_text(regex_buffer, &start, &end, false);
-    // gtk_entry_set_text(GTK_ENTRY(name_entry), "");
-    // gtk_text_buffer_set_text(regex_buffer, "\0", -1);
     return std::make_pair(name, regex);
 }
 
@@ -91,4 +92,21 @@ void Interface::put_regex(const std::string& name, unsigned id) {
     GtkTreeIter iter;
     gtk_list_store_insert(model, &iter, -1);
     gtk_list_store_set(model, &iter, 0, name.c_str(), 1, id, -1);
+}
+
+void Interface::show_expression(const char* exp) {
+    auto text_area = GTK_TEXT_VIEW(gtk_builder_get_object(builder, "regex_view"));
+    auto buffer = gtk_text_view_get_buffer(text_area);
+    gtk_text_buffer_set_text(buffer, exp, -1);
+}
+
+void Interface::select_expression(unsigned id) {
+    auto tree = GTK_TREE_VIEW(gtk_builder_get_object(builder, "exp_list"));
+    auto selection = gtk_tree_view_get_selection(tree);
+    auto model = GTK_TREE_MODEL(gtk_builder_get_object(builder, "exp_table"));
+    auto path = gtk_tree_path_new_from_string(std::to_string(id).c_str());
+    GtkTreeIter iter;
+    gtk_tree_selection_unselect_all(selection);
+    gtk_tree_model_get_iter(model, &iter, path);
+    gtk_tree_selection_select_iter(selection, &iter);
 }

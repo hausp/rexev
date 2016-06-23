@@ -34,7 +34,8 @@ void Controller::add_regex() {
             expressions[number_of_expressions++] = std::make_pair(result.first, regex);
         }
     }
-
+    ui.select_expression(number_of_expressions-1);
+    ui.show_expression(result.second.c_str());
     ui.hide_add_dialog();
 }
 

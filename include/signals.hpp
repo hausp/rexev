@@ -11,6 +11,7 @@ class Controller;
 namespace signals {
     void set_controller(Controller*);
     void add_regex();
+    void regex_selected(GtkTreeView*);
     void close();
 }
 
