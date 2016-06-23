@@ -38,6 +38,8 @@ class FSMachine {
 
     void remove_dead_states();
     void remove_unreachable_states();
+    FSMachine complement();
+    FSMachine union_operation(const FSMachine&);
 
     operator std::string() const;
 

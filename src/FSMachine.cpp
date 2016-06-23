@@ -55,7 +55,70 @@ void FSMachine::remove_dead_states() {
 }
 
 void FSMachine::remove_unreachable_states() {
-    auto state = states[initial_state];
+    std::map<std::string, State> reachable_states;
+    reachable_states.at(initial_state) = states.at(initial_state);
+    for (auto st : reachable_states) {
+        for (auto t : alphabet) {
+            for (auto s : st.second[t]) reachable_states.at(s->get_label()) = *s;
+        }
+    }
+    states = reachable_states;
+}
+
+FSMachine FSMachine::complement() {
+    std::set<std::string> non_final_states; 
+    for (auto st : states) {
+        non_final_states.insert(st.first);
+    }
+    for (auto f : non_final_states) {
+        if (final_states.count(f)) non_final_states.erase(non_final_states.find(f));
+    }
+    FSMachine complemented = *this;
+    complemented.final_states = non_final_states;
+    return complemented;
+}
+
+FSMachine FSMachine::union_operation(const FSMachine& fsm) {
+    std::set<char> united_alphabet;
+    for (auto c : alphabet) {
+        united_alphabet.insert(c);
+    }
+    for (auto c : fsm.alphabet) {
+        united_alphabet.insert(c);
+    }
+    FSMachine united_machine (united_machine);
+    
+    bool initial_is_final = false;
+    if (final_states.count(initial_state) && fsm.final_states.count(fsm.initial_state)) {
+        initial_is_final = true;
+    }
+    
+    std::string initial_label = initial_state+"\'"+"\'";
+    State initial (initial_label, nullptr, true, initial_is_final);
+    for (auto st : states) {
+        united_machine[st.first] = st.second;
+    }
+    for (auto st : fsm.states) {
+        st.second.set_label(st.first+"\'");
+        united_machine[st.first+"\'"] = st.second;
+    }
+    united_machine[initial_label] = initial;
+    united_machine.initial_state = initial_label;
+
+    for (auto c : united_machine.alphabet) {
+        if (!united_machine[initial_state][c].empty()) {
+            for (auto t : united_machine[initial_state][c]) {
+                united_machine.make_transition(initial_label, c, t->get_label());
+            }
+        }
+        if (!united_machine[initial_state+"\'"][c].empty()) {
+            for (auto t : united_machine[initial_state+"\'"][c]) {
+                united_machine.make_transition(initial_label, c, t->get_label());
+            }
+        }
+    }
+
+    return united_machine;
 }
 
 FSMachine::operator std::string() const {
