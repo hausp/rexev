@@ -281,13 +281,14 @@ FSMachine DeSimoneTree::to_fsm() {
     // WHILE:
     FSMachine machine(alphabet);
     std::vector<std::set<Node*>> compositions;
-    std::map<std::set<Node*>,State*> state_compositions;
+    std::map<unsigned,State*> state_compositions;
     std::string state_label = "A";
     unsigned i = 0;
+    unsigned j = 0;
 
     compositions.push_back(root->down_action());
     machine.insert("S", true, has_lambda(compositions[i]));
-    state_compositions[compositions[i]] = &machine["S"];
+    state_compositions[i] = &machine["S"];
     std::list<State*> new_states = {&machine["S"]};
 
     ECHO(*this);
@@ -310,26 +311,38 @@ FSMachine DeSimoneTree::to_fsm() {
                         new_composition.insert(p);
                     }
                 }
+                unsigned key = 0;
                 bool is_new = true;
-                for (auto c : compositions) {
+                for (auto c : compositions) { 
                     if (new_composition == c) {
                         is_new = false;
                         break;
                     }
+                    key++;
                 }
                 if (is_new) {
+                    j++;
                     compositions.push_back(new_composition);
                     machine.insert(state_label, false, has_lambda(new_composition));
+                    ECHO(i+j);
+                    ECHO("state composition");
+                    ECHO(state_label);
+                    state_compositions[i+j] = &machine[state_label];
                     current->add_transition(entry, {&machine[state_label]});
-                    state_compositions[compositions[++i]] = &machine[state_label];
+                    ECHO("transição criada:");
+                    ECHO(current->get_label() + ", " + entry + " -> " + state_label);
                     new_states.push_back(&machine[state_label]);
                     state_label.at(0)++;
                 } else {
-                    current->add_transition(entry,
-                                            {state_compositions.at(new_composition)});
+                    ECHO("about to tretar");
+                    current->add_transition(entry,{state_compositions.at(key)});
+                    ECHO("transição criada:");
+                    ECHO(current->get_label() + ", " + entry + " -> " 
+                         + state_compositions.at(key)->get_label());
                 }
             }
         }
+        i++;
     }
 
     return machine;
