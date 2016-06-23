@@ -140,17 +140,28 @@ FSMachine FSMachine::minimize() {
     while (true) {
         for (auto st : state_set) {
             if (st.second.size() > 1) {
-                unsigned i = 1;
-                //for (i : st.second.size()-1) {
-                    //for (auto a : minimezed_automata.alphabet) {
-                        // PAREI AQUI!!!
-                    //    std::string destiny = (*st.begin()).get_transition(a).get_label();
-                        //if (destiny == state_set[]
-                        //    && (*st.begin()+i).get_transition(a))
-                    //}
-                //}
+                for (unsigned i = 1; i < st.second.size()-1; i++) {
+                    for (auto a : minimezed_automata.alphabet) {
+                        std::string dest, cest;
+                        // This shit is confusing
+                        dest = ((*st.second.begin())[a].at(0).get_label());
+                        cest = ((*(st.second.begin()+i))[a].at(0).get_label());
+                        for (auto ts : state_set) {
+                        	for (auto k : ts.second) {
+                        		if (k.get_transition(a).get_label() == dest) dest = "\'"+ts.first;
+                        		if (k.get_transition(a).get_label() == cest) cest = "\'"+ts.first;
+                        	}
+                        }
+                        if (dest != cest) {
+                        	State diff_state = *st.second.begin();
+                        	st.second.erase(st.second.begin()+i);
+                        	state_set[state_count].push_back(diff_state);
+                        }
+                    }
+                }   
             }
         }
+        state_count.at(0)++;
     }
 
     return minimezed_automata;

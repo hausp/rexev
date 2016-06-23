@@ -4,11 +4,10 @@
 /**
  *
  * State class definition:
- *  This class defines a data structure that
- *  contains information necessary for the construction
- *  of a FSM. States have a reference to other states
- *  accessable from the current state, accessable via
- *  the get_transition method.
+ *  Essa classe define a estrutura de dados Estado
+ *  contém informação necessária para a contrução da
+ *  máquina de estados. Estados tem referência para os
+ *  estados que podem ser atingidos através de transições.
  *
  **/
 
