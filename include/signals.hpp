@@ -12,6 +12,8 @@ namespace signals {
     void set_controller(Controller*);
     void add_regex();
     void regex_selected(GtkTreeView*);
+    gboolean regex_selection(GtkTreeSelection*, GtkTreeModel*,
+                             GtkTreePath*, gboolean, gpointer);
     void close();
 }
 

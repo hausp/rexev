@@ -13,10 +13,11 @@ void Interface::init() {
     builder = gtk_builder_new_from_file("view_simpl.ui");
     window = GTK_WIDGET(gtk_builder_get_object(builder, "window"));
     auto add_button = gtk_builder_get_object(builder, "add_button");
-    auto text_area = GTK_WIDGET(gtk_builder_get_object(builder, "regex_view"));
+    auto regex_list = GTK_TREE_VIEW(gtk_builder_get_object(builder, "exp_list"));
+    auto selection  = gtk_tree_view_get_selection(regex_list);
+    gtk_tree_selection_set_select_function(selection, signals::regex_selection, nullptr, nullptr);
     g_signal_connect(window, "delete-event", G_CALLBACK(signals::close), nullptr);
     g_signal_connect(add_button, "clicked", G_CALLBACK(signals::add_regex), nullptr);
-    //g_signal_connect(text_area, "row-activated", G_CALLBACK(signals::regex_selected), nullptr);
 
 }
 
@@ -102,11 +103,6 @@ void Interface::show_expression(const char* exp) {
 
 void Interface::select_expression(unsigned id) {
     auto tree = GTK_TREE_VIEW(gtk_builder_get_object(builder, "exp_list"));
-    auto selection = gtk_tree_view_get_selection(tree);
-    auto model = GTK_TREE_MODEL(gtk_builder_get_object(builder, "exp_table"));
     auto path = gtk_tree_path_new_from_string(std::to_string(id).c_str());
-    GtkTreeIter iter;
-    gtk_tree_selection_unselect_all(selection);
-    gtk_tree_model_get_iter(model, &iter, path);
-    gtk_tree_selection_select_iter(selection, &iter);
+    gtk_tree_view_set_cursor(tree, path, nullptr, false);
 }
