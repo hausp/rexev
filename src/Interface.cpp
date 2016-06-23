@@ -14,11 +14,14 @@ void Interface::init() {
     window = GTK_WIDGET(gtk_builder_get_object(builder, "window"));
     auto add_button = gtk_builder_get_object(builder, "add_button");
     auto regex_list = GTK_TREE_VIEW(gtk_builder_get_object(builder, "exp_list"));
-    auto selection  = gtk_tree_view_get_selection(regex_list);
-    gtk_tree_selection_set_select_function(selection, signals::regex_selection, nullptr, nullptr);
+    auto af_list    = GTK_TREE_VIEW(gtk_builder_get_object(builder, "automata_list"));
+    auto regex_sel  = gtk_tree_view_get_selection(regex_list);
+    auto af_sel     = gtk_tree_view_get_selection(af_list);
+
+    gtk_tree_selection_set_select_function(regex_sel, signals::regex_selection, nullptr, nullptr);
+    gtk_tree_selection_set_select_function(af_sel, signals::automata_selection, nullptr, nullptr);
     g_signal_connect(window, "delete-event", G_CALLBACK(signals::close), nullptr);
     g_signal_connect(add_button, "clicked", G_CALLBACK(signals::add_regex), nullptr);
-
 }
 
 void Interface::show() {
@@ -95,10 +98,44 @@ void Interface::put_regex(const std::string& name, unsigned id) {
     gtk_list_store_set(model, &iter, 0, name.c_str(), 1, id, -1);
 }
 
+void Interface::put_automaton(const std::string& name, unsigned id) {
+    auto model = GTK_LIST_STORE(gtk_builder_get_object(builder, "automata_table"));
+    GtkTreeIter iter;
+    gtk_list_store_insert(model, &iter, -1);
+    gtk_list_store_set(model, &iter, 0, name.c_str(), 1, id, -1);
+}
+
 void Interface::show_expression(const char* exp) {
     auto text_area = GTK_TEXT_VIEW(gtk_builder_get_object(builder, "regex_view"));
     auto buffer = gtk_text_view_get_buffer(text_area);
     gtk_text_buffer_set_text(buffer, exp, -1);
+}
+
+void Interface::show_automaton(const std::vector<std::vector<std::string>>& values) {
+    auto view = GTK_TREE_VIEW(gtk_builder_get_object(builder, "dfa_tree"));
+    GType* types = new GType[values[0].size()];
+
+    for (unsigned i = 0; i < values[0].size(); i++) {
+        types[i] = G_TYPE_STRING;
+        auto renderer = gtk_cell_renderer_text_new();
+       gtk_tree_view_insert_column_with_attributes(view, -1, values[0][i].c_str(),
+                                                   renderer, nullptr);
+    }
+    
+    auto model = gtk_list_store_newv(values[0].size(), types);
+    g_free(types);
+
+    for (auto v : values) {
+        GtkTreeIter iter;
+        gtk_list_store_insert(model, &iter, -1);
+        unsigned i = 0;
+        for (auto s : v) {
+            ECHO(s);
+            gtk_list_store_set(model, &iter, i, s.c_str(), -1);
+            i++;
+        }
+    }
+    gtk_tree_view_set_model(view, GTK_TREE_MODEL(model));
 }
 
 void Interface::select_expression(unsigned id) {

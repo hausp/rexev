@@ -42,11 +42,24 @@ namespace signals {
         gtk_tree_model_get_iter(model, &iter, path);
         gtk_tree_model_get(model, &iter, 1, &value, -1);
         if (selected) {
-            ECHO("Removing");
             controller->remove_regex_selection(value);
         } else {
-            ECHO("Selecting");
             controller->add_regex_selection(value);
+        }
+        return true;
+    }
+
+
+    gboolean automata_selection(GtkTreeSelection* selection, GtkTreeModel* model,
+                                GtkTreePath *path, gboolean selected, gpointer) {
+        GtkTreeIter iter;
+        unsigned value;
+        gtk_tree_model_get_iter(model, &iter, path);
+        gtk_tree_model_get(model, &iter, 1, &value, -1);
+        if (selected) {
+            controller->remove_automata_selection(value);
+        } else {
+            controller->add_automata_selection(value);
         }
         return true;
     }

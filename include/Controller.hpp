@@ -16,11 +16,14 @@ class Controller {
     void add_regex();
     void add_regex_selection(unsigned);
     void remove_regex_selection(unsigned);
+    void add_automata_selection(unsigned);
+    void remove_automata_selection(unsigned);
     void close();
 
  private:
     Interface& ui;
     std::map<unsigned,std::pair<std::string,Regex>> expressions;
+    std::map<unsigned,FSMachine*> automata;
     std::list<unsigned> selected_expressions;
     std::list<unsigned> selected_automata;
     unsigned number_of_expressions;

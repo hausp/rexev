@@ -14,6 +14,8 @@ namespace signals {
     void regex_selected(GtkTreeView*);
     gboolean regex_selection(GtkTreeSelection*, GtkTreeModel*,
                              GtkTreePath*, gboolean, gpointer);
+    gboolean automata_selection(GtkTreeSelection*, GtkTreeModel*,
+                                GtkTreePath*, gboolean, gpointer);
     void close();
 }
 

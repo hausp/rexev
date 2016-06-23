@@ -70,6 +70,8 @@ class FSMachine {
     /* Transforma o autômato numa tabela, para impressão em terminal/console */
     operator std::string() const;
 
+    std::vector<std::vector<std::string>> to_table();
+
  private:
 
  	/* Um mapa de nome para estado, contendo todos os estados do autômato */

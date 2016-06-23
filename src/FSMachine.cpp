@@ -122,49 +122,49 @@ FSMachine FSMachine::union_operation(const FSMachine& fsm) {
 }
 
 FSMachine FSMachine::minimize() {
-    FSMachine minimezed_automata = *this;
-    minimezed_automata.remove_unreachable_states();
-    minimezed_automata.remove_dead_states();
-    for (auto t : minimezed_automata.alphabet) {
-        for (auto st : minimezed_automata.states) {
-            if (!st.second.accepts(t)) st.second[t].push_back(&minimezed_automata.rejection_state);
-        }
-    }
-    std::map<std::string, std::vector<State>> state_set;
-    state_set["\u03D5"].push_back(minimezed_automata.rejection_state);
-    std::string state_count = "A";
-    for (auto st : final_states) {
-        state_set[state_count].push_back(minimezed_automata[st]);
-    }
-    state_count.at(0)++;
-    while (true) {
-        for (auto st : state_set) {
-            if (st.second.size() > 1) {
-                for (unsigned i = 1; i < st.second.size()-1; i++) {
-                    for (auto a : minimezed_automata.alphabet) {
-                        std::string dest, cest;
-                        // This shit is confusing
-                        dest = ((*st.second.begin())[a].at(0).get_label());
-                        cest = ((*(st.second.begin()+i))[a].at(0).get_label());
-                        for (auto ts : state_set) {
-                        	for (auto k : ts.second) {
-                        		if (k.get_transition(a).get_label() == dest) dest = "\'"+ts.first;
-                        		if (k.get_transition(a).get_label() == cest) cest = "\'"+ts.first;
-                        	}
-                        }
-                        if (dest != cest) {
-                        	State diff_state = *st.second.begin();
-                        	st.second.erase(st.second.begin()+i);
-                        	state_set[state_count].push_back(diff_state);
-                        }
-                    }
-                }   
-            }
-        }
-        state_count.at(0)++;
-    }
+    // FSMachine minimezed_automata = *this;
+    // minimezed_automata.remove_unreachable_states();
+    // minimezed_automata.remove_dead_states();
+    // for (auto t : minimezed_automata.alphabet) {
+    //     for (auto st : minimezed_automata.states) {
+    //         if (!st.second.accepts(t)) st.second[t].push_back(&minimezed_automata.rejection_state);
+    //     }
+    // }
+    // std::map<std::string, std::vector<State>> state_set;
+    // state_set["\u03D5"].push_back(minimezed_automata.rejection_state);
+    // std::string state_count = "A";
+    // for (auto st : final_states) {
+    //     state_set[state_count].push_back(minimezed_automata[st]);
+    // }
+    // state_count.at(0)++;
+    // while (true) {
+    //     for (auto st : state_set) {
+    //         if (st.second.size() > 1) {
+    //             for (unsigned i = 1; i < st.second.size()-1; i++) {
+    //                 for (auto a : minimezed_automata.alphabet) {
+    //                     std::string dest, cest;
+    //                     // This shit is confusing
+    //                     dest = ((*st.second.begin())[a].at(0).get_label());
+    //                     cest = ((*(st.second.begin()+i))[a].at(0).get_label());
+    //                     for (auto ts : state_set) {
+    //                     	for (auto k : ts.second) {
+    //                     		if (k.get_transition(a).get_label() == dest) dest = "\'"+ts.first;
+    //                     		if (k.get_transition(a).get_label() == cest) cest = "\'"+ts.first;
+    //                     	}
+    //                     }
+    //                     if (dest != cest) {
+    //                     	State diff_state = *st.second.begin();
+    //                     	st.second.erase(st.second.begin()+i);
+    //                     	state_set[state_count].push_back(diff_state);
+    //                     }
+    //                 }
+    //             }   
+    //         }
+    //     }
+    //     state_count.at(0)++;
+    // }
 
-    return minimezed_automata;
+    // return minimezed_automata;
 }
 
 FSMachine::operator std::string() const {
@@ -196,4 +196,30 @@ FSMachine::operator std::string() const {
         out += "\n";
     }
     return out;
+}
+
+std::vector<std::vector<std::string>> FSMachine::to_table() {
+    std::vector<std::vector<std::string>> result;
+    result.push_back({"", "", "\u03B4"});
+    for (char entry : alphabet) {
+        result[0].push_back(std::string(1, entry));
+    }
+    unsigned i = 1;
+    for (auto state : states) {
+        result.push_back({"", "", state.first});
+        for (auto entry : alphabet) {
+            bool has_transitions = false;
+            //for (auto t : state.second[entry]) {
+            //    has_transitions = true;
+                //std::cout << t->get_label() << std::endl;
+                //result[i].push_back(t->get_label());
+            //}
+            if(!has_transitions) {
+                result[i].push_back("--");
+            }
+        }
+        i++;
+    }
+    std::cout << "shit" << std::endl;
+    return result;
 }

@@ -32,7 +32,9 @@ void Controller::add_regex() {
                 result.first = "RGX" + std::to_string(number_of_expressions);
             }
             ui.put_regex(result.first, number_of_expressions);
+            ui.put_automaton(result.first, number_of_automata);
             expressions[number_of_expressions++] = std::make_pair(result.first, regex);
+            automata[number_of_automata++] = &expressions[number_of_expressions-1].second.get_automaton();
         }
     }
     ui.select_expression(number_of_expressions-1);
@@ -47,6 +49,17 @@ void Controller::remove_regex_selection(unsigned value) {
     selected_expressions.remove(value);
     if (!selected_expressions.empty()) {
         ui.show_expression(expressions[selected_expressions.front()].second.get_regex().c_str());
+    }
+}
+
+void Controller::add_automata_selection(unsigned value) {
+    selected_automata.push_front(value);
+    //ui.show_automaton(automata[value]->to_table());
+}
+void Controller::remove_automata_selection(unsigned value) {
+    selected_automata.remove(value);
+    if (!selected_automata.empty()) {
+        // ui.show_automaton(automata[value]->to_table());
     }
 }
 

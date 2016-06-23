@@ -16,7 +16,9 @@ class Interface {
     void hide_add_dialog();
     void show_error_message(const char*, const char*);
     void put_regex(const std::string&, unsigned);
+    void put_automaton(const std::string&, unsigned);
     void show_expression(const char*);
+    void show_automaton(const std::vector<std::vector<std::string>>&);
     void select_expression(unsigned);
     void destroy();
 
