@@ -22,6 +22,7 @@
 class RState;
 
 class State {
+    friend class FSMachine;
  public:
     /*
      * TODO: documentação
