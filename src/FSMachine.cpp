@@ -64,3 +64,22 @@ void FSMachine::remove_unreachable_states() {
     }
     states = reachable_states;
 }
+
+FSMachine FSMachine::complement() {
+    std::set<std::string> non_final_states; 
+    for (auto st : states) {
+        non_final_states.insert(st.first);
+    }
+    for (auto f : non_final_states) {
+        if (final_states.count(f)) non_final_states.erase(non_final_states.find(f));
+    }
+    FSMachine complemented = *this;
+    complemented.final_states = non_final_states;
+    return complemented;
+}
+
+FSMachine FSMachine::union_operation(const FSMachine& fsm) {
+    
+
+    return;
+}
