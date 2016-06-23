@@ -6,6 +6,15 @@
 
 namespace {
     Controller* controller;
+    void get_ids(GtkTreeModel* model, GtkTreePath* path, 
+                     GtkTreeIter* iter, gpointer v) {
+        auto vector = (std::vector<unsigned>*)v;
+        unsigned value;
+        gtk_tree_model_get(model, iter, 1, &value, -1);
+        ECHO("test");
+        ECHO(value);
+        vector->push_back(value);
+    }
 } // private
 
 namespace signals {
@@ -15,6 +24,31 @@ namespace signals {
 
     void add_regex() {
         controller->add_regex();
+    }
+
+    void regex_selected(GtkTreeView* tree) {
+        auto selection = gtk_tree_view_get_selection(tree);
+        std::vector<unsigned> values;
+        gtk_tree_selection_selected_foreach(selection, get_ids, &values);
+        for (auto v : values) {
+            ECHO(v);
+        }
+    }
+
+    gboolean regex_selection(GtkTreeSelection* selection, GtkTreeModel* model,
+                             GtkTreePath *path, gboolean selected, gpointer) {
+        GtkTreeIter iter;
+        unsigned value;
+        gtk_tree_model_get_iter(model, &iter, path);
+        gtk_tree_model_get(model, &iter, 1, &value, -1);
+        if (selected) {
+            ECHO("Removing");
+            controller->remove_regex_selection(value);
+        } else {
+            ECHO("Selecting");
+            controller->add_regex_selection(value);
+        }
+        return true;
     }
 
     void close() {

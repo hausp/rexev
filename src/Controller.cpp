@@ -6,7 +6,8 @@
 #include "Regex.hpp"
 
 Controller::Controller(Interface& ui)
- : ui(ui), number_of_expressions(0) {
+ : ui(ui), number_of_expressions(0),
+   number_of_automata(0) {
 
 }
 
@@ -35,8 +36,18 @@ void Controller::add_regex() {
         }
     }
     ui.select_expression(number_of_expressions-1);
-    ui.show_expression(result.second.c_str());
     ui.hide_add_dialog();
+}
+
+void Controller::add_regex_selection(unsigned value) {
+    selected_expressions.push_front(value);
+    ui.show_expression(expressions[value].second.get_regex().c_str());
+}
+void Controller::remove_regex_selection(unsigned value) {
+    selected_expressions.remove(value);
+    if (!selected_expressions.empty()) {
+        ui.show_expression(expressions[selected_expressions.front()].second.get_regex().c_str());
+    }
 }
 
 void Controller::close() {
