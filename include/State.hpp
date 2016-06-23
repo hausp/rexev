@@ -23,7 +23,8 @@ class RState;
 class State {
  public:
     /*
-     * TODO: documentação
+     * Construtor de estado, padrão: 
+     * (label epslon, sem rejeição, não inicial, não final)
      */
     State(const std::string& = "&", RState* const = nullptr,
           bool = false, bool = false);

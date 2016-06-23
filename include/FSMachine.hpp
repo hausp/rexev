@@ -51,10 +51,17 @@ class FSMachine {
     /* Remove os estados inalcansáveis a partir do estado inicial */
     void remove_unreachable_states();
 
-    /* Torna os estados finais, não-finais e os não-finais, finais */
+    /* Troca os estados finais e não finais
+     * Faz o complemento do autômato
+     * NF -> F
+     * F -> NF
+     */
     FSMachine complement();
 
-    /* Cria um novo estado inicial que tem as mesmas transições dos estados iniciais das duas máquinas */
+    /* Cria um novo estado inicial que tem as mesmas 
+     * transições dos estados iniciais das duas máquinas
+     * e devolve uma nova máquina com esta característica
+     */
     FSMachine union_operation(const FSMachine&);
 
     /* Executa o algoritmo de minimização de autômato finito */
@@ -64,11 +71,21 @@ class FSMachine {
     operator std::string() const;
 
  private:
-    std::map<std::string, State> states; // Um mapa de nome para estado, contendo todos os estados do autômato
-    std::set<char> alphabet; // O alfabeto da máquina de estados (sigma)
-    std::string initial_state; // O nome do estado inicial
-    std::set<std::string> final_states; // Um conjunto dos nomes dos estados finais
-    RState rejection_state; // Estado de rejeição
+
+ 	/* Um mapa de nome para estado, contendo todos os estados do autômato */
+    std::map<std::string, State> states;
+
+    /* O alfabeto da máquina de estados (sigma) */
+    std::set<char> alphabet;
+
+    /* O nome do estado inicial */
+    std::string initial_state;
+
+    /* Um conjunto dos nomes dos estados finais */ 
+    std::set<std::string> final_states;
+
+    /*  Estado de rejeição */
+    RState rejection_state;
 };
 
 #endif /* FS_MACHINE_HPP */
