@@ -12,8 +12,8 @@ class Regex {
     Regex();
     Regex(const std::string&, const std::string& = "");
 
-    std::string get_alias();
-    std::string get_regex();
+    std::string get_alias() const;
+    std::string get_regex() const;
     Automaton to_automaton();
     operator std::string();
 

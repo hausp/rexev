@@ -9,17 +9,18 @@
  */
 
 #include <fstream>
-#include <map>
+#include <unordered_map>
 #include <utility>
 #include "Regex.hpp"
 #include <string>
+ #include <algorithm>
 
 class IO {
  public:
  	IO();
  	~IO();
- 	void wright_to_file(const std::map<std::string, Regex>&, const std::string&);
- 	std::map<std::string, Regex> read_file(const std::string&);
+ 	void wright_to_file(const std::unordered_map<unsigned, Regex>&, const std::string&);
+ 	std::unordered_map<unsigned, Regex> read_file(const std::string&);
 
  private:
 

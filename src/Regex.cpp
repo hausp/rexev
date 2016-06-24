@@ -20,11 +20,11 @@ Automaton Regex::to_automaton() {
     return tree.to_automaton();
 }
 
-std::string Regex::get_alias() {
+std::string Regex::get_alias() const {
     return alias;
 }
 
-std::string Regex::get_regex() {
+std::string Regex::get_regex() const {
     return regex;
 }
 
