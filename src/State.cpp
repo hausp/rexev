@@ -58,6 +58,10 @@ void State::add_transition(const char entry, const std::vector<State*>& targets)
     }
 }
 
+std::vector<State*>& State::operator[](const char entry) {
+    return transitions[entry];
+}
+
 const std::vector<State*>& State::operator[](const char entry) const {
     return transitions.at(entry);
 }

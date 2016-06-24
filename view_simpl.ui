@@ -191,7 +191,9 @@
                                 <property name="model">dfa_table</property>
                                 <property name="enable_grid_lines">both</property>
                                 <child internal-child="selection">
-                                  <object class="GtkTreeSelection" id="dfa_tree_intsel"/>
+                                  <object class="GtkTreeSelection" id="dfa_tree_intsel">
+                                    <property name="mode">none</property>
+                                  </object>
                                 </child>
                               </object>
                             </child>

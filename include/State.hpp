@@ -55,6 +55,9 @@ class State {
     /* Cria uma nova transição ou redefine uma já existente. */
     void add_transition(const char, const std::vector<State*>&);
 
+    /* Acesso a uma transição existente. */
+    std::vector<State*>& operator[](const char);
+
     /* Acesso const a uma transição existente. */
     const std::vector<State*>& operator[](const char) const;
 

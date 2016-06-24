@@ -12,7 +12,7 @@ Controller::Controller(Interface& ui)
 }
 
 void Controller::add_regex() {
-    Regex regex;
+    //Regex regex;
     bool success = false;
     std::pair<std::string,std::string> result;
     while(!success) {
@@ -20,20 +20,20 @@ void Controller::add_regex() {
         success = true;
         if (result.second.size() > 0) {
             try {
-            regex = result.second;
+            expressions[number_of_expressions++] = std::make_pair(result.first, result.second);
             } catch (std::exception& e) {
                 ui.show_error_message("Erro!", e.what());
                 success = false;
             }
         }
         if (success) {
-            ECHO((std::string)regex);
+            ECHO((std::string)expressions[number_of_expressions-1].second);
             if (result.first.size() == 0) {
-                result.first = "RGX" + std::to_string(number_of_expressions);
+                result.first = "RGX" + std::to_string(number_of_expressions-1);
             }
-            ui.put_regex(result.first, number_of_expressions);
+            ui.put_regex(result.first, number_of_expressions-1);
             ui.put_automaton(result.first, number_of_automata);
-            expressions[number_of_expressions++] = std::make_pair(result.first, regex);
+            //expressions[number_of_expressions++] = std::make_pair(result.first, regex);
             automata[number_of_automata++] = &expressions[number_of_expressions-1].second.get_automaton();
         }
     }
@@ -54,12 +54,12 @@ void Controller::remove_regex_selection(unsigned value) {
 
 void Controller::add_automata_selection(unsigned value) {
     selected_automata.push_front(value);
-    //ui.show_automaton(automata[value]->to_table());
+    ui.show_automaton(automata[value]->to_table());
 }
 void Controller::remove_automata_selection(unsigned value) {
     selected_automata.remove(value);
     if (!selected_automata.empty()) {
-        // ui.show_automaton(automata[value]->to_table());
+        ui.show_automaton(automata[value]->to_table());
     }
 }
 

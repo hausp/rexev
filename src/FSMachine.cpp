@@ -200,26 +200,25 @@ FSMachine::operator std::string() const {
 
 std::vector<std::vector<std::string>> FSMachine::to_table() {
     std::vector<std::vector<std::string>> result;
-    result.push_back({"", "", "\u03B4"});
+    result.push_back({"\u03B4"});
     for (char entry : alphabet) {
         result[0].push_back(std::string(1, entry));
     }
     unsigned i = 1;
     for (auto state : states) {
-        result.push_back({"", "", state.first});
+        std::string state_str = "";
+        if (state.second.is_final()) state_str += "*";
+        if (state.second.is_initial()) state_str += "->";
+        state_str += state.first;
+        result.push_back({state_str});
         for (auto entry : alphabet) {
-            bool has_transitions = false;
-            //for (auto t : state.second[entry]) {
-            //    has_transitions = true;
-                //std::cout << t->get_label() << std::endl;
-                //result[i].push_back(t->get_label());
-            //}
-            if(!has_transitions) {
-                result[i].push_back("--");
+            std::string transition_str = "";
+            for (auto s : state.second[entry]) {
+                transition_str += s->get_label();
             }
+            result[i].push_back(transition_str);
         }
         i++;
     }
-    std::cout << "shit" << std::endl;
     return result;
 }

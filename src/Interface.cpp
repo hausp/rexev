@@ -115,27 +115,35 @@ void Interface::show_automaton(const std::vector<std::vector<std::string>>& valu
     auto view = GTK_TREE_VIEW(gtk_builder_get_object(builder, "dfa_tree"));
     GType* types = new GType[values[0].size()];
 
+    auto size = gtk_tree_view_get_n_columns(view);
+    for (unsigned i = 0; i < size; i++) {
+        auto column = gtk_tree_view_get_column(view, 0);
+        gtk_tree_view_remove_column(view, column);
+    }
+
     for (unsigned i = 0; i < values[0].size(); i++) {
         types[i] = G_TYPE_STRING;
         auto renderer = gtk_cell_renderer_text_new();
-       gtk_tree_view_insert_column_with_attributes(view, -1, values[0][i].c_str(),
-                                                   renderer, nullptr);
+        if (i == 0) gtk_cell_renderer_set_alignment(renderer, 1, 0.5);
+        gtk_tree_view_insert_column_with_attributes(view, -1, values[0][i].c_str(),
+                                                   renderer, "text", i,
+                                                   nullptr);
     }
     
     auto model = gtk_list_store_newv(values[0].size(), types);
     g_free(types);
 
-    for (auto v : values) {
+    for (unsigned i = 1; i < values.size(); i++) {
         GtkTreeIter iter;
         gtk_list_store_insert(model, &iter, -1);
-        unsigned i = 0;
-        for (auto s : v) {
-            ECHO(s);
-            gtk_list_store_set(model, &iter, i, s.c_str(), -1);
-            i++;
+        unsigned j = 0;
+        for (auto s : values[i]) {
+            gtk_list_store_set(model, &iter, j, s.c_str(), -1);
+            j++;
         }
     }
     gtk_tree_view_set_model(view, GTK_TREE_MODEL(model));
+    gtk_tree_view_columns_autosize(view);
 }
 
 void Interface::select_expression(unsigned id) {
