@@ -5,6 +5,7 @@
 #define CONTROLLER_HPP
 
 #include <map>
+#include <unordered_map>
 #include <list>
 
 #include "Interface.hpp"
@@ -22,12 +23,12 @@ class Controller {
 
  private:
     Interface& ui;
-    std::map<unsigned,std::pair<std::string,Regex>> expressions;
-    std::map<unsigned,FSMachine*> automata;
-    std::list<unsigned> selected_expressions;
-    std::list<unsigned> selected_automata;
-    unsigned number_of_expressions;
-    unsigned number_of_automata;
+    std::unordered_map<unsigned, Regex> expressions;
+    std::unordered_map<unsigned, Automaton> automata;
+    std::list<unsigned> expr_selection;
+    std::list<unsigned> atm_selection;
+    unsigned n_expr;
+    unsigned n_atm;
 };
 
 #endif /* CONTROLLER_HPP */

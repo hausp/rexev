@@ -15,7 +15,7 @@
 #include "SNode.hpp"
 #include "PNode.hpp"
 #include "ONode.hpp"
-#include "FSMachine.hpp"
+#include "Automaton.hpp"
 
 using Node = DeSimoneTree::Node;
 
@@ -233,7 +233,7 @@ unsigned DeSimoneTree::put_subtree(Node*& current, std::string& regex, unsigned 
             Node* temp;
             try {
                 temp = init_tree(regex.substr(pos, size));
-            } catch (unsigned& e) {
+            } catch (unsigned e) {
                 throw pos + e;
             }
             if (current->left) {
@@ -262,18 +262,18 @@ void DeSimoneTree::reasign_father(Node*& temp, Node*& current) {
     current = temp;
 }
 
-FSMachine DeSimoneTree::to_fsm() {
-    FSMachine automaton(alphabet);
+Automaton DeSimoneTree::to_automaton() {
+    Automaton automaton(alphabet);
     std::vector<std::set<Node*>> compositions;
+    std::list<std::string> new_states;
     std::vector<std::string> states;
-    std::list<State*> new_states;
     std::string state_label = "B";
     unsigned i = 0;
 
     states.push_back("A");
     compositions.push_back(root->down_action());
     automaton.insert("A", true, has_lambda(compositions[i]));
-    new_states.push_back(&automaton["A"]);
+    new_states.push_back("A");
 
     while (new_states.size() > 0) {
         auto current = new_states.front();
@@ -294,15 +294,15 @@ FSMachine DeSimoneTree::to_fsm() {
                 if (key != -1) {
                     // Composição já existe
                     // Cria transição para o estado equivalente
-                    automaton.make_transition(current->get_label(), entry, states[key]);
+                    automaton.make_transition(current, entry, states[key]);
                 } else {
                     // Composição nova
                     // Adiciona novo estado e cria transição para ele
                     states.push_back(state_label);
                     compositions.push_back(new_composition);
                     automaton.insert(state_label, false, has_lambda(new_composition));
-                    new_states.push_back(&automaton[state_label]);
-                    automaton.make_transition(current->get_label(), entry, state_label);
+                    new_states.push_back(state_label);
+                    automaton.make_transition(current, entry, state_label);
                     state_label = new_label(states.size());
                 }
             }

@@ -3,20 +3,25 @@
 
 #include "Regex.hpp"
 
-Regex::Regex() { }
+Regex::Regex()
+: regex(""), alias("") { }
 
-Regex::Regex(const string& r)
-: regex(r) {
+Regex::Regex(const std::string& regex, const string& alias)
+: regex(regex), alias(alias) {
     try {
-        automaton = DeSimoneTree(r).to_fsm();
-    } catch (unsigned& e) {
+        tree = DeSimoneTree(regex);
+    } catch (unsigned e) {
         throw std::runtime_error("Expressão regular inválida:\n verifique o caractere "
                                  + std::to_string(e));
     }
 }
 
-FSMachine& Regex::get_automaton() {
-    return automaton;
+Automaton Regex::to_automaton() {
+    return tree.to_automaton();
+}
+
+std::string Regex::get_alias() {
+    return alias;
 }
 
 std::string Regex::get_regex() {
@@ -24,5 +29,5 @@ std::string Regex::get_regex() {
 }
 
 Regex::operator std::string() {
-    return (std::string)automaton;
+    return regex;
 }

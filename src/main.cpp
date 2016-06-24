@@ -5,14 +5,12 @@
 #include <string>
 
 #include "DeSimoneTree.hpp"
-#include "LNode.hpp"
-#include "gtk.hpp"
-#include "signals.hpp"
 #include "Interface.hpp"
 #include "Controller.hpp"
+#include "Automaton.hpp"
+#include "signals.hpp"
+#include "gtk.hpp"
 
-#include "FSMachine.hpp"
-#include "State.hpp"
 
 int main(int argc, char** argv) {
     gtk::init(argc, argv);

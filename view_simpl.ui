@@ -304,9 +304,9 @@
                             <property name="orientation">vertical</property>
                             <property name="spacing">5</property>
                             <child>
-                              <object class="GtkButton" id="edit_button">
-                                <property name="label" translatable="yes">Editar</property>
-                                <property name="name">edit_button</property>
+                              <object class="GtkButton" id="add_button">
+                                <property name="label" translatable="yes">Adicionar</property>
+                                <property name="name">add_button</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
@@ -318,9 +318,9 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="add_button">
-                                <property name="label" translatable="yes">Adicionar</property>
-                                <property name="name">add_button</property>
+                              <object class="GtkButton" id="edit_button">
+                                <property name="label" translatable="yes">Modificar</property>
+                                <property name="name">edit_button</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>

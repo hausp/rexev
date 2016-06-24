@@ -26,7 +26,7 @@
 #define TRACE_L(x,y) std::cout << (x) << " = " << (y) << std::endl
 #define ECHO(x) std::cout << (x) << std::endl
 
-class FSMachine;
+class Automaton;
 
 using std::string;
 
@@ -36,7 +36,7 @@ class DeSimoneTree {
 
     DeSimoneTree();
     DeSimoneTree(string);
-    FSMachine to_fsm();
+    Automaton to_automaton();
     operator string() const;
 
  private:

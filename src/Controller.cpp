@@ -6,58 +6,63 @@
 #include "Regex.hpp"
 
 Controller::Controller(Interface& ui)
- : ui(ui), number_of_expressions(0),
-   number_of_automata(0) {
+ : ui(ui), n_expr(0),
+   n_atm(0) {
 
 }
 
 void Controller::add_regex() {
-    //Regex regex;
-    bool success = false;
     std::pair<std::string,std::string> result;
+    bool success = false;
     while(!success) {
         result = ui.show_add_dialog();
         success = true;
+        if (result.first.size() == 0) {
+            result.first = "RGX" + std::to_string(n_expr);
+        }
         if (result.second.size() > 0) {
             try {
-            expressions[number_of_expressions++] = std::make_pair(result.first, result.second);
+                expressions.insert(
+                    std::make_pair(
+                        n_expr++,
+                        Regex(result.second, result.first)
+                    )
+                );
             } catch (std::exception& e) {
                 ui.show_error_message("Erro!", e.what());
                 success = false;
             }
-        }
-        if (success) {
-            if (result.first.size() == 0) {
-                result.first = "RGX" + std::to_string(number_of_expressions-1);
+            if (success) {
+                ui.put_regex(result.first, n_expr-1);
+                ui.put_automaton(result.first, n_atm);
+                automata[n_atm++] = expressions[n_expr-1].to_automaton();
+                ui.select_expression(n_expr-1);
             }
-            ui.put_regex(result.first, number_of_expressions-1);
-            ui.put_automaton(result.first, number_of_automata);
-            automata[number_of_automata++] = &expressions[number_of_expressions-1].second.get_automaton();
         }
     }
-    ui.select_expression(number_of_expressions-1);
     ui.hide_add_dialog();
 }
 
 void Controller::add_regex_selection(unsigned value) {
-    selected_expressions.push_front(value);
-    ui.show_expression(expressions[value].second.get_regex().c_str());
+    expr_selection.push_front(value);
+    ui.show_expression(expressions[value].get_regex().c_str());
 }
 void Controller::remove_regex_selection(unsigned value) {
-    selected_expressions.remove(value);
-    if (!selected_expressions.empty()) {
-        ui.show_expression(expressions[selected_expressions.front()].second.get_regex().c_str());
+    expr_selection.remove(value);
+    if (!expr_selection.empty()) {
+        auto show_sel = expr_selection.front();
+        ui.show_expression(expressions[show_sel].get_regex().c_str());
     }
 }
 
 void Controller::add_automata_selection(unsigned value) {
-    selected_automata.push_front(value);
-    ui.show_automaton(automata[value]->to_table());
+    atm_selection.push_front(value);
+    ui.show_automaton(automata[value].to_table());
 }
 void Controller::remove_automata_selection(unsigned value) {
-    selected_automata.remove(value);
-    if (!selected_automata.empty()) {
-        ui.show_automaton(automata[value]->to_table());
+    atm_selection.remove(value);
+    if (!atm_selection.empty()) {
+        ui.show_automaton(automata[atm_selection.front()].to_table());
     }
 }
 

@@ -5,20 +5,22 @@
 #define REGEX_HPP
 
 #include "DeSimoneTree.hpp"
-#include "FSMachine.hpp"
+#include "Automaton.hpp"
 
 class Regex {
  public:
     Regex();
-    Regex(const string&);
+    Regex(const std::string&, const std::string& = "");
 
-    FSMachine& get_automaton();
+    std::string get_alias();
     std::string get_regex();
+    Automaton to_automaton();
     operator std::string();
 
  private:
     std::string regex;
-    FSMachine automaton;
+    std::string alias;
+    DeSimoneTree tree;
 };
 
 #endif /* REGEX_HPP */
