@@ -27,13 +27,11 @@ void Controller::add_regex() {
             }
         }
         if (success) {
-            ECHO((std::string)expressions[number_of_expressions-1].second);
             if (result.first.size() == 0) {
                 result.first = "RGX" + std::to_string(number_of_expressions-1);
             }
             ui.put_regex(result.first, number_of_expressions-1);
             ui.put_automaton(result.first, number_of_automata);
-            //expressions[number_of_expressions++] = std::make_pair(result.first, regex);
             automata[number_of_automata++] = &expressions[number_of_expressions-1].second.get_automaton();
         }
     }

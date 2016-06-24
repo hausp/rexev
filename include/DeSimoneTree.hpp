@@ -13,12 +13,13 @@
 #ifndef DE_SIMONE_TREE_HPP
 #define DE_SIMONE_TREE_HPP
 
-#include <memory>
-#include <string>
-#include <ostream>
-#include <unordered_set>
 #include <iostream>
+#include <map>
+#include <memory>
+#include <ostream>
 #include <set>
+#include <string>
+#include <vector>
 
 #define RECENT_COMPILER 0
 #define TRACE(x) std::cout << (#x) << " = " << (x) << std::endl
@@ -55,6 +56,10 @@ class DeSimoneTree {
     void reasign_father(Node*&, Node*&);
     bool is_terminal(char);
     bool has_lambda(const std::set<Node*>&);
+    std::string new_label(unsigned);
+    int search_composition(const std::vector<std::set<Node*>>&,
+                           const std::set<Node*>&);
+    std::set<Node*> get_composition(const std::set<Node*>&);
 };
 
 std::ostream& operator<<(std::ostream&, const DeSimoneTree&);
@@ -81,8 +86,6 @@ class DeSimoneTree::Node {
     std::unique_ptr<Node> left;
     std::unique_ptr<Node> right;
     Node* th_link;
-
- private:
     char symbol;
 };
 

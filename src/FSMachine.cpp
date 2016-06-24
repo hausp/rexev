@@ -216,6 +216,7 @@ std::vector<std::vector<std::string>> FSMachine::to_table() {
             for (auto s : state.second[entry]) {
                 transition_str += s->get_label();
             }
+            if (transition_str.size() == 0) transition_str += "\u2014";
             result[i].push_back(transition_str);
         }
         i++;
