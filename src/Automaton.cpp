@@ -310,15 +310,20 @@ void Automaton::remove_equivalent_states() {
         // Para cada entrada do alfabeto
         for (auto entry : alphabet) {
             // Calcula os predecessores da classe
+            ECHO(entry);
+            TRACE_IT(partition);
             auto predecessors = predecessors_of(partition, entry);
+            TRACE_IT(predecessors);
             // Para cada classe no conjunto de classes
             for (auto it = partitions.begin(); it != partitions.end();) {
                 // Guarda a classe em value
                 auto value = *it;
                 // Calcula a intersecção da classe com os predecessores
                 auto intersec = intersection(predecessors, value);
+                TRACE_IT(intersec);
                 // Calcula a diferença da classe com os predecessores
                 auto diff = difference(value, predecessors);
+                TRACE_IT(diff);
                 
                 // Se ambas, intersecção e diferença, não forem vazias
                 if (!intersec.empty() && !diff.empty()) {
@@ -415,7 +420,6 @@ KeySet Automaton::predecessors_of(const KeySet& set, const Entry e) const {
         for (auto target : set) {
             if (pair.second.accepts_to(e, target)) {
                 predecessors.insert(pair.first);
-                break;
             }
         }
     }
@@ -427,7 +431,6 @@ KeySet Automaton::predecessors_of(const Key& target, const Entry e) const {
     for (auto pair : states) {
         if (pair.second.accepts_to(e, target)) {
             predecessors.insert(pair.first);
-            break;
         }
     }
     return predecessors;
