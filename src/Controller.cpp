@@ -49,15 +49,30 @@ void Controller::minimize_automaton() {
 
 void Controller::intersect_automaton() {
     for (auto key : atm_selection) {
-        if (key == atm_selection.front()) automata[n_atm] = automata[key];
-        automata[n_atm] = automata[key].automaton_intersection(automata[n_atm]);
+        if (key == atm_selection.front()) {
+            automata[n_atm] = automata[key];
+        } else {
+            automata[n_atm] = automata[key].automaton_intersection(automata[n_atm]);
+        }
     }
     ui.put_automaton("INT" + std::to_string(n_atm), n_atm);
     n_atm++;    
 }
 
 void Controller::regex_equivalence() {
-    
+    if (expr_selection.size() < 2) return;
+    bool eq = false;
+    for (auto key : expr_selection) {
+        if (key == expr_selection.front()) {
+        } else {
+           //eq = automata[key].minimize().equals(automata[key-1].minimize()); 
+        }
+    }
+    if (eq) {
+        // Diz que são equivalentes
+    } else {
+        // Diz que não
+    }
 }
 
 void Controller::add_regex_selection(unsigned value) {

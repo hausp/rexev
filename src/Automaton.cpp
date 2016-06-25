@@ -133,33 +133,45 @@ Automaton Automaton::complement() const {
 Automaton Automaton::automaton_intersection(const Automaton& fsm) const {
     Automaton intersec;    
     
+    ECHO("INTERSECÇÃO");
+
+    ECHO ("UNIÃO DOS ALFABETOS");
     // Une os alfabetos
     std::set_union(alphabet.begin(), alphabet.end(),
                     fsm.alphabet.begin(), fsm.alphabet.end(),
                     std::inserter(intersec.alphabet, intersec.alphabet.end()));
 
-    int i = keys.size();
-    Automaton temp = fsm;
-    for (auto state : temp.keys) {
-        state.at(0) += i;
+
+    ECHO("RENOMEAÇÃO DOS ESTADOS DE B");
+    unsigned i = keys.size();
+    KeySet temp_all;
+    KeySet temp_acc;
+    for (auto state : fsm.keys) {
+        char t = state.at(0)+i;
+        ECHO (t);
+        temp_all.insert({t});
+        if (fsm.k_acceptors.count(state)) temp_acc.insert({t});
     }
 
+    ECHO("PRODUTO CARTESIANO BOLADO");
     // Produto cartesiano dos keys
     Key acc_key;
     KeySet final_keys;
     for (auto l : keys) {
-        for (auto n : temp.keys) {
+        for (auto n : temp_all) {
             final_keys.insert(l+n);
+            ECHO(l+n);
         }
     }
 
+
     // Chave inicial
     acc_key = *(final_keys.begin());
-
+    ECHO ("CHAVE INICIAL DEFINIDA "+acc_key);
     // Produto cartesiano dos aceitadores
     KeySet acc_pairs;
     for (auto l : k_acceptors) {
-        for (auto n : temp.k_acceptors) {
+        for (auto n : temp_acc) {
             acc_pairs.insert(l+n);
         }
     }
@@ -187,22 +199,33 @@ Automaton Automaton::automaton_intersection(const Automaton& fsm) const {
         }
     }
 
+    ECHO("HORA DE DEFINIR AS TRANSIÇÕES");
     // Define as transições
     for (auto pair : intersec.keys) {
-        auto st0 = pair[0]+"";
-        auto st1 = pair[1]+"";
+        ECHO ("LOOP 0");
         for (auto entry : intersec.alphabet) {
-           if (states.at(st0).accepts(entry) && states.at(st1).accepts(entry)) {
-                std::vector<Key> dest0 = states.at(st0)[entry];
-                std::vector<Key> dest1 = states.at(st1)[entry];
+            ECHO ("LOOP 1 ");
+            ECHO (pair[0]);
+            ECHO (pair[1]);
+
+            if (states.at({pair[0]}).accepts(entry) && fsm.states.at({pair[1]-i}).accepts(entry)) {
+                ECHO("Will try...");
+                std::vector<Key> dest0 = states.at({pair[0]})[entry];
+                std::vector<Key> dest1 = fsm.states.at({pair[1]-i})[entry];
+                ECHO ("VECTORS GENERATED");
                 for (auto k0 : dest0) {
                     for (auto k1 : dest1) {
-                        intersec.make_transition(pair, entry, k0+k1); 
+                        ECHO ("DO IT");
+                        Key p = k0;
+                        char p1 = k1[0]+i;
+                        intersec.make_transition(pair, entry, p+p1); 
                     }
                 }
             }
         }
     }
+
+    ECHO("FIM INTERSECÇÃO");
 
     // Cria o estado inicial
     /*bool initial_is_final = false;
