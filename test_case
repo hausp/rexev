@@ -16,3 +16,4 @@ test14=(a|b)*(c|d)*
 test15=(aa)*(a|c)b?(cb?)*|(aa)*b(cb?)*
 test16=(aa)*(bb)*
 test17=(a|b)*
+test18=(aa)*(b(cb)*|c(bc)*|a(bc)*|a(cb)*)

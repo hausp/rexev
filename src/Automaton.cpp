@@ -9,7 +9,8 @@
 
 Automaton::Automaton() { }
 
-Automaton::Automaton(const Alphabet& alphabet) : alphabet(alphabet) {
+Automaton::Automaton(const Alphabet& alphabet)
+ : alphabet(alphabet) {
 
 }
 
@@ -152,7 +153,11 @@ Automaton Automaton::union_operation(const Automaton& m) const {
 }
 
 Automaton Automaton::minimize() const {
-   
+    Automaton minimum = *this;
+    minimum.remove_dead_states();
+    minimum.remove_unreachable_states();
+    minimum.remove_equivalent_states();
+    return minimum;
 }
 
 void Automaton::remove_equivalent_states() {
@@ -165,27 +170,76 @@ void Automaton::remove_equivalent_states() {
 
         for (auto entry : alphabet) {
             auto predecessors = predecessors_of(partition, entry);
-            for (auto p : partitions) {
+            for (auto it = partitions.begin(); it != partitions.end();) {
+                auto intersec = intersection(predecessors, *it);
+                auto diff = difference(*it, predecessors);
+                if (!intersec.empty() && !diff.empty()) {
+                    it = partitions.erase(it);
+                    partitions.insert(intersec);
+                    partitions.insert(diff);
+                    if (new_partitions.count(*it)) {
+                        new_partitions.erase(*it);
+                        new_partitions.insert(intersec);
+                        new_partitions.insert(diff);
+                    } else {
+                        if (intersec.size() <= diff.size()) {
+                            new_partitions.insert(intersec);
+                        } else {
+                            new_partitions.insert(diff);
+                        }
+                    }
+                } else {
+                    it++;
+                }
+            }
+        }
+    }
+
+    for (auto p : partitions) {
+        auto state = p.begin();
+        p.erase(state);
+        while (!p.empty()) {
+            auto equivalent = p.begin();
+            p.erase(equivalent);
+            for (auto entry : alphabet) {
+                auto predecessors = predecessors_of(*equivalent, entry);
+                for (auto s : predecessors) {
+                    states[s][entry] = {*state};
+                }
+            }
+            states.erase(*equivalent);
+            keys.erase(*equivalent);
+            if (k_acceptors.count(*equivalent)){
+                k_acceptors.erase(*equivalent);
             }
         }
     }
 }
 
 KeySet Automaton::keys_except(const KeySet& expt) const {
-    KeySet keys_except;
-    std::set_difference(keys.begin(), keys.end(),
-                        expt.begin(), expt.end(),
-                        inserter(keys_except, keys_except.end()));
-    return keys_except;
+    return difference(keys, expt);
+}
+
+KeySet Automaton::difference(const KeySet& s1, const KeySet& s2) const {
+    KeySet difference;
+    std::set_difference(s1.begin(), s1.end(),
+                        s2.begin(), s2.end(),
+                        inserter(difference, difference.end()));
+    return difference;
 }
 
 KeySet Automaton::keys_intersect(const KeySet& set) const {
-    KeySet keys_intersect;
-    std::set_intersection(keys.begin(), keys.end(),
-                          set.begin(), set.end(),
-                          inserter(keys_intersect, keys_intersect.end()));
-    return keys_intersect;
+    return intersection(keys, set);
 }
+
+KeySet Automaton::intersection(const KeySet& s1, const KeySet& s2) const {
+    KeySet intersection;
+    std::set_intersection(s1.begin(), s1.end(),
+                          s2.begin(), s2.end(),
+                          inserter(intersection, intersection.end()));
+    return intersection;
+}
+
 
 KeySet Automaton::predecessors_of(const KeySet& set, const Entry e) const {
     KeySet predecessors;
@@ -195,6 +249,17 @@ KeySet Automaton::predecessors_of(const KeySet& set, const Entry e) const {
                 predecessors.insert(key);
                 break;
             }
+        }
+    }
+    return predecessors;
+}
+
+KeySet Automaton::predecessors_of(const Key& target, const Entry e) const {
+    KeySet predecessors;
+    for (auto key : keys) {
+        if (states.at(key).accepts_to(e, target)) {
+            predecessors.insert(key);
+            break;
         }
     }
     return predecessors;

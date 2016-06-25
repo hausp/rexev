@@ -98,9 +98,15 @@ class Automaton {
 
     KeySet keys_except(const KeySet&) const;
 
+    KeySet difference(const KeySet&, const KeySet&) const;
+
     KeySet keys_intersect(const KeySet&) const;
 
+    KeySet intersection(const KeySet&, const KeySet&) const;
+
     KeySet predecessors_of(const KeySet&, const Entry) const;
+
+    KeySet predecessors_of(const Key&, const Entry) const;
 };
 
 class Automaton::State {

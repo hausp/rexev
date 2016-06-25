@@ -16,6 +16,7 @@ namespace signals {
                              GtkTreePath*, gboolean, gpointer);
     gboolean automata_selection(GtkTreeSelection*, GtkTreeModel*,
                                 GtkTreePath*, gboolean, gpointer);
+    void minimize();
     void close();
 }
 

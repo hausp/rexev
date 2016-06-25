@@ -64,6 +64,10 @@ namespace signals {
         return true;
     }
 
+    void minimize() {
+        controller->minimize_automaton();
+    }
+
     void close() {
         controller->close();
     }

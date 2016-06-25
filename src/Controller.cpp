@@ -61,6 +61,12 @@ void Controller::remove_automata_selection(unsigned value) {
     }
 }
 
+void Controller::minimize_automaton() {
+    auto key = atm_selection.front();
+    automata[key] = automata[key].minimize();
+    ui.show_automaton(automata[key].to_table());
+}
+
 void Controller::close() {
     ui.destroy();
     gtk::quit();

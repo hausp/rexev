@@ -13,6 +13,7 @@ void Interface::init() {
     builder = gtk_builder_new_from_file("view_simpl.ui");
     window = GTK_WIDGET(gtk_builder_get_object(builder, "window"));
     auto add_button = gtk_builder_get_object(builder, "add_button");
+    auto min_button = gtk_builder_get_object(builder, "minimize_button");
     auto regex_list = GTK_TREE_VIEW(gtk_builder_get_object(builder, "exp_list"));
     auto af_list    = GTK_TREE_VIEW(gtk_builder_get_object(builder, "automata_list"));
     auto regex_sel  = gtk_tree_view_get_selection(regex_list);
@@ -22,6 +23,7 @@ void Interface::init() {
     gtk_tree_selection_set_select_function(af_sel, signals::automata_selection, nullptr, nullptr);
     g_signal_connect(window, "delete-event", G_CALLBACK(signals::close), nullptr);
     g_signal_connect(add_button, "clicked", G_CALLBACK(signals::add_regex), nullptr);
+    g_signal_connect(min_button, "clicked", G_CALLBACK(signals::minimize), nullptr);
 }
 
 void Interface::show() {
