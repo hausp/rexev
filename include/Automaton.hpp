@@ -94,13 +94,7 @@ class Automaton {
     // Ainda em análise da necessidade
     bool non_deterministic;
 
-    bool is_dead(const State&) const;
-
-    KeySet keys_except(const KeySet&) const;
-
     KeySet difference(const KeySet&, const KeySet&) const;
-
-    KeySet keys_intersect(const KeySet&) const;
 
     KeySet intersection(const KeySet&, const KeySet&) const;
 
@@ -122,6 +116,8 @@ class Automaton::State {
 
     /* Verifica se estado é final */
     bool is_final() const;
+
+    void set_initial(bool);
 
     /* Verifica se estado aceita a entrada fornecida.
      * i.e., se existe transição com dada entrada,

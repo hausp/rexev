@@ -17,6 +17,10 @@ bool Automaton::State::is_final() const {
     return final;
 }
 
+void Automaton::State::set_initial(bool i) {
+    initial = i;
+}
+
 bool Automaton::State::accepts(const char entry) const {
     return transitions.count(entry);
 }
