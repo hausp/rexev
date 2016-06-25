@@ -22,10 +22,6 @@ namespace signals {
         controller = c;
     }
 
-    void add_regex() {
-        controller->add_regex();
-    }
-
     void regex_selected(GtkTreeView* tree) {
         auto selection = gtk_tree_view_get_selection(tree);
         std::vector<unsigned> values;
@@ -64,8 +60,24 @@ namespace signals {
         return true;
     }
 
+    void add_regex() {
+        controller->add_regex();
+    }
+
+    void edit_regex() {
+        controller->edit_regex();
+    }
+
     void minimize() {
         controller->minimize_automaton();
+    }
+
+    void intersect() {
+        controller->intersect_automaton();
+    }
+
+    void regex_equivalence() {
+        controller->regex_equivalence();
     }
 
     void close() {

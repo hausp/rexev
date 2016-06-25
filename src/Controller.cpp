@@ -38,6 +38,24 @@ void Controller::add_regex() {
     ui.hide_add_dialog();
 }
 
+void Controller::edit_regex() {
+    
+}
+
+void Controller::minimize_automaton() {
+    auto key = atm_selection.front();
+    automata[key] = automata[key].minimize();
+    ui.show_automaton(automata[key].to_table());
+}
+
+void Controller::intersect_automaton() {
+    
+}
+
+void Controller::regex_equivalence() {
+    
+}
+
 void Controller::add_regex_selection(unsigned value) {
     expr_selection.push_front(value);
     ui.show_expression(expressions[value].get_regex().c_str());
@@ -59,12 +77,6 @@ void Controller::remove_automata_selection(unsigned value) {
     if (!atm_selection.empty()) {
         ui.show_automaton(automata[atm_selection.front()].to_table());
     }
-}
-
-void Controller::minimize_automaton() {
-    auto key = atm_selection.front();
-    automata[key] = automata[key].minimize();
-    ui.show_automaton(automata[key].to_table());
 }
 
 void Controller::close() {

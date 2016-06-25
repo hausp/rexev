@@ -15,11 +15,14 @@ class Controller {
  public:
     Controller(Interface&);
     void add_regex();
+    void edit_regex();
+    void minimize_automaton();
+    void intersect_automaton();
+    void regex_equivalence();
     void add_regex_selection(unsigned);
     void remove_regex_selection(unsigned);
     void add_automata_selection(unsigned);
     void remove_automata_selection(unsigned);
-    void minimize_automaton();
     void close();
 
  private:

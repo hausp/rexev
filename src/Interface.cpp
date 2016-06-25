@@ -12,18 +12,26 @@ Interface::Interface() {
 void Interface::init() {
     builder = gtk_builder_new_from_file("view_simpl.ui");
     window = GTK_WIDGET(gtk_builder_get_object(builder, "window"));
-    auto add_button = gtk_builder_get_object(builder, "add_button");
-    auto min_button = gtk_builder_get_object(builder, "minimize_button");
     auto regex_list = GTK_TREE_VIEW(gtk_builder_get_object(builder, "exp_list"));
     auto af_list    = GTK_TREE_VIEW(gtk_builder_get_object(builder, "automata_list"));
     auto regex_sel  = gtk_tree_view_get_selection(regex_list);
     auto af_sel     = gtk_tree_view_get_selection(af_list);
+    auto min_button = gtk_builder_get_object(builder, "minimize_button");
+    auto add_button = gtk_builder_get_object(builder, "add_button");
+    auto edit_button = gtk_builder_get_object(builder, "edit_button");
+    auto intersect_button = gtk_builder_get_object(builder, "intersect_button");
+    auto equivalence_button = gtk_builder_get_object(builder, "equivalence_button");
 
     gtk_tree_selection_set_select_function(regex_sel, signals::regex_selection, nullptr, nullptr);
     gtk_tree_selection_set_select_function(af_sel, signals::automata_selection, nullptr, nullptr);
     g_signal_connect(window, "delete-event", G_CALLBACK(signals::close), nullptr);
+
+
     g_signal_connect(add_button, "clicked", G_CALLBACK(signals::add_regex), nullptr);
     g_signal_connect(min_button, "clicked", G_CALLBACK(signals::minimize), nullptr);
+    g_signal_connect(edit_button, "clicked", G_CALLBACK(signals::edit_regex), nullptr);
+    g_signal_connect(intersect_button, "clicked", G_CALLBACK(signals::intersect), nullptr);
+    g_signal_connect(equivalence_button, "clicked", G_CALLBACK(signals::regex_equivalence), nullptr);
 }
 
 void Interface::show() {
