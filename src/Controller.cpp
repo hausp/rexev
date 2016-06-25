@@ -64,6 +64,7 @@ void Controller::add_regex_selection(unsigned value) {
     expr_selection.push_front(value);
     ui.show_expression(expressions[value].get_regex().c_str());
 }
+
 void Controller::remove_regex_selection(unsigned value) {
     expr_selection.remove(value);
     if (!expr_selection.empty()) {
@@ -76,6 +77,7 @@ void Controller::add_automata_selection(unsigned value) {
     atm_selection.push_front(value);
     ui.show_automaton(automata[value].to_table());
 }
+
 void Controller::remove_automata_selection(unsigned value) {
     atm_selection.remove(value);
     if (!atm_selection.empty()) {
