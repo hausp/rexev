@@ -34,6 +34,8 @@ class Automaton {
     void set_name(const std::string&);
 
     std::string get_name() const;
+
+    bool is_minimum() const;
     
     /* Método para inserção de estado na máquina: label, inicial, final */
     void insert(const Key&, bool = false, bool = false);
@@ -47,6 +49,7 @@ class Automaton {
     /* Remove os estados inalcansáveis a partir do estado inicial */
     void remove_unreachable_states();
 
+    /* Remove os estados equivalentes */
     void remove_equivalent_states();
 
     /* Troca os estados finais e não finais
@@ -67,10 +70,11 @@ class Automaton {
     /* Executa o algoritmo de minimização de autômato finito */
     Automaton minimize() const;
 
+    /* Mostra as transições de erro */
     void set_error_transitions();
 
-    /* Transforma o autômato numa tabela, para impressão em terminal/console */
-    operator std::string() const;
+    /* Esconde as transições de erro */
+    void hide_error_transitions();
 
     TransitionVector& operator()(const Key&, const Entry);
 
@@ -99,7 +103,11 @@ class Automaton {
     // O nome do estado de rejeição
     Key k_error;
 
+    // O nome do autômato
     std::string name;
+
+    // Identifica se autômato já é mínimo
+    bool minimum;
 
     KeySet difference(const KeySet&, const KeySet&) const;
 

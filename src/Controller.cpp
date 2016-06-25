@@ -22,16 +22,20 @@ void Controller::add_regex() {
         }
         if (result.second.size() > 0) {
             try {
-                expressions[n_expr++] = Regex(result.second, result.first);
+                expressions[n_expr] = Regex(result.second, result.first);
             } catch (std::exception& e) {
                 ui.show_error_message("Erro!", e.what());
                 success = false;
             }
             if (success) {
-                automata[n_atm++] = expressions[n_expr-1].to_automaton();
-                automata[n_atm-1].set_name(result.first);
-                ui.put_regex(result.first, n_expr-1);
-                ui.put_automaton(result.first, n_atm-1);
+                automata[n_atm] = expressions[n_expr].to_automaton();
+                automata[n_atm].set_name(result.first);
+                ui.put_regex(result.first, n_expr);
+                ui.select_regex(n_expr);
+                ui.put_automaton(result.first, n_atm);
+                ui.select_automaton(n_atm);
+                n_atm++;
+                n_expr++;
             }
         }
     }
@@ -44,22 +48,37 @@ void Controller::edit_regex() {
 
 void Controller::minimize_automaton() {
     auto key = atm_selection.front();
-    automata[n_atm] = automata[key].minimize();
-    automata[n_atm].set_name("MIN[" + automata[n_atm].get_name() + "]");
-    ui.put_automaton(automata[n_atm].get_name(), n_atm);
-    n_atm++;
+    if (!automata[key].is_minimum()) {
+        automata[n_atm] = automata[key].minimize();
+        automata[n_atm].set_name("MIN[" + automata[n_atm].get_name() + "]");
+        ui.put_automaton(automata[n_atm].get_name(), n_atm);
+        ui.select_automaton(n_atm);
+        n_atm++;
+    } else {
+        ui.show_general_message("Operação inválida!", "Autômato já é mínimo.");
+    }
 }
 
 void Controller::intersect_automaton() {
-    for (auto key : atm_selection) {
-        if (key == atm_selection.front()) {
-            automata[n_atm] = automata[key];
-        } else {
-            automata[n_atm] = automata[key].automaton_intersection(automata[n_atm]);
+    if (atm_selection.size() > 1) {
+        auto first = atm_selection.front();
+        atm_selection.pop_front();
+        ECHO(first);
+        for (auto key : atm_selection) {
+            ECHO("shit");
+            ECHO(key);
+            automata[n_atm] = automata[first].automaton_intersection(automata[key]);
+            ECHO("HEY");
+            automata[n_atm].set_name("INT[" + automata[first].get_name()
+                                     + "x" + automata[key].get_name() + "]");
+            ui.put_automaton(automata[n_atm].get_name(), n_atm);
+            first = n_atm++;
         }
+        ui.select_automaton(n_atm);
+    } else {
+        ui.show_general_message("Erro!",
+            "Selecione ao menos dois autômatos\npara realizar a intersecção.");
     }
-    ui.put_automaton("INT" + std::to_string(n_atm), n_atm);
-    n_atm++;    
 }
 
 void Controller::regex_equivalence() {
@@ -72,22 +91,24 @@ void Controller::regex_equivalence() {
         }
     }
     if (eq) {
-        // Diz que são equivalentes
+        ui.show_general_message("Resultado",
+            "As expressões regulares selecionadas\nsão equivalentes.");
     } else {
-        // Diz que não
+        ui.show_general_message("Resultado",
+             "As expressões regulares selecionadas\nnão são equivalentes.");
     }
 }
 
 void Controller::add_regex_selection(unsigned value) {
     expr_selection.push_front(value);
-    ui.show_expression(expressions[value].get_regex().c_str());
+    ui.show_regex(expressions[value].get_regex().c_str());
 }
 
 void Controller::remove_regex_selection(unsigned value) {
     expr_selection.remove(value);
     if (!expr_selection.empty()) {
         auto show_sel = expr_selection.front();
-        ui.show_expression(expressions[show_sel].get_regex().c_str());
+        ui.show_regex(expressions[show_sel].get_regex().c_str());
     }
 }
 

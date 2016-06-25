@@ -15,11 +15,12 @@ class Interface {
     std::pair<std::string,std::string> show_add_dialog();
     void hide_add_dialog();
     void show_error_message(const char*, const char*);
+    void show_general_message(const char*, const char*);
     void put_regex(const std::string&, unsigned);
     void put_automaton(const std::string&, unsigned);
-    void show_expression(const char*);
+    void show_regex(const char*);
     void show_automaton(const std::vector<std::vector<std::string>>&);
-    void select_expression(unsigned);
+    void select_regex(unsigned);
     void select_automaton(unsigned);
     void destroy();
 

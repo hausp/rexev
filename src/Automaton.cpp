@@ -23,19 +23,26 @@ std::string Automaton::get_name() const {
     return name;
 }
 
+bool Automaton::is_minimum() const {
+    return minimum;
+}
+
 void Automaton::insert(const Key& k, bool initial, bool final) {
     states[k] = State(initial, final);
     keys.insert(k);
     if (initial) k_initial = k;
     if (final) k_acceptors.insert(k);
+    minimum = false;
 }
 
 void Automaton::make_transition(const Key& from, const Entry e, const Key& to) {
     if (!states.count(to)) states[to];
     states[from].append_transition(e, to);
+    minimum = false;
 }
 
 TransitionVector& Automaton::operator()(const Key& k, const Entry e) {
+    minimum = false;
     return states[k][e];
 
 }
@@ -288,20 +295,23 @@ Automaton Automaton::union_operation(const Automaton& m) const {
 
 Automaton Automaton::minimize() const {
     // Cria cópia do autômato
-    Automaton minimum = *this;
+    Automaton min = *this;
     // Remove os estados mortos da cópia
-    minimum.remove_dead_states();
+    min.remove_dead_states();
     // Remove os estados inalcançáveis da cópia
-    minimum.remove_unreachable_states();
+    min.remove_unreachable_states();
+    // Define as transições de erro
+    min.set_error_transitions();
     // Remove os estados equivalentes da cópia
-    minimum.remove_equivalent_states();
+    min.remove_equivalent_states();
+    // Esconde as transições de erro
+    min.hide_error_transitions();
+    min.minimum = true;
     // Retorna a cópia
-    return minimum;
+    return min;
 }
 
 void Automaton::remove_equivalent_states() {
-    // Adiciona as transições de erro
-    set_error_transitions();
     // Classes de equivalência
     PartitionSet partitions = {k_acceptors, difference(keys, k_acceptors)};
     // Novas classes de equivalência encontradas
@@ -397,6 +407,17 @@ void Automaton::set_error_transitions() {
         for (auto& pair : states) {
             if (!pair.second.accepts(entry)) {
                 pair.second.append_transition(entry, k_error);
+            }
+        }
+    }
+}
+
+void Automaton::hide_error_transitions() {
+    states.erase(k_error);
+    for (auto entry : alphabet) {
+        for (auto& pair : states) {
+            if (pair.second.accepts_to(entry, k_error)) {
+                pair.second[entry] = {};
             }
         }
     }

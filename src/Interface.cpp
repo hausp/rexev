@@ -101,12 +101,27 @@ void Interface::show_error_message(const char* primary, const char* secondary) {
     gtk_widget_destroy(message);
 }
 
+void Interface::show_general_message(const char* primary, const char* secondary) {
+    auto message = gtk_message_dialog_new(GTK_WINDOW(window),
+                                          GTK_DIALOG_DESTROY_WITH_PARENT,
+                                          GTK_MESSAGE_ERROR,
+                                          GTK_BUTTONS_CLOSE,
+                                          primary,
+                                          NULL);
+    gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(message), secondary);
+    gtk_window_set_transient_for(GTK_WINDOW(message), GTK_WINDOW(window));
+    gtk_window_set_modal(GTK_WINDOW(message), true);
+    gtk_widget_show_all(message);
+    gtk_dialog_run(GTK_DIALOG(message));
+    gtk_widget_destroy(message);
+}
+
 void Interface::put_regex(const std::string& name, unsigned id) {
     auto model = GTK_LIST_STORE(gtk_builder_get_object(builder, "exp_table"));
     GtkTreeIter iter;
     gtk_list_store_insert(model, &iter, -1);
     gtk_list_store_set(model, &iter, 0, name.c_str(), 1, id, -1);
-    select_expression(id);
+    //select_expression(id);
 }
 
 void Interface::put_automaton(const std::string& name, unsigned id) {
@@ -114,10 +129,10 @@ void Interface::put_automaton(const std::string& name, unsigned id) {
     GtkTreeIter iter;
     gtk_list_store_insert(model, &iter, -1);
     gtk_list_store_set(model, &iter, 0, name.c_str(), 1, id, -1);
-    select_automaton(id);
+    //select_automaton(id);
 }
 
-void Interface::show_expression(const char* exp) {
+void Interface::show_regex(const char* exp) {
     auto text_area = GTK_TEXT_VIEW(gtk_builder_get_object(builder, "regex_view"));
     auto buffer = gtk_text_view_get_buffer(text_area);
     gtk_text_buffer_set_text(buffer, exp, -1);
@@ -158,7 +173,7 @@ void Interface::show_automaton(const std::vector<std::vector<std::string>>& valu
     gtk_tree_view_columns_autosize(view);
 }
 
-void Interface::select_expression(unsigned id) {
+void Interface::select_regex(unsigned id) {
     auto tree = GTK_TREE_VIEW(gtk_builder_get_object(builder, "exp_list"));
     auto path = gtk_tree_path_new_from_string(std::to_string(id).c_str());
     gtk_tree_view_set_cursor(tree, path, nullptr, false);

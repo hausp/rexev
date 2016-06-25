@@ -6,6 +6,7 @@
 PNode::PNode() : Node('+') { }
 
 std::set<DeSimoneTree::Node*> PNode::down_action() {
+    ECHO("DOWN of +");
     return left->down_action();
 }
 

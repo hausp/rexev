@@ -11,6 +11,8 @@ class SNode : public DeSimoneTree::Node {
     SNode();
     std::set<Node*> down_action();
     std::set<Node*> up_action();
+ private:
+    bool guard;
 };
 
 #endif /* S_NODE_HPP */

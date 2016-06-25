@@ -472,7 +472,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkTreeViewColumn" id="autname_column">
-                                        <property name="sizing">autosize</property>
+                                        <property name="sizing">fixed</property>
                                         <property name="title" translatable="yes">Nome</property>
                                         <property name="expand">True</property>
                                         <child>
