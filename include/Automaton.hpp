@@ -52,6 +52,8 @@ class Automaton {
      */
     Automaton complement() const;
 
+    Automaton automaton_intersection(const Automaton&) const;
+
     /* Cria um novo estado inicial que tem as mesmas 
      * transições dos estados iniciais das duas máquinas
      * e devolve uma nova máquina com esta característica

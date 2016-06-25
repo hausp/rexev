@@ -120,6 +120,99 @@ Automaton Automaton::complement() const {
     return complemented;
 }
 
+Automaton Automaton::automaton_intersection(const Automaton& fsm) const {
+    Automaton intersec;    
+    
+    // Une os alfabetos
+    std::set_union(alphabet.begin(), alphabet.end(),
+                    fsm.alphabet.begin(), fsm.alphabet.end(),
+                    std::inserter(intersec.alphabet, intersec.alphabet.end()));
+
+    int i = keys.size();
+    Automaton temp = fsm;
+    for (auto state : temp.keys) {
+        state.at(0) += i;
+    }
+
+    // Produto cartesiano dos keys
+    Key acc_key;
+    KeySet final_keys;
+    for (auto l : keys) {
+        for (auto n : temp.keys) {
+            final_keys.insert(l+n);
+        }
+    }
+
+    // Chave inicial
+    acc_key = *(final_keys.begin());
+
+    // Produto cartesiano dos aceitadores
+    KeySet acc_pairs;
+    for (auto l : k_acceptors) {
+        for (auto n : temp.k_acceptors) {
+            acc_pairs.insert(l+n);
+        }
+    }
+
+    // Adiciona os keys ao novo autômato  ??? Depende da implementação do State
+    intersec.keys = final_keys;
+    intersec.k_acceptors = acc_pairs;
+
+    // Retira acc_key de final_keys para inserí-la como chave inicial
+    final_keys.erase(acc_key);
+
+    // Insere acc_key
+    if (acc_pairs.count(acc_key)) {
+        intersec.insert(acc_key, true, true); 
+    } else {
+        intersec.insert(acc_key, true, false);
+    }
+
+    // Cria os estados em questão
+    for (auto l : final_keys) {
+        if (acc_pairs.count(l)) {
+            intersec.insert(l, false, true);
+        } else {
+            intersec.insert(l);
+        }
+    }
+
+    // Define as transições
+    for (auto pair : intersec.keys) {
+        auto st0 = pair[0]+"";
+        auto st1 = pair[1]+"";
+        for (auto entry : intersec.alphabet) {
+           if (states.at(st0).accepts(entry) && states.at(st1).accepts(entry)) {
+                std::vector<Key> dest0 = states.at(st0)[entry];
+                std::vector<Key> dest1 = states.at(st1)[entry];
+                for (auto k0 : dest0) {
+                    for (auto k1 : dest1) {
+                        intersec.make_transition(pair, entry, k0+k1); 
+                    }
+                }
+            }
+        }
+    }
+
+    // Cria o estado inicial
+    /*bool initial_is_final = false;
+    if (states[initial].is_final() && temp.states.at(temp.initial).is_final()) {
+        initial_is_final = true;
+    }
+    intersec.k_initial = "A";
+    intersec.insert("A", true, initial_is_final);
+
+    // Cria as transições do estado inicial = transições dos iniciais anteriores
+    for (auto entry : intersect.alphabet) {
+        if (fsm.states.at("A").accepts(entry) && states.at("A").accepts(entry)) {
+            intersec.make_transition(intersec.k_initial, entry, "A"+('A'+i));
+        }
+    }*/
+
+    return intersec;
+}
+
+
 Automaton Automaton::union_operation(const Automaton& m) const {
     // Cria um novo autômato inicialmente igual ao autômato m
     Automaton union_atm = m;
