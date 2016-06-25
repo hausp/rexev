@@ -165,7 +165,7 @@ void Interface::select_expression(unsigned id) {
 }
 
 void Interface::select_automaton(unsigned id) {
-    auto tree = GTK_TREE_VIEW(gtk_builder_get_object(builder, "automata_table"));
+    auto tree = GTK_TREE_VIEW(gtk_builder_get_object(builder, "automata_list"));
     auto path = gtk_tree_path_new_from_string(std::to_string(id).c_str());
     gtk_tree_view_set_cursor(tree, path, nullptr, false);
 }
