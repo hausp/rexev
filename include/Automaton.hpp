@@ -20,6 +20,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <algorithm>
 
 class Automaton {
  public:
@@ -54,6 +55,8 @@ class Automaton {
      */
     Automaton union_operation(const Automaton&);
 
+    Automaton automaton_intersection(const Automaton&);
+
     /* Executa o algoritmo de minimização de autômato finito */
     Automaton minimize();
 
@@ -80,6 +83,8 @@ class Automaton {
 
     /* Um conjunto dos nomes dos estados finais */ 
     std::set<std::string> final_states;
+
+    std::set<std::string> labels;
 
     std::string rejection_state;
 

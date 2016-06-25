@@ -113,6 +113,81 @@ Automaton Automaton::complement() {
     return complemented;
 }
 
+Automaton Automaton::automaton_intersection(const Automaton& fsm) {
+    Automaton intersec;    
+    
+    // Une os alfabetos
+    std::set_union(alphabet.begin(), alphabet.end(),
+                    fsm.alphabet.begin(), fsm.alphabet.end(),
+                    std::back_inserter(intersec.alphabet));
+
+    int i = labels.size();
+    Automaton temp = fsm;
+    for (auto state : temp.labels) {
+        state.at(0) += i;
+    }
+
+    // Produto cartesiano dos labels
+    std::set<std::string> final_labels;
+    for (auto l : labels) {
+        for (auto n : temp.labels) {
+            final_labels.insert(l+n);
+        }
+    }
+
+    // Produto cartesiano dos aceitadores
+    std::set<std::string> acc_pairs;
+    for (auto l : acceptors) {
+        for (auto n : temp.acceptors) {
+            acc_pairs.insert(l+n);
+        }
+    }
+
+    // Adiciona os labels ao novo autômato  ??? Depende da implementação do State
+    intersec.labels = final_labels;
+    intersec.acceptors = acc_pairs;
+
+    // Cria os estados em questão
+    for (auto l : final_labels) {
+        if (acc_pairs.count(l)) {
+            intersec.insert(l, false, true);
+        } else {
+            intersec.insert(l);
+        }
+    }
+
+    // Define as transições
+    for (auto pair : final_labels) {
+        auto st0 = pair[0];
+        auto st1 = pair[1];
+        for (auto entry : intersect.alphabet) {
+           if (states[st0].accepts(entry) && states[st1].accepts(entry)) {
+                std::string dest0 = states[st0][entry];
+                std::string dest1 = states[st1][entry];
+                intersect.make_transition(pair, entry, dest0+dest1); 
+            }
+        }
+    }
+
+
+    // Cria o estado inicial
+    bool initial_is_final = false;
+    if (states[initial].is_final() && temp.states.at(temp.initial).is_final()) {
+        initial_is_final = true;
+    }
+    intersec.initial = "A";
+    intersec.insert("A", true, initial_is_final);
+
+    // Cria as transições do estado inicial = transições dos iniciais anteriores
+    for (auto entry : intersect.alphabet) {
+        if (fsm.states.at("A").accepts(entry) && states.at("A").accepts(entry)) {
+            intersect.make_transition(intersect.initial, entry, "A"+('A'+i));
+        }
+    }
+
+    return intersect;
+}
+
 Automaton Automaton::union_operation(const Automaton& fsm) {
     // std::set<char> united_alphabet;
     // for (auto c : alphabet) {
