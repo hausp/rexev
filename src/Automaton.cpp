@@ -7,10 +7,11 @@
 #include <list>
 
 
-Automaton::Automaton() { }
+Automaton::Automaton()
+: k_error("\u03C6") { }
 
 Automaton::Automaton(const Alphabet& alphabet)
- : alphabet(alphabet) {
+ : alphabet(alphabet), k_error("\u03C6") {
 
 }
 
@@ -268,6 +269,8 @@ Automaton Automaton::minimize() const {
 }
 
 void Automaton::remove_equivalent_states() {
+    // Adiciona as transições de erro
+    set_error_transitions();
     // Classes de equivalência
     PartitionSet partitions = {k_acceptors, difference(keys, k_acceptors)};
     // Novas classes de equivalência encontradas
@@ -351,6 +354,17 @@ void Automaton::remove_equivalent_states() {
             if (equivalent == k_initial) {
                 k_initial = state;
                 states[state].set_initial(true);
+            }
+        }
+    }
+}
+
+void Automaton::set_error_transitions() {
+    insert(k_error);
+    for (auto entry : alphabet) {
+        for (auto& pair : states) {
+            if (!pair.second.accepts(entry)) {
+                pair.second.append_transition(entry, k_error);
             }
         }
     }

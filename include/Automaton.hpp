@@ -63,6 +63,8 @@ class Automaton {
     /* Executa o algoritmo de minimização de autômato finito */
     Automaton minimize() const;
 
+    void set_error_transitions();
+
     /* Transforma o autômato numa tabela, para impressão em terminal/console */
     operator std::string() const;
 

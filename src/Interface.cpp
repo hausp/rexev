@@ -106,6 +106,7 @@ void Interface::put_regex(const std::string& name, unsigned id) {
     GtkTreeIter iter;
     gtk_list_store_insert(model, &iter, -1);
     gtk_list_store_set(model, &iter, 0, name.c_str(), 1, id, -1);
+    select_expression(id);
 }
 
 void Interface::put_automaton(const std::string& name, unsigned id) {
@@ -113,6 +114,7 @@ void Interface::put_automaton(const std::string& name, unsigned id) {
     GtkTreeIter iter;
     gtk_list_store_insert(model, &iter, -1);
     gtk_list_store_set(model, &iter, 0, name.c_str(), 1, id, -1);
+    select_automaton(id);
 }
 
 void Interface::show_expression(const char* exp) {
@@ -158,6 +160,12 @@ void Interface::show_automaton(const std::vector<std::vector<std::string>>& valu
 
 void Interface::select_expression(unsigned id) {
     auto tree = GTK_TREE_VIEW(gtk_builder_get_object(builder, "exp_list"));
+    auto path = gtk_tree_path_new_from_string(std::to_string(id).c_str());
+    gtk_tree_view_set_cursor(tree, path, nullptr, false);
+}
+
+void Interface::select_automaton(unsigned id) {
+    auto tree = GTK_TREE_VIEW(gtk_builder_get_object(builder, "automata_table"));
     auto path = gtk_tree_path_new_from_string(std::to_string(id).c_str());
     gtk_tree_view_set_cursor(tree, path, nullptr, false);
 }

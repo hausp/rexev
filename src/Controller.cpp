@@ -31,7 +31,7 @@ void Controller::add_regex() {
                 ui.put_regex(result.first, n_expr-1);
                 ui.put_automaton(result.first, n_atm);
                 automata[n_atm++] = expressions[n_expr-1].to_automaton();
-                ui.select_expression(n_expr-1);
+                //ui.select_expression(n_expr-1);
             }
         }
     }
@@ -39,7 +39,7 @@ void Controller::add_regex() {
 }
 
 void Controller::edit_regex() {
-    
+
 }
 
 void Controller::minimize_automaton() {
@@ -49,11 +49,11 @@ void Controller::minimize_automaton() {
 }
 
 void Controller::intersect_automaton() {
-    
+
 }
 
 void Controller::regex_equivalence() {
-    
+
 }
 
 void Controller::add_regex_selection(unsigned value) {

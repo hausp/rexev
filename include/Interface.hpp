@@ -20,6 +20,7 @@ class Interface {
     void show_expression(const char*);
     void show_automaton(const std::vector<std::vector<std::string>>&);
     void select_expression(unsigned);
+    void select_automaton(unsigned);
     void destroy();
 
  private:
