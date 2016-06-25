@@ -49,7 +49,12 @@ void Controller::minimize_automaton() {
 }
 
 void Controller::intersect_automaton() {
-    
+    for (auto key : atm_selection) {
+        if (key == atm_selection.front()) automata[n_atm] = automata[key];
+        automata[n_atm] = automata[key].automaton_intersection(automata[n_atm]);
+    }
+    ui.put_automaton("INT" + std::to_string(n_atm), n_atm);
+    n_atm++;
 }
 
 void Controller::regex_equivalence() {
