@@ -54,7 +54,7 @@ void Controller::intersect_automaton() {
         automata[n_atm] = automata[key].automaton_intersection(automata[n_atm]);
     }
     ui.put_automaton("INT" + std::to_string(n_atm), n_atm);
-    n_atm++;
+    n_atm++;    
 }
 
 void Controller::regex_equivalence() {
