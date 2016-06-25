@@ -21,19 +21,21 @@
 #include <utility>
 #include <vector>
 
+#include "types.hpp"
+
 class Automaton {
  public:
  	/* Construtor vazio da máquina de estados */
  	Automaton(); 
     
  	/* Construtor passando alfabeto como parâmetro */
-    Automaton(const std::set<char>&);
+    Automaton(const Alphabet&);
     
     /* Método para inserção de estado na máquina: label, inicial, final */
-    void insert(const std::string&, bool = false, bool = false);
+    void insert(const Key&, bool = false, bool = false);
 
     /* Método para criar uma transição de from por label para to: from, label, to */
-    void make_transition(const std::string&, const char, const std::string&);
+    void make_transition(const Key&, const Entry, const Key&);
 
  	/* Remove os estados que não levam ao estado final */
     void remove_dead_states();
@@ -41,49 +43,64 @@ class Automaton {
     /* Remove os estados inalcansáveis a partir do estado inicial */
     void remove_unreachable_states();
 
+    void remove_equivalent_states();
+
     /* Troca os estados finais e não finais
      * Faz o complemento do autômato
      * NF -> F
      * F -> NF
      */
-    Automaton complement();
+    Automaton complement() const;
 
     /* Cria um novo estado inicial que tem as mesmas 
      * transições dos estados iniciais das duas máquinas
      * e devolve uma nova máquina com esta característica
      */
-    Automaton union_operation(const Automaton&);
+    Automaton union_operation(const Automaton&) const;
 
     /* Executa o algoritmo de minimização de autômato finito */
-    Automaton minimize();
+    Automaton minimize() const;
 
     /* Transforma o autômato numa tabela, para impressão em terminal/console */
     operator std::string() const;
 
-    std::vector<std::string>& operator()(const std::string&, const char);
+    TransitionVector& operator()(const Key&, const Entry);
 
-    const std::vector<std::string>& operator()(const std::string&, const char) const;
+    const TransitionVector& operator()(const Key&, const Entry) const;
 
-    std::vector<std::vector<std::string>> to_table();
+    std::vector<std::vector<std::string>> to_table() const;
 
  private:
     class State;
 
- 	/* Um mapa de nome para estado, contendo todos os estados do autômato */
-    std::map<std::string, State> states;
+ 	// Um mapa de nome para estado, contendo todos os estados do autômato
+    std::map<Key, State> states;
 
-    /* O alfabeto da máquina de estados (sigma) */
-    std::set<char> alphabet;
+    // O alfabeto da máquina de estados (sigma)
+    Alphabet alphabet;
 
-    /* O nome do estado inicial */
-    std::string initial_state;
+    // O nome do estado inicial
+    Key k_initial;
 
-    /* Um conjunto dos nomes dos estados finais */ 
-    std::set<std::string> final_states;
+    // Um conjunto dos nomes dos estados finais
+    KeySet k_acceptors;
 
-    std::string rejection_state;
+    // Conjunto de nomes dos estados
+    KeySet keys;
+
+    // O nome do estado de rejeição
+    Key k_error;
+
+    // Ainda em análise da necessidade
+    bool non_deterministic;
 
     bool is_dead(const State&) const;
+
+    KeySet keys_except(const KeySet&) const;
+
+    KeySet keys_intersect(const KeySet&) const;
+
+    KeySet predecessors_of(const KeySet&, const Entry) const;
 };
 
 class Automaton::State {
@@ -104,32 +121,29 @@ class Automaton::State {
      * i.e., se existe transição com dada entrada,
      * ignorando as transições para o estado de rejeição.
      */
-    bool accepts(const char) const;
+    bool accepts(const Entry) const;
 
-    void append_transition(const char, const std::string&);
+    bool accepts_to(const Entry, const Key&) const;
 
-    std::map<char,std::vector<std::string>>::iterator begin();
+    void append_transition(const Entry, const Key&);
 
-    std::map<char,std::vector<std::string>>::iterator end();
+    std::map<Entry,TransitionVector>::iterator begin();
 
-    std::map<char,std::vector<std::string>>::const_iterator begin() const;
+    std::map<Entry,TransitionVector>::iterator end();
 
-    std::map<char,std::vector<std::string>>::const_iterator end() const;
+    std::map<Entry,TransitionVector>::const_iterator begin() const;
+
+    std::map<Entry,TransitionVector>::const_iterator end() const;
 
     /* Acesso a uma transição existente. */
-    std::vector<std::string>& operator[](const char);
+    TransitionVector& operator[](const Entry);
 
     /* Acesso const a uma transição existente. */
-    const std::vector<std::string>& operator[](const char) const;
-
-    operator std::string() const;
+    const TransitionVector& operator[](const Entry) const;
 
  private:
-    /* Label do estado */
-    std::string label;
-
     /* Mapa de transições */
-    std::map<char, std::vector<std::string>> transitions;
+    std::map<char, TransitionVector> transitions;
 
     /* Identifica se estado é inicial.
      * True se inicial, false caso contrário.

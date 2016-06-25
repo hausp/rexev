@@ -22,12 +22,7 @@ void Controller::add_regex() {
         }
         if (result.second.size() > 0) {
             try {
-                expressions.insert(
-                    std::make_pair(
-                        n_expr++,
-                        Regex(result.second, result.first)
-                    )
-                );
+                expressions[n_expr++] = Regex(result.second, result.first);
             } catch (std::exception& e) {
                 ui.show_error_message("Erro!", e.what());
                 success = false;

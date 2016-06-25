@@ -4,34 +4,34 @@
 #include "Automaton.hpp"
 #include <iostream>
 #include <algorithm>
+#include <list>
+
 
 Automaton::Automaton() { }
 
-Automaton::Automaton(const std::set<char>& alphabet) : alphabet(alphabet) {
+Automaton::Automaton(const Alphabet& alphabet) : alphabet(alphabet) {
 
 }
 
-void Automaton::insert(const std::string& entry, bool initial, bool final) {
-    states[entry] = State(initial, final);
-    if (initial) initial_state = entry;
-    if (final) final_states.insert(entry);
+void Automaton::insert(const Key& k, bool initial, bool final) {
+    states[k] = State(initial, final);
+    keys.insert(k);
+    if (initial) k_initial = k;
+    if (final) k_acceptors.insert(k);
 }
 
-void Automaton::make_transition(const std::string& from, char label,
-                                const std::string& to) {
+void Automaton::make_transition(const Key& from, const Entry e, const Key& to) {
     if (!states.count(to)) states[to];
-    states[from].append_transition(label, to);
+    states[from].append_transition(e, to);
 }
 
-std::vector<std::string>& Automaton::operator()(const std::string& state,
-                                                const char entry) {
-    return states[state][entry];
+TransitionVector& Automaton::operator()(const Key& k, const Entry e) {
+    return states[k][e];
 
 }
 
-const std::vector<std::string>& Automaton::operator()(const std::string& state,
-                                                      const char entry) const {
-    return states.at(state)[entry];
+const TransitionVector& Automaton::operator()(const Key& k, const Entry e) const {
+    return states.at(k)[e];
 }
 
 
@@ -54,7 +54,7 @@ void Automaton::remove_dead_states() {
 }
 
 bool Automaton::is_dead(const State& state) const {
-        if (state.is_final()) {
+    if (state.is_final()) {
         return false;
     }
     for (auto pair : state) {
@@ -68,95 +68,140 @@ bool Automaton::is_dead(const State& state) const {
 }
 
 void Automaton::remove_unreachable_states() {
-    std::map<std::string, State> reachable_states;
-    reachable_states[initial_state] = states[initial_state];
-    for (auto pair : states) {
-        if (!reachable_states.count(pair.first)) {
-            bool reachable = false;
-            for (auto rpair : reachable_states) {
-                for (auto transition : rpair.second) {
-                    for (auto t : transition.second) {
-                        if (t == pair.first) {
-                            reachable = true;
-                            break;
-                        }
-                    }
-                    if (reachable) break;
+    // Estados alcançáveis
+    std::map<Key, State> reachable_states;
+    // Novos estados alcançáveis encontrados
+    std::list<Key> new_reachables = {k_initial};
+    // Limpa conjunto de chaves de estados,
+    // deixando apenas a chave do estado inicial
+    keys = {k_initial};
+    // Enquanto houver novos estados alcançáveis
+    while (!new_reachables.empty()) {
+        // Obtém a chave de um novo estado alcançável
+        auto key = new_reachables.front();
+        // Obtém o estado equivalente à chave
+        auto reachable = states[key];
+        // Adiciona o estado obtido ao conjunto de estados alcançáveis
+        reachable_states[key] = reachable;
+        // Remove a chave da lista de novos estados alcançáveis
+        new_reachables.pop_front();
+        // Para cada conjunto de transições do estado alcançável
+        for (auto trs : reachable) {
+            // Para cada estado do conjunto de transições
+            for (auto t : trs.second) {
+                // Se o estado t não se encontra no conjunto
+                // de estados alcançáveis
+                if (!reachable_states.count(t)) {
+                    // Adiciona o estado t ao conjunto
+                    new_reachables.push_back(t);
+                    // Adiciona a key ao conjunto de keys
+                    keys.insert(t);
                 }
-                if (reachable) break;
-            }
-            if (reachable) {
-                reachable_states.insert(pair);
             }
         }
     }
-    // for (auto pair : reachable_states) {
-    //     for (auto t : alphabet) {
-    //         for (auto s : pair.second) {
-    //             reachable_states[s] = states[s];
-    //         }
-    //     }
-    // }
+    // Mapa de estados recebe mapa de estados alcançáveis
     states = reachable_states;
+    // Atualiza conjunto de chaves de estados aceitadores
+    k_acceptors = keys_intersect(k_acceptors);
 }
 
-Automaton Automaton::complement() {
-    std::set<std::string> non_final_states;
+Automaton Automaton::complement() const {
+    KeySet non_acceptors;
     for (auto pair : states) {
         if (!pair.second.is_final()) {
-            non_final_states.insert(pair.first);
+            non_acceptors.insert(pair.first);
         }
     }
 
     Automaton complemented = *this;
-    complemented.final_states = non_final_states;
+    complemented.k_acceptors = non_acceptors;
     return complemented;
 }
 
-Automaton Automaton::union_operation(const Automaton& fsm) {
-    // std::set<char> united_alphabet;
-    // for (auto c : alphabet) {
-    //     united_alphabet.insert(c);
-    // }
-    // for (auto c : fsm.alphabet) {
-    //     united_alphabet.insert(c);
-    // }
-    // Automaton united_machine (united_machine);
+Automaton Automaton::union_operation(const Automaton& m) const {
+    // Cria um novo autômato inicialmente igual ao autômato m
+    Automaton union_atm = m;
+    // Faz a união dos dois alfabetos
+    std::set_union(union_atm.alphabet.begin(), union_atm.alphabet.end(),
+                   alphabet.begin(), alphabet.end(),
+                   inserter(union_atm.alphabet, union_atm.alphabet.begin()));
     
-    // bool initial_is_final = false;
-    // if (final_states.count(initial_state) && fsm.final_states.count(fsm.initial_state)) {
-    //     initial_is_final = true;
-    // }
+    // Verifica se um dos estados iniciais é também final
+    bool final = k_acceptors.count(k_initial) ||
+                 m.k_acceptors.count(m.k_initial);
     
-    // std::string initial_label = initial_state+"\'"+"\'";
-    // State initial (initial_label, nullptr, true, initial_is_final);
-    // for (auto st : states) {
-    //     united_machine[st.first] = st.second;
-    // }
-    // for (auto st : fsm.states) {
-    //     st.second.set_label(st.first+"\'");
-    //     united_machine[st.first+"\'"] = st.second;
-    // }
-    // united_machine[initial_label] = initial;
-    // united_machine.initial_state = initial_label;
+    // Insere um novo estado inicial
+    union_atm.insert(k_initial + "''", true, final);
 
-    // for (auto c : united_machine.alphabet) {
-    //     if (!united_machine[initial_state][c].empty()) {
-    //         for (auto t : united_machine[initial_state][c]) {
-    //             united_machine.make_transition(initial_label, c, t->get_label());
-    //         }
-    //     }
-    //     if (!united_machine[initial_state+"\'"][c].empty()) {
-    //         for (auto t : united_machine[initial_state+"\'"][c]) {
-    //             united_machine.make_transition(initial_label, c, t->get_label());
-    //         }
-    //     }
-    // }
-
-    // return united_machine;
+    // Para cada estado em m
+    for (auto s : m.states) {
+        // Cria-se um novo estado equivalente em union_atm
+        union_atm.insert(s.first + "'", false, s.second.is_final());
+        // Para cada conjunto de transições para uma entrada no estado s
+        for (auto trs : s.second) {
+            // Para cada estado do conjunto de transições
+            for (auto t : trs.second) {
+                // Cri-se uma transição equivalente em union_atm
+                union_atm.make_transition(s.first + "'", trs.first, t + "'");
+            }
+        }
+    }
+    // Retorna a união
+    return union_atm;
 }
 
-Automaton Automaton::minimize() {
+Automaton Automaton::minimize() const {
+   
+}
+
+void Automaton::remove_equivalent_states() {
+    PartitionSet partitions = {k_acceptors, keys_except(k_acceptors)};
+    PartitionSet new_partitions = {k_acceptors};
+
+    while(!new_partitions.empty()) {
+        auto partition = *new_partitions.begin();
+        new_partitions.erase(partition);
+
+        for (auto entry : alphabet) {
+            auto predecessors = predecessors_of(partition, entry);
+            for (auto p : partitions) {
+            }
+        }
+    }
+}
+
+KeySet Automaton::keys_except(const KeySet& expt) const {
+    KeySet keys_except;
+    std::set_difference(keys.begin(), keys.end(),
+                        expt.begin(), expt.end(),
+                        inserter(keys_except, keys_except.end()));
+    return keys_except;
+}
+
+KeySet Automaton::keys_intersect(const KeySet& set) const {
+    KeySet keys_intersect;
+    std::set_intersection(keys.begin(), keys.end(),
+                          set.begin(), set.end(),
+                          inserter(keys_intersect, keys_intersect.end()));
+    return keys_intersect;
+}
+
+KeySet Automaton::predecessors_of(const KeySet& set, const Entry e) const {
+    KeySet predecessors;
+    for (auto key : keys) {
+        for (auto target : set) {
+            if (states.at(key).accepts_to(e, target)) {
+                predecessors.insert(key);
+                break;
+            }
+        }
+    }
+    return predecessors;
+}
+
+//std::set<
+
     // Automaton minimezed_automata = *this;
     // minimezed_automata.remove_unreachable_states();
     // minimezed_automata.remove_dead_states();
@@ -168,7 +213,7 @@ Automaton Automaton::minimize() {
     // std::map<std::string, std::vector<State>> state_set;
     // state_set["\u03D5"].push_back(minimezed_automata.rejection_state);
     // std::string state_count = "A";
-    // for (auto st : final_states) {
+    // for (auto st : acceptors) {
     //     state_set[state_count].push_back(minimezed_automata[st]);
     // }
     // state_count.at(0)++;
@@ -200,40 +245,9 @@ Automaton Automaton::minimize() {
     }*/
 
     //return minimezed_automata;
-}
+//}
 
-Automaton::operator std::string() const {
-    // std::string out = "      ";
-    // for (auto entry : alphabet) {
-    //     out += "| ";
-    //     out += entry;
-    //     out += " ";
-    // }
-    // out += "\n";
-    // for (auto s : states) {
-    //     out += " ";
-    //     if (s.second.is_final()) out += "*";
-    //     else out += " ";
-    //     if (s.second.is_initial()) out += "->";
-    //     else out += "  ";
-    //     out += s.second.get_label();
-    //     out += " ";
-    //     for (auto entry : alphabet) {
-    //         bool test = true;
-    //         out += "| ";
-    //         for (auto t : s.second[entry]) {
-    //             test = false;
-    //             out += t->get_label();
-    //         }
-    //         if (test) out += " ";
-    //         out += " ";
-    //     }
-    //     out += "\n";
-    // }
-    // return out;
-}
-
-std::vector<std::vector<std::string>> Automaton::to_table() {
+std::vector<std::vector<std::string>> Automaton::to_table() const {
     std::vector<std::vector<std::string>> result;
     
     result.push_back({"\u03B4"});

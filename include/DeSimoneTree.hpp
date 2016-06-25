@@ -21,10 +21,7 @@
 #include <string>
 #include <vector>
 
-#define RECENT_COMPILER 0
-#define TRACE(x) std::cout << (#x) << " = " << (x) << std::endl
-#define TRACE_L(x,y) std::cout << (x) << " = " << (y) << std::endl
-#define ECHO(x) std::cout << (x) << std::endl
+#include "types.hpp"
 
 class Automaton;
 

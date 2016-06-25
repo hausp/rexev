@@ -21,6 +21,15 @@ bool Automaton::State::accepts(const char entry) const {
     return transitions.count(entry);
 }
 
+bool Automaton::State::accepts_to(const char entry, const std::string& target) const {
+    if (transitions.count(entry)) {
+        for (auto t : transitions.at(entry)) {
+            if (t == target) return true;
+        }
+    }
+    return false;
+}
+
 void Automaton::State::append_transition(const char entry, const std::string& target) {
     transitions[entry].push_back(target);
 }
@@ -47,8 +56,4 @@ std::vector<std::string>& Automaton::State::operator[](const char entry) {
 
 const std::vector<std::string>& Automaton::State::operator[](const char entry) const {
     return transitions.at(entry);
-}
-
-Automaton::State::operator std::string() const {
-    return label;
 }
