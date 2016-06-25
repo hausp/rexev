@@ -31,7 +31,6 @@ void Controller::add_regex() {
                 automata[n_atm++] = expressions[n_expr-1].to_automaton();
                 ui.put_regex(result.first, n_expr-1);
                 ui.put_automaton(result.first, n_atm-1);
-                //ui.select_expression(n_expr-1);
             }
         }
     }
@@ -39,7 +38,7 @@ void Controller::add_regex() {
 }
 
 void Controller::edit_regex() {
-
+    
 }
 
 void Controller::minimize_automaton() {
@@ -49,11 +48,16 @@ void Controller::minimize_automaton() {
 }
 
 void Controller::intersect_automaton() {
-
+    for (auto key : atm_selection) {
+        if (key == atm_selection.front()) automata[n_atm] = automata[key];
+        automata[n_atm] = automata[key].automaton_intersection(automata[n_atm]);
+    }
+    ui.put_automaton("INT" + std::to_string(n_atm), n_atm);
+    n_atm++;    
 }
 
 void Controller::regex_equivalence() {
-
+    
 }
 
 void Controller::add_regex_selection(unsigned value) {
