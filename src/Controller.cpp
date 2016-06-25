@@ -28,9 +28,9 @@ void Controller::add_regex() {
                 success = false;
             }
             if (success) {
-                ui.put_regex(result.first, n_expr-1);
-                ui.put_automaton(result.first, n_atm);
                 automata[n_atm++] = expressions[n_expr-1].to_automaton();
+                ui.put_regex(result.first, n_expr-1);
+                ui.put_automaton(result.first, n_atm-1);
                 //ui.select_expression(n_expr-1);
             }
         }
