@@ -264,7 +264,7 @@
                             <property name="show_expanders">False</property>
                             <property name="enable_grid_lines">both</property>
                             <child internal-child="selection">
-                              <object class="GtkTreeSelection">
+                              <object class="GtkTreeSelection" id="dfa_tree_select">
                                 <property name="mode">none</property>
                               </object>
                             </child>
