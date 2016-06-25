@@ -15,6 +15,14 @@ Automaton::Automaton(const Alphabet& alphabet)
 
 }
 
+void Automaton::set_name(const std::string& n) {
+    name = n;
+}
+
+std::string Automaton::get_name() const {
+    return name;
+}
+
 void Automaton::insert(const Key& k, bool initial, bool final) {
     states[k] = State(initial, final);
     keys.insert(k);
@@ -287,21 +295,15 @@ void Automaton::remove_equivalent_states() {
         // Para cada entrada do alfabeto
         for (auto entry : alphabet) {
             // Calcula os predecessores da classe
-            ECHO(entry);
-            TRACE_IT(partition);
             auto predecessors = predecessors_of(partition, entry);
-            TRACE_IT(predecessors);
             // Para cada classe no conjunto de classes
             for (auto it = partitions.begin(); it != partitions.end();) {
                 // Guarda a classe em value
                 auto value = *it;
                 // Calcula a intersecção da classe com os predecessores
                 auto intersec = intersection(predecessors, value);
-                TRACE_IT(intersec);
                 // Calcula a diferença da classe com os predecessores
-                auto diff = difference(value, predecessors);
-                TRACE_IT(diff);
-                
+                auto diff = difference(value, predecessors);                
                 // Se ambas, intersecção e diferença, não forem vazias
                 if (!intersec.empty() && !diff.empty()) {
                     // Remove a classe selecionada
@@ -337,9 +339,11 @@ void Automaton::remove_equivalent_states() {
             }
         }
     }
+    update_states(partitions);
+}
 
-    for (auto p : partitions) {
-        TRACE_IT(p);
+void Automaton::update_states(const PartitionSet& partitions) {
+        for (auto p : partitions) {
         Key state = *p.begin();
         p.erase(state);
         while (!p.empty()) {

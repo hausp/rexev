@@ -30,6 +30,10 @@ class Automaton {
     
  	/* Construtor passando alfabeto como parâmetro */
     Automaton(const Alphabet&);
+
+    void set_name(const std::string&);
+
+    std::string get_name() const;
     
     /* Método para inserção de estado na máquina: label, inicial, final */
     void insert(const Key&, bool = false, bool = false);
@@ -95,8 +99,7 @@ class Automaton {
     // O nome do estado de rejeição
     Key k_error;
 
-    // Ainda em análise da necessidade
-    bool non_deterministic;
+    std::string name;
 
     KeySet difference(const KeySet&, const KeySet&) const;
 
@@ -105,6 +108,8 @@ class Automaton {
     KeySet predecessors_of(const KeySet&, const Entry) const;
 
     KeySet predecessors_of(const Key&, const Entry) const;
+
+    void update_states(const PartitionSet&);
 };
 
 class Automaton::State {

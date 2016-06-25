@@ -29,6 +29,7 @@ void Controller::add_regex() {
             }
             if (success) {
                 automata[n_atm++] = expressions[n_expr-1].to_automaton();
+                automata[n_atm-1].set_name(result.first);
                 ui.put_regex(result.first, n_expr-1);
                 ui.put_automaton(result.first, n_atm-1);
             }
@@ -43,8 +44,10 @@ void Controller::edit_regex() {
 
 void Controller::minimize_automaton() {
     auto key = atm_selection.front();
-    automata[key] = automata[key].minimize();
-    ui.show_automaton(automata[key].to_table());
+    automata[n_atm] = automata[key].minimize();
+    automata[n_atm].set_name("MIN[" + automata[n_atm].get_name() + "]");
+    ui.put_automaton(automata[n_atm].get_name(), n_atm);
+    n_atm++;
 }
 
 void Controller::intersect_automaton() {
