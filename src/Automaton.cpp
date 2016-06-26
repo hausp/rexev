@@ -295,17 +295,24 @@ Automaton Automaton::union_operation(const Automaton& m) const {
 
 Automaton Automaton::minimize() const {
     // Cria cópia do autômato
+    ECHO("minimize");
     Automaton min = *this;
+    ECHO("copied");
     // Remove os estados mortos da cópia
     min.remove_dead_states();
+    ECHO("dead states gone");
     // Remove os estados inalcançáveis da cópia
     min.remove_unreachable_states();
+    ECHO("unreachable states gone");
     // Define as transições de erro
     min.set_error_transitions();
+    ECHO("error transitions say hello");
     // Remove os estados equivalentes da cópia
     min.remove_equivalent_states();
+    ECHO("equivalent states gone");
     // Esconde as transições de erro
     min.hide_error_transitions();
+    ECHO("error transitions say bye");
     min.minimum = true;
     // Retorna a cópia
     return min;
@@ -370,30 +377,34 @@ void Automaton::remove_equivalent_states() {
             }
         }
     }
+    ECHO(24);
     update_states(partitions);
 }
 
 void Automaton::update_states(const PartitionSet& partitions) {
-        for (auto p : partitions) {
-        Key state = *p.begin();
-        p.erase(state);
-        while (!p.empty()) {
-            Key equivalent = *p.begin();
-            p.erase(equivalent);
-            for (auto entry : alphabet) {
-                auto predecessors = predecessors_of(equivalent, entry);
-                for (auto s : predecessors) {
-                    states[s][entry] = {state};
+    ECHO(25);
+    for (auto p : partitions) {
+        if (!p.empty()) {
+            Key state = *p.begin();
+            p.erase(state);
+            while (!p.empty()) {
+                Key equivalent = *p.begin();
+                p.erase(equivalent);
+                for (auto entry : alphabet) {
+                    auto predecessors = predecessors_of(equivalent, entry);
+                    for (auto s : predecessors) {
+                        states[s][entry] = {state};
+                    }
                 }
-            }
-            states.erase(equivalent);
-            keys.erase(equivalent);
-            if (k_acceptors.count(equivalent)){
-                k_acceptors.erase(equivalent);
-            }
-            if (equivalent == k_initial) {
-                k_initial = state;
-                states[state].set_initial(true);
+                states.erase(equivalent);
+                keys.erase(equivalent);
+                if (k_acceptors.count(equivalent)){
+                    k_acceptors.erase(equivalent);
+                }
+                if (equivalent == k_initial) {
+                    k_initial = state;
+                    states[state].set_initial(true);
+                }
             }
         }
     }
