@@ -23,6 +23,7 @@ class Interface {
     void show_automaton(const std::vector<std::vector<std::string>>&);
     void select_regex(unsigned);
     void select_automaton(unsigned);
+    void clear();
     void destroy();
     std::string open_file_dialog();
     std::string save_file_dialog();

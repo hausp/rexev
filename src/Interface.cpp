@@ -106,11 +106,6 @@ void Interface::clean_add_dialog() {
     gtk_text_buffer_set_text(text_buffer, "\0", -1);
 }
 
-void Interface::destroy() {
-    gtk_widget_destroy(window);
-
-}
-
 void Interface::show_error_message(const char* primary, const char* secondary) {
     auto message = gtk_message_dialog_new(GTK_WINDOW(dialog),
                                           GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -239,4 +234,15 @@ std::string Interface::build_file_dialog(const GtkFileChooserAction& action,
     }
     gtk_widget_destroy(file_chooser);
     return filename;
+}
+
+void Interface::clear() {
+    auto exp_model = GTK_LIST_STORE(gtk_builder_get_object(builder, "exp_table"));
+    auto atm_model = GTK_LIST_STORE(gtk_builder_get_object(builder, "automata_table"));
+    gtk_list_store_clear(exp_model);
+    gtk_list_store_clear(atm_model);
+}
+
+void Interface::destroy() {
+    gtk_widget_destroy(window);
 }
