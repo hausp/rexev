@@ -52,7 +52,6 @@ class DeSimoneTree {
     void put_node(Node*&, Node*&);
     bool is_terminal(char);
     bool has_lambda(const std::set<Node*>&);
-    std::string new_label(unsigned);
     int search_composition(const std::vector<std::set<Node*>>&,
                            const std::set<Node*>&);
     std::set<Node*> get_composition(const std::set<Node*>&);

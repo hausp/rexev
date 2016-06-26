@@ -2,6 +2,7 @@
    and Marleson Graf<aszdrick@gmail.com> [2016] */
 
 #include "Automaton.hpp"
+#include <cmath>
 #include <iostream>
 #include <algorithm>
 #include <list>
@@ -41,17 +42,17 @@ void Automaton::insert(const Key& k, bool initial, bool final) {
 
 void Automaton::make_transition(const Key& from, const Entry e, const Key& to) {
     if (!states.count(to)) states[to];
-    states[from].append_transition(e, to);
+    states[from].make_transition(e, to);
     minimum = false;
 }
 
-TransitionVector& Automaton::operator()(const Key& k, const Entry e) {
+Key& Automaton::operator()(const Key& k, const Entry e) {
     minimum = false;
     return states[k][e];
 
 }
 
-const TransitionVector& Automaton::operator()(const Key& k, const Entry e) const {
+const Key& Automaton::operator()(const Key& k, const Entry e) const {
     return states.at(k)[e];
 }
 
@@ -68,151 +69,71 @@ Automaton Automaton::complement() const {
     return complemented;
 }
 
-Automaton Automaton::automaton_intersection(const Automaton& fsm) const {
-    Automaton intersec;    
-    
-    ECHO("INTERSECÇÃO");
+Automaton Automaton::automaton_intersection(const Automaton& m) const {
+    // Novo autômato para representar a intersecção
+    Automaton intersect;
+    // Contador para criação dos labels dos estados da intersecção
+    unsigned label_count = 0;
+    // Pares de estados st1 e st2 tal que st1 pertence ao autômato 'this'
+    // e st2 pertence ao autômato 'm', mapeando para o label equivalente
+    std::map<std::pair<Key,Key>,Key> state_pairs;
+    // Novos pares de estados alcançados, inicializado com o par dos estados iniciais
+    // de ambos os autômatos
+    std::list<std::pair<Key,Key>> new_states = {std::make_pair(k_initial, m.k_initial)};
+    // O alfbeto do autômato da intersecção recebe a intersecção dos alfabetos
+    std::set_intersection(alphabet.begin(), alphabet.end(),
+                          m.alphabet.begin(), m.alphabet.end(),
+                          inserter(intersect.alphabet, intersect.alphabet.end()));
 
-    ECHO ("UNIÃO DOS ALFABETOS");
-    // Une os alfabetos
-    std::set_union(alphabet.begin(), alphabet.end(),
-                    fsm.alphabet.begin(), fsm.alphabet.end(),
-                    std::inserter(intersec.alphabet, intersec.alphabet.end()));
-
-
-    ECHO("RENOMEAÇÃO DOS ESTADOS DE B");
-    unsigned i = keys.size();
-    KeySet temp_all;
-    KeySet temp_acc;
-    for (auto state : fsm.keys) {
-        char t = state.at(0)+i;
-        ECHO (t);
-        temp_all.insert({t});
-        if (fsm.k_acceptors.count(state)) temp_acc.insert({t});
-    }
-
-    ECHO("PRODUTO CARTESIANO BOLADO");
-    // Produto cartesiano dos keys
-    Key acc_key;
-    KeySet final_keys;
-    for (auto l : keys) {
-        for (auto n : temp_all) {
-            final_keys.insert(l+n);
-            ECHO(l+n);
-        }
-    }
-
-
-    // Chave inicial
-    acc_key = *(final_keys.begin());
-    ECHO ("CHAVE INICIAL DEFINIDA "+acc_key);
-    // Produto cartesiano dos aceitadores
-    KeySet acc_pairs;
-    for (auto l : k_acceptors) {
-        for (auto n : temp_acc) {
-            acc_pairs.insert(l+n);
-        }
-    }
-
-    // Adiciona os keys ao novo autômato  ??? Depende da implementação do State
-    intersec.keys = final_keys;
-    intersec.k_acceptors = acc_pairs;
-
-    // Retira acc_key de final_keys para inserí-la como chave inicial
-    final_keys.erase(acc_key);
-
-    // Insere acc_key
-    bool initial_is_final = false;
-    if (acc_pairs.count(acc_key)) {
-        initial_is_final = true; 
-    } else {
-        initial_is_final = false;
-    }
-    intersec.insert(acc_key, true, initial_is_final);
-
-    // Cria os estados em questão
-    for (auto l : final_keys) {
-        if (acc_pairs.count(l)) {
-            intersec.insert(l, false, true);
-        } else {
-            intersec.insert(l);
-        }
-    }
-
-    ECHO("HORA DE DEFINIR AS TRANSIÇÕES");
-    // Define as transições
-    for (auto pair : intersec.keys) {
-        ECHO ("LOOP 0");
-        for (auto entry : intersec.alphabet) {
-            ECHO ("LOOP 1 ");
-            ECHO (pair[0]);
-            ECHO (pair[1]);
-
-            if (states.at({pair[0]}).accepts(entry) && fsm.states.at({pair[1]-i}).accepts(entry)) {
-                ECHO("Will try...");
-                std::vector<Key> dest0 = states.at({pair[0]})[entry];
-                std::vector<Key> dest1 = fsm.states.at({pair[1]-i})[entry];
-                ECHO ("VECTORS GENERATED");
-                for (auto k0 : dest0) {
-                    for (auto k1 : dest1) {
-                        ECHO ("DO IT");
-                        Key p = k0;
-                        char p1 = k1[0]+i;
-                        intersec.make_transition(pair, entry, p+p1); 
-                    }
-                }
+    // Enquanto houver novos pares encontrados
+    while (!new_states.empty()) {
+        // Adquire as keys dos estados do par
+        auto keys = new_states.front();
+        // Recupera os estados equivalentes às keys
+        auto st1 = states.at(keys.first);
+        auto st2 = m.states.at(keys.second);
+        // Remove o par da lista de pares novos
+        new_states.pop_front();
+        // Adiciona o par num map de pares para labels
+        // Os labels serão usados para definir os novos estados da intersecção
+        state_pairs[keys] = new_label(label_count++);
+        // Para cada entrada do alfabeto da intersecção
+        for (auto entry : intersect.alphabet) {
+            // Verifica se ambos os estados aceitam essa entrada
+            if (st1.accepts(entry) && st2.accepts(entry)) {
+                // Adiciona o par dos estados-destino de ambos os estados
+                new_states.push_back(std::make_pair(st1[entry], st2[entry]));
             }
         }
     }
 
-    ECHO("FIM INTERSECÇÃO");
-
-    Automaton inter;
-    std::map<Key, Key> old_new;
-    inter.alphabet = intersec.alphabet;
-    unsigned cc = 0;
-    inter.k_initial = 'A';
-    inter.insert({'A'}, true, initial_is_final);
-    old_new[*intersec.keys.begin()] = 'A';
-    cc++;
-
-    for (auto key : intersec.keys) {
-        old_new[key] = {'A'+cc};
-        if (intersec.k_acceptors.count(key)) {
-            inter.k_acceptors.insert({'A'+cc});
-            inter.insert({'A'+cc}, false, true);
-        } else {
-            inter.insert({'A'+cc});
-        }
-        cc++;
-    }
-    for (auto entry : inter.alphabet) {
-        for (auto transition : intersec.keys) {
-            ECHO(old_new[transition]);
-            for (auto dest : intersec(transition, entry)) {
-                ECHO(old_new[transition]+" "+entry+" "+old_new[dest]);
-                inter.make_transition(old_new[transition], entry, old_new[dest]);
+    // Para cada par de keys definido
+    for (auto pair : state_pairs) {
+        // Recupera os estados equivalentes
+        auto st1 = states.at(pair.first.first);
+        auto st2 = m.states.at(pair.first.second);
+        // Verifica se ambos são finais
+        bool final = st1.is_final() && st2.is_final();
+        // Verifica se ambos são iniciais
+        bool initial = st1.is_initial() && st2.is_initial();
+        // Utiliza o label definido no map para criar um novo estado na
+        // intersecção, passando também a informação de ser final ou inicial
+        intersect.insert(pair.second, initial, final);
+        // Para cada entrada do alfabeto da intersecção
+        for (auto entry : intersect.alphabet) {
+            // Se ambos os estados do par aceitam essa entrada
+            if (st1.accepts(entry) && st2.accepts(entry)) {
+                // Cria um novo par com as keys dos estados-destino
+                auto tpair = std::make_pair(st1[entry], st2[entry]);
+                // Recupera o label guardado sob este par
+                auto target = state_pairs.at(tpair);
+                // Cria a transição correspondente na intersecção
+                intersect.make_transition(pair.second, entry, target);
             }
         }
     }
-    // Cria o estado inicial
-    /*bool initial_is_final = false;
-    if (states[initial].is_final() && temp.states.at(temp.initial).is_final()) {
-        initial_is_final = true;
-    }
-    intersec.k_initial = "A";
-    intersec.insert("A", true, initial_is_final);
-
-    // Cria as transições do estado inicial = transições dos iniciais anteriores
-    for (auto entry : intersect.alphabet) {
-        if (fsm.states.at("A").accepts(entry) && states.at("A").accepts(entry)) {
-            intersec.make_transition(intersec.k_initial, entry, "A"+('A'+i));
-        }
-    }*/
-    // inter.remove_dead_states();
-    // inter.remove_unreachable_states();
-
-    return inter;
+    // Retorna a intersecção
+    return intersect;
 }
 
 
@@ -235,13 +156,10 @@ Automaton Automaton::union_operation(const Automaton& m) const {
     for (auto s : m.states) {
         // Cria-se um novo estado equivalente em union_atm
         union_atm.insert(s.first + "'", false, s.second.is_final());
-        // Para cada conjunto de transições para uma entrada no estado s
-        for (auto trs : s.second) {
-            // Para cada estado do conjunto de transições
-            for (auto t : trs.second) {
-                // Cria-se uma transição equivalente em union_atm
-                union_atm.make_transition(s.first + "'", trs.first, t + "'");
-            }
+        // Para cada transição para uma entrada no estado s
+        for (auto t : s.second) {
+            // Cria-se uma transição equivalente em union_atm
+            union_atm.make_transition(s.first + "'", t.first, t.second + "'");
         }
     }
     // Retorna a união
@@ -330,18 +248,15 @@ void Automaton::remove_unreachable_states() {
             reachable_states[key] = reachable;
             // Remove a chave da lista de novos estados alcançáveis
             new_reachables.pop_front();
-            // Para cada conjunto de transições do estado alcançável
-            for (auto trs : reachable) {
-                // Para cada estado do conjunto de transições
-                for (auto t : trs.second) {
-                    // Se o estado t não se encontra no conjunto
-                    // de estados alcançáveis
-                    if (!reachable_states.count(t)) {
-                        // Adiciona o estado t ao conjunto
-                        new_reachables.push_back(t);
-                        // Adiciona a key ao conjunto de keys
-                        keys.insert(t);
-                    }
+            // Para cada transição do estado alcançável
+            for (auto pair : reachable) {
+                // Se o estado não se encontra no conjunto
+                // de estados alcançáveis
+                if (!reachable_states.count(pair.second)) {
+                    // Adiciona o estado ao conjunto
+                    new_reachables.push_back(pair.second);
+                    // Adiciona a key ao conjunto de keys
+                    keys.insert(pair.second);
                 }
             }
         }
@@ -429,7 +344,7 @@ void Automaton::update_states(const PartitionSet& partitions) {
                 for (auto entry : alphabet) {
                     auto predecessors = predecessors_of(equivalent, entry);
                     for (auto s : predecessors) {
-                        states[s][entry] = {state};
+                        states[s][entry] = state;
                     }
                 }
                 states.erase(equivalent);
@@ -451,7 +366,7 @@ void Automaton::set_error_transitions() {
     for (auto entry : alphabet) {
         for (auto& pair : states) {
             if (!pair.second.accepts(entry)) {
-                pair.second.append_transition(entry, k_error);
+                pair.second.make_transition(entry, k_error);
             }
         }
     }
@@ -462,7 +377,7 @@ void Automaton::hide_error_transitions() {
     for (auto entry : alphabet) {
         for (auto& pair : states) {
             if (pair.second.accepts_to(entry, k_error)) {
-                pair.second[entry] = {};
+                pair.second.remove_transition(entry);
             }
         }
     }
@@ -506,6 +421,26 @@ KeySet Automaton::predecessors_of(const Key& target, const Entry e) const {
     return predecessors;
 }
 
+std::string Automaton::new_label(unsigned n) const {
+    //std::string ultra_danger;
+    
+    // auto division = std::div(n, 26);
+    // ECHO(division.quot);
+    // ECHO(division.rem);
+    // ultra_danger.push_back(65 + division.rem);
+    // while (division.quot != 0) {
+    //     division = div(division.quot, 26);
+    //     ultra_danger.push_back(65 + division.rem);
+    // }
+    // std::string danger(ultra_danger.rbegin(), ultra_danger.rend());
+    // TRACE(danger);
+    std::string label(1, 65 + (n % 26));
+    for (int p = floor(n/26); p > 0; p--) {
+        label += "'";
+    }
+    return label;
+}
+
 std::vector<std::vector<std::string>> Automaton::to_table() const {
     std::vector<std::vector<std::string>> result;
     result.push_back({"\u03B4"});
@@ -524,9 +459,9 @@ std::vector<std::vector<std::string>> Automaton::to_table() const {
         state_str += pair.first;
         result.push_back({state_str});
         for (auto entry : alphabet) {
-            std::string transition_str = "";
-            for (auto s : pair.second[entry]) {
-                transition_str += s;
+            std::string transition_str;
+            if (pair.second.accepts(entry)) {
+                transition_str += pair.second[entry];
             }
             if (transition_str.size() == 0) {
                 transition_str += "\u2014";

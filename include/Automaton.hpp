@@ -78,9 +78,11 @@ class Automaton {
     /* Esconde as transições de erro */
     void hide_error_transitions();
 
-    TransitionVector& operator()(const Key&, const Entry);
+    Key& operator()(const Key&, const Entry);
 
-    const TransitionVector& operator()(const Key&, const Entry) const;
+    const Key& operator()(const Key&, const Entry) const;
+
+    std::string new_label(unsigned) const;
 
     std::vector<std::vector<std::string>> to_table() const;
 
@@ -146,25 +148,27 @@ class Automaton::State {
 
     bool accepts_to(const Entry, const Key&) const;
 
-    void append_transition(const Entry, const Key&);
+    void make_transition(const Entry, const Key&);
 
-    std::map<Entry,TransitionVector>::iterator begin();
+    void remove_transition(const Entry);
 
-    std::map<Entry,TransitionVector>::iterator end();
+    std::map<Entry,Key>::iterator begin();
 
-    std::map<Entry,TransitionVector>::const_iterator begin() const;
+    std::map<Entry,Key>::iterator end();
 
-    std::map<Entry,TransitionVector>::const_iterator end() const;
+    std::map<Entry,Key>::const_iterator begin() const;
+
+    std::map<Entry,Key>::const_iterator end() const;
 
     /* Acesso a uma transição existente. */
-    TransitionVector& operator[](const Entry);
+    Key& operator[](const Entry);
 
     /* Acesso const a uma transição existente. */
-    const TransitionVector& operator[](const Entry) const;
+    const Key& operator[](const Entry) const;
 
  private:
     /* Mapa de transições */
-    std::map<char, TransitionVector> transitions;
+    std::map<Entry, Key> transitions;
 
     /* Identifica se estado é inicial.
      * True se inicial, false caso contrário.

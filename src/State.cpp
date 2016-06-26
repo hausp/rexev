@@ -21,43 +21,47 @@ void Automaton::State::set_initial(bool i) {
     initial = i;
 }
 
-bool Automaton::State::accepts(const char entry) const {
-    return transitions.count(entry);
+bool Automaton::State::accepts(const Entry e) const {
+    return transitions.count(e) && transitions.at(e) != "";
 }
 
-bool Automaton::State::accepts_to(const char entry, const std::string& target) const {
-    if (transitions.count(entry)) {
-        for (auto t : transitions.at(entry)) {
-            if (t == target) return true;
+bool Automaton::State::accepts_to(const Entry e, const Key& target) const {
+    if (transitions.count(e)) {
+        if (transitions.at(e) == target) {
+            return true;
         }
     }
     return false;
 }
 
-void Automaton::State::append_transition(const char entry, const std::string& target) {
-    transitions[entry].push_back(target);
+void Automaton::State::make_transition(const Entry e, const Key& target) {
+    transitions[e] = target;
 }
 
-std::map<char,std::vector<std::string>>::iterator Automaton::State::begin() {
+void Automaton::State::remove_transition(const Entry e) {
+    transitions.erase(e);
+}
+
+std::map<Entry,Key>::iterator Automaton::State::begin() {
     return transitions.begin();
 }
 
-std::map<char,std::vector<std::string>>::iterator Automaton::State::end() {
+std::map<Entry,Key>::iterator Automaton::State::end() {
     return transitions.end();
 }
 
-std::map<char,std::vector<std::string>>::const_iterator Automaton::State::begin() const {
+std::map<Entry,Key>::const_iterator Automaton::State::begin() const {
     return transitions.cbegin();
 }
 
-std::map<char,std::vector<std::string>>::const_iterator Automaton::State::end() const {
+std::map<Entry,Key>::const_iterator Automaton::State::end() const {
     return transitions.cend();
 }
 
-std::vector<std::string>& Automaton::State::operator[](const char entry) {
-    return transitions[entry];
+Key& Automaton::State::operator[](const Entry e) {
+    return transitions[e];
 }
 
-const std::vector<std::string>& Automaton::State::operator[](const char entry) const {
-    return transitions.at(entry);
+const Key& Automaton::State::operator[](const Entry e) const {
+    return transitions.at(e);
 }
