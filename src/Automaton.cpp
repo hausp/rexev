@@ -108,8 +108,12 @@ Automaton Automaton::automaton_intersection(const Automaton& m) const {
         for (auto entry : intersect.alphabet) {
             // Verifica se ambos os estados aceitam essa entrada
             if (st1.accepts(entry) && st2.accepts(entry)) {
+                // Cria um par com os estados-destino
+                auto pair = std::make_pair(st1[entry], st2[entry]);
+                // Se não foi adicionado previamente ao map de pares
+                if (!state_pairs.count(pair))
                 // Adiciona o par dos estados-destino de ambos os estados
-                new_states.push_back(std::make_pair(st1[entry], st2[entry]));
+                new_states.push_back(pair);
             }
             // Atualiza a existência de estado final
             has_final_state = has_final_state
@@ -404,24 +408,20 @@ KeySet Automaton::predecessors_of(const Key& target, const Entry e) const {
 }
 
 std::string Automaton::new_label(unsigned n) const {
-    // std::string ultra_danger;
-    
-    // auto division = std::div(n, 26);
-    // //ECHO(division.quot);
-    // //ECHO(division.rem);
-    // ultra_danger.push_back(65 + division.rem);
-    // while (division.quot != 0) {
-    //     division = div(division.quot, 26);
-    //     ultra_danger.push_back(65 + division.rem);
-    // }
-    // std::string danger(ultra_danger.rbegin(), ultra_danger.rend());
-    // //TRACE(danger);
-    // return danger;
-    std::string label(1, 65 + (n % 26));
-    for (int p = floor(n/26); p > 0; p--) {
-        label += "'";
+    std::string inverse;
+    auto division = std::div(n, 26);
+    inverse.push_back(65 + division.rem);
+    while (division.quot != 0) {
+        division = div(division.quot, 26);
+        inverse.push_back(64 + division.rem);
     }
+    std::string label(inverse.rbegin(), inverse.rend());
     return label;
+    // std::string label(1, 65 + (n % 26));
+    // for (int p = floor(n/26); p > 0; p--) {
+    //     label += "'";
+    // }
+    // return label;
 }
 
 std::vector<std::vector<std::string>> Automaton::to_table() const {
