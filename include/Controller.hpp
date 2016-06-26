@@ -10,6 +10,7 @@
 
 #include "Interface.hpp"
 #include "Regex.hpp"
+#include "IO.hpp"
 
 class Controller {
  public:

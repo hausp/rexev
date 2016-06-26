@@ -209,6 +209,8 @@ Automaton Automaton::automaton_intersection(const Automaton& fsm) const {
             intersec.make_transition(intersec.k_initial, entry, "A"+('A'+i));
         }
     }*/
+    // inter.remove_dead_states();
+    // inter.remove_unreachable_states();
 
     return inter;
 }
