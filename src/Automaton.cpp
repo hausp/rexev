@@ -67,10 +67,11 @@ const Key& Automaton::operator()(const Key& k, const Entry e) const {
 Automaton Automaton::complement() const {
     Automaton complemented = *this;
     complemented.k_acceptors = difference(keys, k_acceptors);
+    complemented.set_name("¬(" + name + ")");
     return complemented;
 }
 
-Automaton Automaton::automaton_intersection(const Automaton& m) const {
+Automaton Automaton::intersection(const Automaton& m) const {
     // Novo autômato para representar a intersecção
     Automaton intersect;
     // Contador para criação dos labels dos estados da intersecção
@@ -150,6 +151,7 @@ Automaton Automaton::automaton_intersection(const Automaton& m) const {
             }
         }
     }
+    intersect.set_name("\u22C2(" + name + " x " + m.name + ")");
     // Retorna a intersecção
     return intersect;
 }
@@ -172,6 +174,7 @@ Automaton Automaton::minimize() const {
         min.hide_error_transitions();    
     }
     min.minimum = true;
+    min.set_name("MIN(" + name + ")");
     // Retorna a cópia
     return min;
 }

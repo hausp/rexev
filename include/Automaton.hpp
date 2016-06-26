@@ -65,7 +65,7 @@ class Automaton {
      */
     Automaton complement() const;
 
-    Automaton automaton_intersection(const Automaton&) const;
+    Automaton intersection(const Automaton&) const;
 
     /* Executa o algoritmo de minimização de autômato finito */
     Automaton minimize() const;

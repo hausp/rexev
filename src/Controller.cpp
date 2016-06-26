@@ -18,7 +18,7 @@ void Controller::add_regex() {
         result = ui.show_add_dialog();
         success = true;
         if (result.first.size() == 0) {
-            result.first = "RGX" + std::to_string(n_expr);
+            result.first = "R" + std::to_string(n_expr);
         }
         if (result.second.size() > 0) {
             try {
@@ -56,7 +56,7 @@ void Controller::edit_regex() {
             result = ui.show_edit_dialog(selected.get_alias(), selected.get_regex());
             success = true;
             if (result.first.size() == 0) {
-                result.first = "RGX" + std::to_string(key);
+                result.first = "R" + std::to_string(key);
             }
             if (result.second.size() > 0) {
                 try {
@@ -88,7 +88,6 @@ void Controller::minimize_automaton() {
         for (auto key : atm_selection) {
             if (!automata[key].is_minimum()) {
                 automata[n_atm] = automata[key].minimize();
-                automata[n_atm].set_name("MIN[" + automata[n_atm].get_name() + "]");
                 ui.put_automaton(automata[n_atm].get_name(), n_atm);
                 n_atm++;
             } else {
@@ -108,9 +107,7 @@ void Controller::intersect_automaton() {
         auto first = atm_selection.front();
         atm_selection.pop_front();
         for (auto key : atm_selection) {
-            automata[n_atm] = automata[first].automaton_intersection(automata[key]);
-            automata[n_atm].set_name("INT[" + automata[first].get_name()
-                                     + "x" + automata[key].get_name() + "]");
+            automata[n_atm] = automata[first].intersection(automata[key]);
             ui.put_automaton(automata[n_atm].get_name(), n_atm);
             first = n_atm++;
         }
@@ -122,19 +119,31 @@ void Controller::intersect_automaton() {
 }
 
 void Controller::regex_equivalence() {
-    if (expr_selection.size() > 2) {
-        ui.show_general_message("Aviso", "Selecione apenas duas\nexpressões regulares");
+    if (expr_selection.size() != 2) {
+        ui.show_general_message("Operação inválida!",
+            "Selecione duas\nexpressões regulares.");
         return;
     }
-    bool eq = false;
-    unsigned key = 0;
-    unsigned temp = 1;
+    unsigned k1 = expressions[expr_selection.front()].get_automaton_key();
+    unsigned k2 = expressions[expr_selection.back()].get_automaton_key();
     
-    // Isso só pode ser feito caso não aja outros autômatos gerados por intersecção
-    eq = automata[key].automaton_intersection(automata[temp].complement()).is_empty() 
-            && automata[temp].automaton_intersection(automata[key].complement()).is_empty();
-    
-    if (eq) {
+    automata[n_atm] = automata[k1].complement();
+    ui.put_automaton(automata[n_atm].get_name(), n_atm);
+    n_atm++;
+
+    automata[n_atm] = automata[k2].complement();
+    ui.put_automaton(automata[n_atm].get_name(), n_atm);
+    n_atm++;
+
+    automata[n_atm] = automata[k1].intersection(automata[n_atm-1]);
+    ui.put_automaton(automata[n_atm].get_name(), n_atm);
+    n_atm++;
+
+    automata[n_atm] = automata[k2].intersection(automata[n_atm-3]);
+    ui.put_automaton(automata[n_atm].get_name(), n_atm);
+    n_atm++;
+
+    if (automata[n_atm-1].is_empty() && automata[n_atm-2].is_empty()) {
         ui.show_general_message("Resultado",
             "As expressões regulares selecionadas\nsão equivalentes.");
     } else {
