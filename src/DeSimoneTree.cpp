@@ -60,27 +60,27 @@ DeSimoneTree::Node* DeSimoneTree::init_tree(std::string regex) {
         if (valid_entries.count(entry)) {
             put_leaf(current, entry);
         } else if (entry == '|') {
-            if (current->get_symbol() == '|') {
+            if (regex[i+1] == '|') {
                 throw i+1;
             }
             put_union(current);
         } else if (entry == '.') {
-            if (current->get_symbol() == '.') {
+            if (regex[i+1] == '.') {
                 throw i+1;
             }
             put_concatenation(current);
         } else if (entry == '*') {
-            if (current->get_symbol() == '*') {
+            if (regex[i+1] == '*') {
                 throw i+1;
             }
             put_kleene_star(current);
         } else if (entry == '+') {
-            if (current->get_symbol() == '+') {
+            if (regex[i+1] == '+') {
                 throw i+1;
             }
             put_transitive_closure(current);
         } else if (entry == '?') {
-            if (current->get_symbol() == '?') {
+            if (regex[i+1] == '?') {
                 throw i+1;
             }
             put_option(current);
