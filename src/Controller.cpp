@@ -77,7 +77,8 @@ void Controller::edit_regex() {
         }
         ui.hide_add_dialog();
     } else {
-        
+        ui.show_general_message("Operação inválida!", 
+                                "Nenhuma expressão regular selecionada.");
     }
 }
 
@@ -95,10 +96,12 @@ void Controller::minimize_automaton() {
             ui.select_automaton(n_atm);
             n_atm++;
         } else {
-            ui.show_general_message("Operação inválida!", "Autômato já é mínimo.");
+            ui.show_general_message("Operação inválida!",
+                                    "Autômato já é mínimo.");
         }
     } else {
-        ui.show_general_message("Operação inválida!", "Nenhum autômato selecionado.");
+        ui.show_general_message("Operação inválida!",
+                                "Nenhum autômato selecionado.");
     }
 }
 
