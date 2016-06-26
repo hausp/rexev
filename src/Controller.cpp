@@ -121,18 +121,18 @@ void Controller::intersect_automaton() {
 }
 
 void Controller::regex_equivalence() {
-    if (expr_selection.size() < 2) return;
-    bool eq = false;
-    unsigned temp;
-    for (auto key : expr_selection) {
-        if (key == expr_selection.front()) {
-        } else {
-            // Isso só pode ser feito caso não aja outros autômatos gerados por intersecção
-            eq = (!automata[key].automaton_intersection(automata[temp].complement()).is_empty()
-                    && !automata[key].complement().automaton_intersection(automata[temp]).is_empty());
-        }
-        temp = key;
+    if (expr_selection.size() > 2) {
+        ui.show_general_message("Aviso", "Selecione apenas duas\nexpressões regulares");
+        return;
     }
+    bool eq = false;
+    unsigned key = 0;
+    unsigned temp = 1;
+    
+    // Isso só pode ser feito caso não aja outros autômatos gerados por intersecção
+    eq = automata[key].automaton_intersection(automata[temp].complement()).is_empty() 
+            && automata[temp].automaton_intersection(automata[key].complement()).is_empty();
+    
     if (eq) {
         ui.show_general_message("Resultado",
             "As expressões regulares selecionadas\nsão equivalentes.");
