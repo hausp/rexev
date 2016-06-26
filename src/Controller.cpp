@@ -4,7 +4,6 @@
 #include "Controller.hpp"
 #include "DeSimoneTree.hpp"
 #include "Regex.hpp"
-#include "IO.hpp"
 
 Controller::Controller(Interface& ui)
  : ui(ui), n_expr(0),
@@ -180,6 +179,12 @@ void Controller::save() {
 void Controller::open() {
     IO io;
     auto filename = ui.open_file_dialog();
+    expressions.clear();
+    automata.clear();
+    expr_selection.clear();
+    atm_selection.clear();
+    n_expr = 0;
+    n_atm = 0;
     expressions = io.read_file(filename);
 }
 
