@@ -20,6 +20,8 @@ namespace signals {
     void minimize();
     void intersect();
     void regex_equivalence();
+    void save();
+    void open();
     void close();
 }
 

@@ -26,6 +26,9 @@ void Interface::init() {
     auto edit_option = gtk_builder_get_object(builder, "edit_option");
     auto intersect_option = gtk_builder_get_object(builder, "intersect_option");
     auto equivalence_option = gtk_builder_get_object(builder, "equivalence_option");
+    auto open_option = gtk_builder_get_object(builder, "open_file");
+    auto save_option = gtk_builder_get_object(builder, "save_file");
+    auto exit_option = gtk_builder_get_object(builder, "exit");
 
     gtk_tree_selection_set_select_function(regex_sel, signals::regex_selection, nullptr, nullptr);
     gtk_tree_selection_set_select_function(af_sel, signals::automata_selection, nullptr, nullptr);
@@ -42,6 +45,9 @@ void Interface::init() {
     g_signal_connect(edit_option, "activate", G_CALLBACK(signals::edit_regex), nullptr);
     g_signal_connect(intersect_option, "activate", G_CALLBACK(signals::intersect), nullptr);
     g_signal_connect(equivalence_option, "activate", G_CALLBACK(signals::regex_equivalence), nullptr);
+    g_signal_connect(open_option, "activate", G_CALLBACK(signals::open), nullptr);
+    g_signal_connect(save_option, "activate", G_CALLBACK(signals::save), nullptr);
+    g_signal_connect(exit_option, "activate", G_CALLBACK(signals::close), nullptr);
 }
 
 void Interface::show() {
@@ -193,4 +199,33 @@ void Interface::select_automaton(unsigned id) {
     auto tree = GTK_TREE_VIEW(gtk_builder_get_object(builder, "automata_list"));
     auto path = gtk_tree_path_new_from_string(std::to_string(id).c_str());
     gtk_tree_view_set_cursor(tree, path, nullptr, false);
+}
+
+std::string Interface::open_file_dialog() {
+    return build_file_dialog(GTK_FILE_CHOOSER_ACTION_OPEN, "Open File", "Open");
+}
+
+std::string Interface::save_file_dialog() {
+    return build_file_dialog(GTK_FILE_CHOOSER_ACTION_SAVE, "Save File", "Save");
+}
+
+std::string Interface::build_file_dialog(const GtkFileChooserAction& action,
+                                         const std::string& title,
+                                         const std::string& ok_label) {
+    std::string filename = "";
+    auto file_chooser = gtk_file_chooser_dialog_new(title.c_str(), GTK_WINDOW(window),
+        action, "Cancel", GTK_RESPONSE_CANCEL, ok_label.c_str(), GTK_RESPONSE_ACCEPT, NULL);
+
+    if (action == GTK_FILE_CHOOSER_ACTION_SAVE) {
+        gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(file_chooser), true);
+    }
+    
+    auto response = gtk_dialog_run(GTK_DIALOG(file_chooser));
+    if (response == GTK_RESPONSE_ACCEPT) {
+        char* file = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
+        filename = file;
+        g_free(file);
+    }
+    gtk_widget_destroy(file_chooser);
+    return filename;
 }

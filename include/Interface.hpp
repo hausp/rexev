@@ -23,6 +23,8 @@ class Interface {
     void select_regex(unsigned);
     void select_automaton(unsigned);
     void destroy();
+    std::string open_file_dialog();
+    std::string save_file_dialog();
 
  private:
     GtkBuilder* builder;
@@ -32,6 +34,8 @@ class Interface {
     void init();
     std::pair<std::string,std::string> extract_add_dialog_entries();
     void clean_add_dialog();
+    std::string build_file_dialog(const GtkFileChooserAction&,
+                                const std::string&, const std::string&);
 };
 
 #endif /* INTERFACE_HPP */

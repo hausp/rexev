@@ -23,6 +23,8 @@ class Controller {
     void remove_regex_selection(unsigned);
     void add_automata_selection(unsigned);
     void remove_automata_selection(unsigned);
+    void save();
+    void open();
     void close();
 
  private:

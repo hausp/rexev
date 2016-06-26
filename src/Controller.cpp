@@ -128,6 +128,14 @@ void Controller::remove_automata_selection(unsigned value) {
     }
 }
 
+void Controller::save() {
+    auto filename = ui.save_file_dialog();
+}
+
+void Controller::open() {
+    auto filename = ui.open_file_dialog();
+}
+
 void Controller::close() {
     ui.destroy();
     gtk::quit();

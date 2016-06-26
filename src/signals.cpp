@@ -80,6 +80,14 @@ namespace signals {
         controller->regex_equivalence();
     }
 
+    void save() {
+        controller->save();
+    }
+
+    void open() {
+        controller->open();
+    }
+
     void close() {
         controller->close();
     }
