@@ -171,7 +171,7 @@ void Controller::remove_automata_selection(unsigned value) {
 void Controller::save() {
     IO io;
     auto filename = ui.save_file_dialog();
-    io.wright_to_file(expressions, filename);
+    io.write_to_file(expressions, filename);
 }
 
 void Controller::open() {
