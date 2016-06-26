@@ -192,9 +192,14 @@ void Controller::open() {
     atm_selection.clear();
     n_expr = 0;
     n_atm = 0;
-    std::map<unsigned, Regex> exprs = io.read_file(filename);
-    for (auto e : exprs) {
-        
+    expressions = io.read_file(filename);
+    for (auto& e : expressions) {
+        automata[e.first] = e.second.to_automaton();
+        ui.put_automaton(e.second.get_alias(), e.first);
+        ui.put_regex(e.second.get_alias(), e.first);
+        n_expr++;
+        n_atm++;
+        ECHO (std::to_string(e.first)+" "+e.second.get_alias());
     }
 }
 
