@@ -199,11 +199,13 @@ Automaton Automaton::automaton_intersection(const Automaton& fsm) const {
     final_keys.erase(acc_key);
 
     // Insere acc_key
+    bool initial_is_final = false;
     if (acc_pairs.count(acc_key)) {
-        intersec.insert(acc_key, true, true); 
+        initial_is_final = true; 
     } else {
-        intersec.insert(acc_key, true, false);
+        initial_is_final = false;
     }
+    intersec.insert(acc_key, true, initial_is_final);
 
     // Cria os estados em questão
     for (auto l : final_keys) {
@@ -242,6 +244,34 @@ Automaton Automaton::automaton_intersection(const Automaton& fsm) const {
 
     ECHO("FIM INTERSECÇÃO");
 
+    Automaton inter;
+    std::map<Key, Key> old_new;
+    inter.alphabet = intersec.alphabet;
+    unsigned cc = 0;
+    inter.k_initial = 'A';
+    inter.insert({'A'}, true, initial_is_final);
+    old_new[*intersec.keys.begin()] = 'A';
+    cc++;
+
+    for (auto key : intersec.keys) {
+        old_new[key] = {'A'+cc};
+        if (intersec.k_acceptors.count(key)) {
+            inter.k_acceptors.insert({'A'+cc});
+            inter.insert({'A'+cc}, false, true);
+        } else {
+            inter.insert({'A'+cc});
+        }
+        cc++;
+    }
+    for (auto entry : inter.alphabet) {
+        for (auto transition : intersec.keys) {
+            ECHO(old_new[transition]);
+            for (auto dest : intersec(transition, entry)) {
+                ECHO(old_new[transition]+" "+entry+" "+old_new[dest]);
+                inter.make_transition(old_new[transition], entry, old_new[dest]);
+            }
+        }
+    }
     // Cria o estado inicial
     /*bool initial_is_final = false;
     if (states[initial].is_final() && temp.states.at(temp.initial).is_final()) {
@@ -257,7 +287,7 @@ Automaton Automaton::automaton_intersection(const Automaton& fsm) const {
         }
     }*/
 
-    return intersec;
+    return inter;
 }
 
 
