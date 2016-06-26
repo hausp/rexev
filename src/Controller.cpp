@@ -192,7 +192,10 @@ void Controller::open() {
     atm_selection.clear();
     n_expr = 0;
     n_atm = 0;
-    expressions = io.read_file(filename);
+    std::map<unsigned, Regex> exprs = io.read_file(filename);
+    for (auto e : exprs) {
+        
+    }
 }
 
 void Controller::close() {
