@@ -151,7 +151,7 @@ Automaton Automaton::intersection(const Automaton& m) const {
             }
         }
     }
-    intersect.set_name("\u22C2(" + name + " x " + m.name + ")");
+    intersect.set_name(name + " \u22C2 " + m.name);
     // Retorna a intersecção
     return intersect;
 }
