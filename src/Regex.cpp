@@ -2,9 +2,9 @@
    and Marleson Graf<aszdrick@gmail.com> [2016] */
 
 #include "Regex.hpp"
+#include <algorithm>
 
-Regex::Regex()
-: regex(""), alias("") { }
+Regex::Regex() : regex(""), alias("") { }
 
 Regex::Regex(const std::string& regex, const std::string& alias)
 : regex(regex), alias(alias) {
@@ -15,6 +15,10 @@ Regex::Regex(const std::string& regex, const std::string& alias)
                                  + std::to_string(e));
     }
 }
+
+Regex::Regex(const Regex& re) : Regex(re.regex, re.alias) { }
+
+Regex::~Regex() { }
 
 Automaton Regex::to_automaton() {
     return tree.to_automaton();
@@ -36,6 +40,12 @@ void Regex::set_automaton_key(unsigned key) {
     automaton_key = key;
 }
 
+Regex& Regex::operator=(const Regex& re) {
+    regex = re.regex;
+    alias = re.alias;
+    tree = DeSimoneTree(regex);
+    return *this;
+}
 
 Regex::operator std::string() {
     return regex;

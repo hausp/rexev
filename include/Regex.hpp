@@ -11,12 +11,15 @@ class Regex {
  public:
     Regex();
     Regex(const std::string&, const std::string& = "");
+    Regex(const Regex&);
+    ~Regex();
 
     std::string get_alias() const;
     std::string get_regex() const;
     unsigned get_automaton_key() const;
     void set_automaton_key(unsigned);
     Automaton to_automaton();
+    Regex& operator=(const Regex&);
     operator std::string();
 
  private:

@@ -190,17 +190,19 @@ void Controller::open() {
     automata.clear();
     expr_selection.clear();
     atm_selection.clear();
-    n_expr = 0;
-    n_atm = 0;
+    ui.clear();
     expressions = io.read_file(filename);
-    for (auto& e : expressions) {
-        automata[e.first] = e.second.to_automaton();
-        ui.put_automaton(e.second.get_alias(), e.first);
-        ui.put_regex(e.second.get_alias(), e.first);
-        n_expr++;
-        n_atm++;
-        ECHO (std::to_string(e.first)+" "+e.second.get_alias());
+    n_expr = expressions.size();
+    n_atm = expressions.size();
+    for (unsigned i = 0; i < n_atm; i++) {
+        automata[i] = expressions[i].to_automaton();
+        expressions[i].set_automaton_key(i);
+        ui.put_automaton(expressions[i].get_alias(), i);
+        ui.put_regex(expressions[i].get_alias(), i);
+        ECHO (std::to_string(i) +" "+ expressions[i].get_alias());
     }
+    ui.select_regex(n_expr);
+    ui.select_automaton(n_expr);
 }
 
 void Controller::close() {
