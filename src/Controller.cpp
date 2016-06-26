@@ -199,7 +199,6 @@ void Controller::open() {
         expressions[i].set_automaton_key(i);
         ui.put_automaton(expressions[i].get_alias(), i);
         ui.put_regex(expressions[i].get_alias(), i);
-        ECHO (std::to_string(i) +" "+ expressions[i].get_alias());
     }
     ui.select_regex(n_expr);
     ui.select_automaton(n_expr);

@@ -43,7 +43,6 @@ std::unordered_map<unsigned, Regex> IO::read_file(const std::string& filename) {
 								Regex(regex, name)
 							)
 						);	
-						ECHO (regex+" "+name);
 						break;
 					}
 					regex += c;
