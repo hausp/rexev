@@ -74,6 +74,8 @@ Automaton Automaton::automaton_intersection(const Automaton& m) const {
     Automaton intersect;
     // Contador para criação dos labels dos estados da intersecção
     unsigned label_count = 0;
+    // Registra se foi criado algum par de estados final para a intersecção
+    bool has_final_state = false;
     // Pares de estados st1 e st2 tal que st1 pertence ao autômato 'this'
     // e st2 pertence ao autômato 'm', mapeando para o label equivalente
     std::map<std::pair<Key,Key>,Key> state_pairs;
@@ -84,7 +86,6 @@ Automaton Automaton::automaton_intersection(const Automaton& m) const {
     std::set_intersection(alphabet.begin(), alphabet.end(),
                           m.alphabet.begin(), m.alphabet.end(),
                           inserter(intersect.alphabet, intersect.alphabet.end()));
-
     // Enquanto houver novos pares encontrados
     while (!new_states.empty()) {
         // Adquire as keys dos estados do par
@@ -103,32 +104,36 @@ Automaton Automaton::automaton_intersection(const Automaton& m) const {
             if (st1.accepts(entry) && st2.accepts(entry)) {
                 // Adiciona o par dos estados-destino de ambos os estados
                 new_states.push_back(std::make_pair(st1[entry], st2[entry]));
+                // Atualiza a existência de estado final
+                has_final_state = has_final_state || (st1.is_final() && st2.is_final());
             }
         }
     }
-
-    // Para cada par de keys definido
-    for (auto pair : state_pairs) {
-        // Recupera os estados equivalentes
-        auto st1 = states.at(pair.first.first);
-        auto st2 = m.states.at(pair.first.second);
-        // Verifica se ambos são finais
-        bool final = st1.is_final() && st2.is_final();
-        // Verifica se ambos são iniciais
-        bool initial = st1.is_initial() && st2.is_initial();
-        // Utiliza o label definido no map para criar um novo estado na
-        // intersecção, passando também a informação de ser final ou inicial
-        intersect.insert(pair.second, initial, final);
-        // Para cada entrada do alfabeto da intersecção
-        for (auto entry : intersect.alphabet) {
-            // Se ambos os estados do par aceitam essa entrada
-            if (st1.accepts(entry) && st2.accepts(entry)) {
-                // Cria um novo par com as keys dos estados-destino
-                auto tpair = std::make_pair(st1[entry], st2[entry]);
-                // Recupera o label guardado sob este par
-                auto target = state_pairs.at(tpair);
-                // Cria a transição correspondente na intersecção
-                intersect.make_transition(pair.second, entry, target);
+    // Se existe estado final, então o autômato não é vazio
+    if (has_final_state) {
+        // Para cada par de keys definido
+        for (auto pair : state_pairs) {
+            // Recupera os estados equivalentes
+            auto st1 = states.at(pair.first.first);
+            auto st2 = m.states.at(pair.first.second);
+            // Verifica se ambos são finais
+            bool final = st1.is_final() && st2.is_final();
+            // Verifica se ambos são iniciais
+            bool initial = st1.is_initial() && st2.is_initial();
+            // Utiliza o label definido no map para criar um novo estado na
+            // intersecção, passando também a informação de ser final ou inicial
+            intersect.insert(pair.second, initial, final);
+            // Para cada entrada do alfabeto da intersecção
+            for (auto entry : intersect.alphabet) {
+                // Se ambos os estados do par aceitam essa entrada
+                if (st1.accepts(entry) && st2.accepts(entry)) {
+                    // Cria um novo par com as keys dos estados-destino
+                    auto tpair = std::make_pair(st1[entry], st2[entry]);
+                    // Recupera o label guardado sob este par
+                    auto target = state_pairs.at(tpair);
+                    // Cria a transição correspondente na intersecção
+                    intersect.make_transition(pair.second, entry, target);
+                }
             }
         }
     }
