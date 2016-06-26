@@ -10,7 +10,6 @@ class Controller;
 
 namespace signals {
     void set_controller(Controller*);
-    void regex_selected(GtkTreeView*);
     gboolean regex_selection(GtkTreeSelection*, GtkTreeModel*,
                              GtkTreePath*, gboolean, gpointer);
     gboolean automata_selection(GtkTreeSelection*, GtkTreeModel*,
