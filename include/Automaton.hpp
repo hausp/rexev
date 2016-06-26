@@ -37,7 +37,11 @@ class Automaton {
 
     bool is_minimum() const;
 
-    bool empty() const;
+    bool is_initial(const Key&) const;
+
+    bool is_final(const Key&) const;
+
+    bool is_empty() const;
     
     /* Método para inserção de estado na máquina: label, inicial, final */
     void insert(const Key&, bool = false, bool = false);
@@ -62,12 +66,6 @@ class Automaton {
     Automaton complement() const;
 
     Automaton automaton_intersection(const Automaton&) const;
-
-    /* Cria um novo estado inicial que tem as mesmas 
-     * transições dos estados iniciais das duas máquinas
-     * e devolve uma nova máquina com esta característica
-     */
-    Automaton union_operation(const Automaton&) const;
 
     /* Executa o algoritmo de minimização de autômato finito */
     Automaton minimize() const;
@@ -130,7 +128,7 @@ class Automaton::State {
      * Construtor de estado, padrão: 
      * (label epslon, sem rejeição, não inicial, não final)
      */
-    State(bool = false, bool = false);
+    State();
 
     /* Verifica se estado é inicial */
     bool is_initial() const;

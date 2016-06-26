@@ -7,19 +7,7 @@
 
 //-------------------------- State implementation ---------------------------//
 
-Automaton::State::State(bool initial, bool final) : initial(initial), final(final) { }
-
-bool Automaton::State::is_initial() const {
-    return initial;
-}
-
-bool Automaton::State::is_final() const {
-    return final;
-}
-
-void Automaton::State::set_initial(bool i) {
-    initial = i;
-}
+Automaton::State::State() { }
 
 bool Automaton::State::accepts(const Entry e) const {
     return transitions.count(e) && transitions.at(e) != "";

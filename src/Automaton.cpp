@@ -28,12 +28,20 @@ bool Automaton::is_minimum() const {
     return minimum;
 }
 
-bool Automaton::empty() const {
+bool Automaton::is_empty() const {
     return k_acceptors.empty();
 }
 
+bool Automaton::is_initial(const Key& k) const {
+    return k_initial == k;
+}
+
+bool Automaton::is_final(const Key& k) const {
+    return k_acceptors.count(k);
+}
+
 void Automaton::insert(const Key& k, bool initial, bool final) {
-    states[k] = State(initial, final);
+    states[k] = State();
     keys.insert(k);
     if (initial) k_initial = k;
     if (final) k_acceptors.insert(k);
@@ -79,6 +87,11 @@ Automaton Automaton::automaton_intersection(const Automaton& m) const {
     std::set_intersection(alphabet.begin(), alphabet.end(),
                           m.alphabet.begin(), m.alphabet.end(),
                           inserter(intersect.alphabet, intersect.alphabet.end()));
+    // Se um dos autômatos é vazio
+    if (m.is_empty() || is_empty()) {
+        // A intersecção é vazia
+        return intersect;
+    }
     // Enquanto houver novos pares encontrados
     while (!new_states.empty()) {
         // Adquire as keys dos estados do par
@@ -99,7 +112,8 @@ Automaton Automaton::automaton_intersection(const Automaton& m) const {
                 new_states.push_back(std::make_pair(st1[entry], st2[entry]));
             }
             // Atualiza a existência de estado final
-            has_final_state = has_final_state || (st1.is_final() && st2.is_final());
+            has_final_state = has_final_state
+                            || (is_final(keys.first) && m.is_final(keys.second));
         }
     }
     // Se existe estado final, então o autômato não é vazio
@@ -109,10 +123,12 @@ Automaton Automaton::automaton_intersection(const Automaton& m) const {
             // Recupera os estados equivalentes
             auto st1 = states.at(pair.first.first);
             auto st2 = m.states.at(pair.first.second);
-            // Verifica se ambos são finais
-            bool final = st1.is_final() && st2.is_final();
             // Verifica se ambos são iniciais
-            bool initial = st1.is_initial() && st2.is_initial();
+            bool initial = is_initial(pair.first.first)
+                        && m.is_initial(pair.first.second);
+            // Verifica se ambos são finais
+            bool final = is_final(pair.first.first)
+                        && m.is_final(pair.first.second);
             // Utiliza o label definido no map para criar um novo estado na
             // intersecção, passando também a informação de ser final ou inicial
             intersect.insert(pair.second, initial, final);
@@ -321,7 +337,6 @@ void Automaton::update_states(const PartitionSet& partitions) {
                 }
                 if (equivalent == k_initial) {
                     k_initial = state;
-                    states[state].set_initial(true);
                 }
             }
         }
@@ -389,24 +404,24 @@ KeySet Automaton::predecessors_of(const Key& target, const Entry e) const {
 }
 
 std::string Automaton::new_label(unsigned n) const {
-    std::string ultra_danger;
+    // std::string ultra_danger;
     
-    auto division = std::div(n, 26);
-    //ECHO(division.quot);
-    //ECHO(division.rem);
-    ultra_danger.push_back(65 + division.rem);
-    while (division.quot != 0) {
-        division = div(division.quot, 26);
-        ultra_danger.push_back(65 + division.rem);
-    }
-    std::string danger(ultra_danger.rbegin(), ultra_danger.rend());
-    //TRACE(danger);
-    return danger;
-    // std::string label(1, 65 + (n % 26));
-    // for (int p = floor(n/26); p > 0; p--) {
-    //     label += "'";
+    // auto division = std::div(n, 26);
+    // //ECHO(division.quot);
+    // //ECHO(division.rem);
+    // ultra_danger.push_back(65 + division.rem);
+    // while (division.quot != 0) {
+    //     division = div(division.quot, 26);
+    //     ultra_danger.push_back(65 + division.rem);
     // }
-    //return label;
+    // std::string danger(ultra_danger.rbegin(), ultra_danger.rend());
+    // //TRACE(danger);
+    // return danger;
+    std::string label(1, 65 + (n % 26));
+    for (int p = floor(n/26); p > 0; p--) {
+        label += "'";
+    }
+    return label;
 }
 
 std::vector<std::vector<std::string>> Automaton::to_table() const {
@@ -418,10 +433,10 @@ std::vector<std::vector<std::string>> Automaton::to_table() const {
     unsigned i = 1;
     for (auto pair : states) {
         std::string state_str = "";
-        if (pair.second.is_final()) {
+        if (is_final(pair.first)) {
             state_str += "*";
         }
-        if (pair.second.is_initial()) {
+        if (is_initial(pair.first)) {
             state_str += "->";
         }
         state_str += pair.first;

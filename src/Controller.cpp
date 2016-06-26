@@ -128,8 +128,8 @@ void Controller::regex_equivalence() {
         if (key == expr_selection.front()) {
         } else {
             // Isso só pode ser feito caso não aja outros autômatos gerados por intersecção
-            eq = (!automata[key].automaton_intersection(automata[temp].complement()).empty()
-                    && !automata[key].complement().automaton_intersection(automata[temp]).empty());
+            eq = (!automata[key].automaton_intersection(automata[temp].complement()).is_empty()
+                    && !automata[key].complement().automaton_intersection(automata[temp]).is_empty());
         }
         temp = key;
     }
