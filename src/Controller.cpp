@@ -49,6 +49,7 @@ void Controller::edit_regex() {
     if (!expr_selection.empty()) {
         auto key = expr_selection.front();
         auto& selected = expressions[key];
+        auto atm_key = expressions[key].get_automaton_key();
         std::pair<std::string,std::string> result;
         bool success = false;
         while(!success) {
@@ -60,12 +61,12 @@ void Controller::edit_regex() {
             if (result.second.size() > 0) {
                 try {
                     expressions[key] = Regex(result.second, result.first);
+                    expressions[key].set_automaton_key(atm_key);
                 } catch (std::exception& e) {
                     ui.show_error_message("Erro!", e.what());
                     success = false;
                 }
                 if (success) {
-                    auto atm_key = expressions[key].get_automaton_key();
                     automata[atm_key] = expressions[key].to_automaton();
                     automata[atm_key].set_name(result.first);
                     ui.put_regex(result.first, key);
