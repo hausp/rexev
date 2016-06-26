@@ -12,6 +12,7 @@ Interface::Interface() {
 void Interface::init() {
     builder = gtk_builder_new_from_file("view_simpl.ui");
     window = GTK_WIDGET(gtk_builder_get_object(builder, "window"));
+    dialog = GTK_WIDGET(gtk_builder_get_object(builder, "add_regex"));
     auto regex_list = GTK_TREE_VIEW(gtk_builder_get_object(builder, "exp_list"));
     auto af_list    = GTK_TREE_VIEW(gtk_builder_get_object(builder, "automata_list"));
     auto regex_sel  = gtk_tree_view_get_selection(regex_list);
@@ -54,7 +55,6 @@ void Interface::show() {
 }
 
 std::pair<std::string,std::string> Interface::show_add_dialog() {
-    dialog = GTK_WIDGET(gtk_builder_get_object(builder, "add_regex"));
     std::pair<std::string,std::string> result = std::make_pair("","");
     gtk_widget_show_all(dialog);
     while (result.second.size() == 0) {
@@ -142,7 +142,7 @@ void Interface::put_regex(const std::string& name, unsigned id) {
     if (!gtk_tree_model_get_iter_from_string(model, &iter, std::to_string(id).c_str())) {
         gtk_list_store_insert(GTK_LIST_STORE(model), &iter, id);
     }
-    gtk_list_store_set(GTK_LIST_STORE(GTK_LIST_STORE(model)), &iter, 0, name.c_str(), 1, id, -1);
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, name.c_str(), 1, id, -1);
 }
 
 void Interface::put_automaton(const std::string& name, unsigned id) {
