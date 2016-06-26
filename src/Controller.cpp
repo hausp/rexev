@@ -200,8 +200,8 @@ void Controller::open() {
         ui.put_automaton(expressions[i].get_alias(), i);
         ui.put_regex(expressions[i].get_alias(), i);
     }
-    ui.select_regex(n_expr);
-    ui.select_automaton(n_expr);
+    ui.select_regex(n_expr-1);
+    ui.select_automaton(n_atm-1);
 }
 
 void Controller::close() {
