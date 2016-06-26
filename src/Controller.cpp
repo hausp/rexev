@@ -87,11 +87,8 @@ void Controller::minimize_automaton() {
     if (!atm_selection.empty()) {
         for (auto key : atm_selection) {
             if (!automata[key].is_minimum()) {
-                ECHO("Going to minimizar");
                 automata[n_atm] = automata[key].minimize();
-                ECHO("Hell yeah!");
                 automata[n_atm].set_name("MIN[" + automata[n_atm].get_name() + "]");
-                ECHO("uou");
                 ui.put_automaton(automata[n_atm].get_name(), n_atm);
                 n_atm++;
             } else {
@@ -99,7 +96,7 @@ void Controller::minimize_automaton() {
                                         "Autômato já é mínimo.");
             }
         }
-        ui.select_automaton(n_atm);
+        ui.select_automaton(n_atm-1);
     } else {
         ui.show_general_message("Operação inválida!",
                                 "Nenhum autômato selecionado.");

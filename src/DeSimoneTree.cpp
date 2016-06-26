@@ -300,11 +300,23 @@ bool DeSimoneTree::has_lambda(const std::set<Node*>& nodes) {
 }
 
 std::string DeSimoneTree::new_label(unsigned n) {
-    std::string label(1, 65 + (n % 26));
-    for (int p = floor(n/26); p > 0; p--) {
-        label += "'";
+    std::string ultra_danger;
+    
+    auto division = std::div(n, 26);
+    ECHO(division.quot);
+    ECHO(division.rem);
+    ultra_danger.push_back(65 + division.rem);
+    while (division.quot != 0) {
+        division = div(division.quot, 26);
+        ultra_danger.push_back(65 + division.rem);
     }
-    return label;
+    std::string danger(ultra_danger.rbegin(), ultra_danger.rend());
+    TRACE(danger);
+    // std::string label(1, 65 + (n % 26));
+    // for (int p = floor(n/26); p > 0; p--) {
+    //     label += "'";
+    // }
+    return danger;
 }
 
 int DeSimoneTree::search_composition(const std::vector<std::set<Node*>>& list,
