@@ -88,65 +88,63 @@ Automaton Automaton::intersection(const Automaton& m) const {
     std::set_intersection(alphabet.begin(), alphabet.end(),
                           m.alphabet.begin(), m.alphabet.end(),
                           inserter(intersect.alphabet, intersect.alphabet.end()));
-    // Se um dos autômatos é vazio
-    if (m.is_empty() || is_empty()) {
-        // A intersecção é vazia
-        return intersect;
-    }
-    // Enquanto houver novos pares encontrados
-    while (!new_states.empty()) {
-        // Adquire as keys dos estados do par
-        auto keys = new_states.front();
-        // Recupera os estados equivalentes às keys
-        auto st1 = states.at(keys.first);
-        auto st2 = m.states.at(keys.second);
-        // Remove o par da lista de pares novos
-        new_states.pop_front();
-        // Adiciona o par num map de pares para labels
-        // Os labels serão usados para definir os novos estados da intersecção
-        state_pairs[keys] = new_label(label_count++);
-        // Para cada entrada do alfabeto da intersecção
-        for (auto entry : intersect.alphabet) {
-            // Verifica se ambos os estados aceitam essa entrada
-            if (st1.accepts(entry) && st2.accepts(entry)) {
-                // Cria um par com os estados-destino
-                auto pair = std::make_pair(st1[entry], st2[entry]);
-                // Se não foi adicionado previamente ao map de pares
-                if (!state_pairs.count(pair))
-                // Adiciona o par dos estados-destino de ambos os estados
-                new_states.push_back(pair);
-            }
-            // Atualiza a existência de estado final
-            has_final_state = has_final_state
-                            || (is_final(keys.first) && m.is_final(keys.second));
-        }
-    }
-    // Se existe estado final, então o autômato não é vazio
-    if (has_final_state) {
-        // Para cada par de keys definido
-        for (auto pair : state_pairs) {
-            // Recupera os estados equivalentes
-            auto st1 = states.at(pair.first.first);
-            auto st2 = m.states.at(pair.first.second);
-            // Verifica se ambos são iniciais
-            bool initial = is_initial(pair.first.first)
-                        && m.is_initial(pair.first.second);
-            // Verifica se ambos são finais
-            bool final = is_final(pair.first.first)
-                        && m.is_final(pair.first.second);
-            // Utiliza o label definido no map para criar um novo estado na
-            // intersecção, passando também a informação de ser final ou inicial
-            intersect.insert(pair.second, initial, final);
+    // Se ambos os autômatos não são vazios
+    if (!m.is_empty() && !is_empty()) {
+        // Enquanto houver novos pares encontrados
+        while (!new_states.empty()) {
+            // Adquire as keys dos estados do par
+            auto keys = new_states.front();
+            // Recupera os estados equivalentes às keys
+            auto st1 = states.at(keys.first);
+            auto st2 = m.states.at(keys.second);
+            // Remove o par da lista de pares novos
+            new_states.pop_front();
+            // Adiciona o par num map de pares para labels
+            // Os labels serão usados para definir os novos estados da intersecção
+            state_pairs[keys] = new_label(label_count++);
             // Para cada entrada do alfabeto da intersecção
             for (auto entry : intersect.alphabet) {
-                // Se ambos os estados do par aceitam essa entrada
+                // Verifica se ambos os estados aceitam essa entrada
                 if (st1.accepts(entry) && st2.accepts(entry)) {
-                    // Cria um novo par com as keys dos estados-destino
-                    auto tpair = std::make_pair(st1[entry], st2[entry]);
-                    // Recupera o label guardado sob este par
-                    auto target = state_pairs.at(tpair);
-                    // Cria a transição correspondente na intersecção
-                    intersect.make_transition(pair.second, entry, target);
+                    // Cria um par com os estados-destino
+                    auto pair = std::make_pair(st1[entry], st2[entry]);
+                    // Se não foi adicionado previamente ao map de pares
+                    if (!state_pairs.count(pair))
+                    // Adiciona o par dos estados-destino de ambos os estados
+                    new_states.push_back(pair);
+                }
+                // Atualiza a existência de estado final
+                has_final_state = has_final_state
+                                || (is_final(keys.first) && m.is_final(keys.second));
+            }
+        }
+        // Se existe estado final, então o autômato não é vazio
+        if (has_final_state) {
+            // Para cada par de keys definido
+            for (auto pair : state_pairs) {
+                // Recupera os estados equivalentes
+                auto st1 = states.at(pair.first.first);
+                auto st2 = m.states.at(pair.first.second);
+                // Verifica se ambos são iniciais
+                bool initial = is_initial(pair.first.first)
+                            && m.is_initial(pair.first.second);
+                // Verifica se ambos são finais
+                bool final = is_final(pair.first.first)
+                            && m.is_final(pair.first.second);
+                // Utiliza o label definido no map para criar um novo estado na
+                // intersecção, passando também a informação de ser final ou inicial
+                intersect.insert(pair.second, initial, final);
+                // Para cada entrada do alfabeto da intersecção
+                for (auto entry : intersect.alphabet) {
+                    // Se ambos os estados do par aceitam essa entrada
+                    if (st1.accepts(entry) && st2.accepts(entry)) {
+                        // Cria um novo par com as keys dos estados-destino
+                        auto tpair = std::make_pair(st1[entry], st2[entry]);
+                        // Recupera o label guardado sob este par
+                        auto target = state_pairs.at(tpair);
+                        // Cria a transição correspondente na intersecção
+                        intersect.make_transition(pair.second, entry, target);
+                    }
                 }
             }
         }
