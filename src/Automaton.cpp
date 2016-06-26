@@ -57,15 +57,8 @@ const Key& Automaton::operator()(const Key& k, const Entry e) const {
 }
 
 Automaton Automaton::complement() const {
-    KeySet non_acceptors;
-    for (auto pair : states) {
-        if (!pair.second.is_final()) {
-            non_acceptors.insert(pair.first);
-        }
-    }
-
     Automaton complemented = *this;
-    complemented.k_acceptors = non_acceptors;
+    complemented.k_acceptors = difference(keys, k_acceptors);
     return complemented;
 }
 
@@ -104,9 +97,9 @@ Automaton Automaton::automaton_intersection(const Automaton& m) const {
             if (st1.accepts(entry) && st2.accepts(entry)) {
                 // Adiciona o par dos estados-destino de ambos os estados
                 new_states.push_back(std::make_pair(st1[entry], st2[entry]));
-                // Atualiza a existência de estado final
-                has_final_state = has_final_state || (st1.is_final() && st2.is_final());
             }
+            // Atualiza a existência de estado final
+            has_final_state = has_final_state || (st1.is_final() && st2.is_final());
         }
     }
     // Se existe estado final, então o autômato não é vazio
@@ -139,36 +132,6 @@ Automaton Automaton::automaton_intersection(const Automaton& m) const {
     }
     // Retorna a intersecção
     return intersect;
-}
-
-
-Automaton Automaton::union_operation(const Automaton& m) const {
-    // Cria um novo autômato inicialmente igual ao autômato m
-    Automaton union_atm = m;
-    // Faz a união dos dois alfabetos
-    std::set_union(union_atm.alphabet.begin(), union_atm.alphabet.end(),
-                   alphabet.begin(), alphabet.end(),
-                   inserter(union_atm.alphabet, union_atm.alphabet.begin()));
-    
-    // Verifica se um dos estados iniciais é também final
-    bool final = k_acceptors.count(k_initial) ||
-                 m.k_acceptors.count(m.k_initial);
-    
-    // Insere um novo estado inicial
-    union_atm.insert(k_initial + "''", true, final);
-
-    // Para cada estado em m
-    for (auto s : m.states) {
-        // Cria-se um novo estado equivalente em union_atm
-        union_atm.insert(s.first + "'", false, s.second.is_final());
-        // Para cada transição para uma entrada no estado s
-        for (auto t : s.second) {
-            // Cria-se uma transição equivalente em union_atm
-            union_atm.make_transition(s.first + "'", t.first, t.second + "'");
-        }
-    }
-    // Retorna a união
-    return union_atm;
 }
 
 Automaton Automaton::minimize() const {
@@ -338,7 +301,6 @@ void Automaton::remove_equivalent_states() {
 }
 
 void Automaton::update_states(const PartitionSet& partitions) {
-    ECHO(25);
     for (auto p : partitions) {
         if (!p.empty()) {
             Key state = *p.begin();
@@ -427,23 +389,24 @@ KeySet Automaton::predecessors_of(const Key& target, const Entry e) const {
 }
 
 std::string Automaton::new_label(unsigned n) const {
-    //std::string ultra_danger;
+    std::string ultra_danger;
     
-    // auto division = std::div(n, 26);
-    // ECHO(division.quot);
-    // ECHO(division.rem);
-    // ultra_danger.push_back(65 + division.rem);
-    // while (division.quot != 0) {
-    //     division = div(division.quot, 26);
-    //     ultra_danger.push_back(65 + division.rem);
-    // }
-    // std::string danger(ultra_danger.rbegin(), ultra_danger.rend());
-    // TRACE(danger);
-    std::string label(1, 65 + (n % 26));
-    for (int p = floor(n/26); p > 0; p--) {
-        label += "'";
+    auto division = std::div(n, 26);
+    //ECHO(division.quot);
+    //ECHO(division.rem);
+    ultra_danger.push_back(65 + division.rem);
+    while (division.quot != 0) {
+        division = div(division.quot, 26);
+        ultra_danger.push_back(65 + division.rem);
     }
-    return label;
+    std::string danger(ultra_danger.rbegin(), ultra_danger.rend());
+    //TRACE(danger);
+    return danger;
+    // std::string label(1, 65 + (n % 26));
+    // for (int p = floor(n/26); p > 0; p--) {
+    //     label += "'";
+    // }
+    //return label;
 }
 
 std::vector<std::vector<std::string>> Automaton::to_table() const {
