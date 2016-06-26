@@ -47,15 +47,23 @@ void Controller::edit_regex() {
 }
 
 void Controller::minimize_automaton() {
-    auto key = atm_selection.front();
-    if (!automata[key].is_minimum()) {
-        automata[n_atm] = automata[key].minimize();
-        automata[n_atm].set_name("MIN[" + automata[n_atm].get_name() + "]");
-        ui.put_automaton(automata[n_atm].get_name(), n_atm);
-        ui.select_automaton(n_atm);
-        n_atm++;
+    if (!atm_selection.empty()) {
+        auto key = atm_selection.front();
+        ECHO(key);
+        if (!automata[key].is_minimum()) {
+            ECHO("Going to minimizar");
+            automata[n_atm] = automata[key].minimize();
+            ECHO("Hell yeah!");
+            automata[n_atm].set_name("MIN[" + automata[n_atm].get_name() + "]");
+            ECHO("uou");
+            ui.put_automaton(automata[n_atm].get_name(), n_atm);
+            ui.select_automaton(n_atm);
+            n_atm++;
+        } else {
+            ui.show_general_message("Operação inválida!", "Autômato já é mínimo.");
+        }
     } else {
-        ui.show_general_message("Operação inválida!", "Autômato já é mínimo.");
+        ui.show_general_message("Operação inválida!", "Nenhum autômato selecionado.");
     }
 }
 
@@ -63,12 +71,8 @@ void Controller::intersect_automaton() {
     if (atm_selection.size() > 1) {
         auto first = atm_selection.front();
         atm_selection.pop_front();
-        ECHO(first);
         for (auto key : atm_selection) {
-            ECHO("shit");
-            ECHO(key);
             automata[n_atm] = automata[first].automaton_intersection(automata[key]);
-            ECHO("HEY");
             automata[n_atm].set_name("INT[" + automata[first].get_name()
                                      + "x" + automata[key].get_name() + "]");
             ui.put_automaton(automata[n_atm].get_name(), n_atm);
@@ -76,7 +80,7 @@ void Controller::intersect_automaton() {
         }
         ui.select_automaton(n_atm);
     } else {
-        ui.show_general_message("Erro!",
+        ui.show_general_message("Operação inválida!",
             "Selecione ao menos dois autômatos\npara realizar a intersecção.");
     }
 }

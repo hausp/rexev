@@ -21,6 +21,11 @@ void Interface::init() {
     auto edit_button = gtk_builder_get_object(builder, "edit_button");
     auto intersect_button = gtk_builder_get_object(builder, "intersect_button");
     auto equivalence_button = gtk_builder_get_object(builder, "equivalence_button");
+    auto min_option = gtk_builder_get_object(builder, "minimize_option");
+    auto add_option = gtk_builder_get_object(builder, "add_option");
+    auto edit_option = gtk_builder_get_object(builder, "edit_option");
+    auto intersect_option = gtk_builder_get_object(builder, "intersect_option");
+    auto equivalence_option = gtk_builder_get_object(builder, "equivalence_option");
 
     gtk_tree_selection_set_select_function(regex_sel, signals::regex_selection, nullptr, nullptr);
     gtk_tree_selection_set_select_function(af_sel, signals::automata_selection, nullptr, nullptr);
@@ -32,6 +37,11 @@ void Interface::init() {
     g_signal_connect(edit_button, "clicked", G_CALLBACK(signals::edit_regex), nullptr);
     g_signal_connect(intersect_button, "clicked", G_CALLBACK(signals::intersect), nullptr);
     g_signal_connect(equivalence_button, "clicked", G_CALLBACK(signals::regex_equivalence), nullptr);
+    g_signal_connect(add_option, "activate", G_CALLBACK(signals::add_regex), nullptr);
+    g_signal_connect(min_option, "activate", G_CALLBACK(signals::minimize), nullptr);
+    g_signal_connect(edit_option, "activate", G_CALLBACK(signals::edit_regex), nullptr);
+    g_signal_connect(intersect_option, "activate", G_CALLBACK(signals::intersect), nullptr);
+    g_signal_connect(equivalence_option, "activate", G_CALLBACK(signals::regex_equivalence), nullptr);
 }
 
 void Interface::show() {
