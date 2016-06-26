@@ -317,14 +317,12 @@ void Automaton::remove_equivalent_states() {
     // Novas classes de equivalência encontradas
     // Sempre é adicionada a menor classe dentre as duas novas
     PartitionSet new_partitions = {k_acceptors};
-
     // Enquanto houver novas classes de equivalência
     while(!new_partitions.empty()) {
         // Pega a primeira classe de equivalência
         auto partition = *new_partitions.begin();
         // Remove-a da lista
         new_partitions.erase(partition);
-
         // Para cada entrada do alfabeto
         for (auto entry : alphabet) {
             // Calcula os predecessores da classe
@@ -463,39 +461,29 @@ KeySet Automaton::predecessors_of(const Key& target, const Entry e) const {
 
 std::vector<std::vector<std::string>> Automaton::to_table() const {
     std::vector<std::vector<std::string>> result;
-    
     result.push_back({"\u03B4"});
-    
     for (char entry : alphabet) {
         result[0].push_back(std::string(1, entry));
     }
-    
     unsigned i = 1;
     for (auto pair : states) {
         std::string state_str = "";
-        
         if (pair.second.is_final()) {
             state_str += "*";
         }
         if (pair.second.is_initial()) {
             state_str += "->";
         }
-        
         state_str += pair.first;
-        
         result.push_back({state_str});
-        
         for (auto entry : alphabet) {
             std::string transition_str = "";
-        
             for (auto s : pair.second[entry]) {
                 transition_str += s;
             }
-        
             if (transition_str.size() == 0) {
                 transition_str += "\u2014";
             }
-        
             result[i].push_back(transition_str);
         }
         i++;

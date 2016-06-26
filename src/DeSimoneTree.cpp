@@ -27,24 +27,22 @@ DeSimoneTree::DeSimoneTree()
   lambda(new LNode()) {
 }
 
-DeSimoneTree::DeSimoneTree(string regex)
+DeSimoneTree::DeSimoneTree(std::string regex)
 : alphabet{},
   valid_entries{'a','b','c','d','e','f','g','h','i','j','k','l',
                 'm','n','o','p','q','r','s','t','u','v','w','x',
                 'y','z','0','1','2','3','4','5','6','7','8','9','&'},
   lambda(new LNode()),
   root(init_tree(regex)) {
-    ECHO("Constructor");
     auto temp = root->link_node();
     temp->th_link = lambda.get();
-    ECHO("End");
 }
 
 bool DeSimoneTree::is_terminal(char entry) {
     return valid_entries.count(entry);
 }
 
-DeSimoneTree::Node* DeSimoneTree::init_tree(string regex) {
+DeSimoneTree::Node* DeSimoneTree::init_tree(std::string regex) {
     // A árvore é inicializada com lambda, a fim de simplificar
     // as verificações de ponteiros nulos no algoritmo.
     Node* current = lambda.get();
@@ -113,7 +111,7 @@ DeSimoneTree::Node* DeSimoneTree::init_tree(string regex) {
 }
 
 void DeSimoneTree::put_leaf(Node*& current, const char entry) {
-    ECHO("Leaf insertion");
+    //ECHO("Leaf insertion");
     // Novo nodo terminal, guardando o símbolo lido.
     Node* temp = new TNode(entry);
     // Adiciona entrada ao alfabeto
@@ -143,7 +141,7 @@ void DeSimoneTree::put_leaf(Node*& current, const char entry) {
 }
 
 void DeSimoneTree::put_union(Node*& current) {
-    ECHO("Union insertion");
+    //ECHO("Union insertion");
     Node* temp = new UNode();
     auto father_symbol = current->father->get_symbol();
     while (father_symbol != '~' || father_symbol == '|') {
@@ -154,53 +152,30 @@ void DeSimoneTree::put_union(Node*& current) {
 }
 
 void DeSimoneTree::put_concatenation(Node*& current) {
-    ECHO("Concatenation insertion");
+    //ECHO("Concatenation insertion");
     Node* temp = new CNode();
-    if (current->father) {
-        if (current->father->left.get() == current) {
-            current->father->left.release();
-            current->father->left.reset(temp);
-        } else {
-            current->father->right.release();
-            current->father->right.reset(temp);            
-        }
-    }
-    reasign_father(temp, current);
+    put_node(temp, current);
 }
 
 void DeSimoneTree::put_kleene_star(Node*& current) {
-    ECHO("Kleene star insertion");
+    //ECHO("Kleene star insertion");
     Node* temp = new SNode();
-    if (current->father) {
-        if (current->father->left.get() == current) {
-            current->father->left.release();
-            current->father->left.reset(temp);
-        } else {
-            current->father->right.release();
-            current->father->right.reset(temp);
-        }
-    }
-    reasign_father(temp, current);
+    put_node(temp, current);
 }
 
 void DeSimoneTree::put_transitive_closure(Node*& current) {
-    ECHO("Transitive closure insertion");
+    //ECHO("Transitive closure insertion");
     Node* temp = new PNode();
-    if (current->father) {
-        if (current->father->left.get() == current) {
-            current->father->left.release();
-            current->father->left.reset(temp);
-        } else {
-            current->father->right.release();
-            current->father->right.reset(temp);
-        }
-    }
-    reasign_father(temp, current);   
+    put_node(temp, current);
 }
 
 void DeSimoneTree::put_option(Node*& current) {
-    ECHO("Union insertion");
+    //ECHO("Union insertion");
     Node* temp = new ONode();
+    put_node(temp, current);
+}
+
+void DeSimoneTree::put_node(Node*& temp, Node*& current) {
     if (current->father) {
         if (current->father->left.get() == current) {
             current->father->left.release();
@@ -214,7 +189,7 @@ void DeSimoneTree::put_option(Node*& current) {
 }
 
 unsigned DeSimoneTree::put_subtree(Node*& current, std::string& regex, unsigned pos) {
-    ECHO("Subtree insertion");
+    //ECHO("Subtree insertion");
     if (pos < regex.size()-1) {
         auto symbol = current->get_symbol();
         if (valid_entries.count(symbol) || symbol == '*' || symbol == '+' || symbol == '?') {
@@ -265,7 +240,7 @@ void DeSimoneTree::reasign_father(Node*& temp, Node*& current) {
 }
 
 Automaton DeSimoneTree::to_automaton() {
-    ECHO("to_automaton");
+    //ECHO("to_automaton");
     Automaton automaton(alphabet);
     std::vector<std::set<Node*>> compositions;
     std::list<std::string> new_states;
@@ -274,15 +249,11 @@ Automaton DeSimoneTree::to_automaton() {
     unsigned i = 0;
 
     states.push_back("A");
-    TRACE(*root);
-    TRACE(root->left->get_symbol());
     compositions.push_back(root->down_action());
-    ECHO(root->get_symbol());
     automaton.insert("A", true, has_lambda(compositions[i]));
     new_states.push_back("A");
 
     while (new_states.size() > 0) {
-        ECHO("While");
         auto current = new_states.front();
         new_states.pop_front();
         for (auto entry : alphabet) {
@@ -357,11 +328,11 @@ std::set<Node*> DeSimoneTree::get_composition(const std::set<Node*>& entry_nodes
     return composition;
 }
 
-DeSimoneTree::operator string() const {
+DeSimoneTree::operator std::string() const {
     return *root;
 }
 
 std::ostream& operator<<(std::ostream& out, const DeSimoneTree& tree) {
-    out << (string)tree;
+    out << (std::string)tree;
     return out;
 }

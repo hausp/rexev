@@ -6,7 +6,7 @@
 Regex::Regex()
 : regex(""), alias("") { }
 
-Regex::Regex(const std::string& regex, const string& alias)
+Regex::Regex(const std::string& regex, const std::string& alias)
 : regex(regex), alias(alias) {
     try {
         tree = DeSimoneTree(regex);

@@ -25,16 +25,14 @@
 
 class Automaton;
 
-using std::string;
-
 class DeSimoneTree {
  public:
     class Node;
 
     DeSimoneTree();
-    DeSimoneTree(string);
+    DeSimoneTree(std::string);
     Automaton to_automaton();
-    operator string() const;
+    operator std::string() const;
 
  private:
     std::set<char> alphabet;
@@ -42,7 +40,7 @@ class DeSimoneTree {
     std::unique_ptr<Node> lambda;
     std::unique_ptr<Node> root;
 
-    Node* init_tree(string);
+    Node* init_tree(std::string);
     void put_leaf(Node*&, const char);
     void put_union(Node*&);
     void put_concatenation(Node*&);
@@ -51,6 +49,7 @@ class DeSimoneTree {
     void put_option(Node*&);
     unsigned put_subtree(Node*&, std::string&, unsigned);
     void reasign_father(Node*&, Node*&);
+    void put_node(Node*&, Node*&);
     bool is_terminal(char);
     bool has_lambda(const std::set<Node*>&);
     std::string new_label(unsigned);
@@ -73,7 +72,7 @@ class DeSimoneTree::Node {
     virtual std::set<Node*> down_action() = 0;
     virtual std::set<Node*> up_action() = 0;
     
-    operator string() const;
+    operator std::string() const;
 
  protected:
     Node(char);

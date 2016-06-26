@@ -36,8 +36,8 @@ DeSimoneTree::Node* DeSimoneTree::Node::link_node() {
     return this;
 }
 
-DeSimoneTree::Node::operator string() const {
-    string out;
+DeSimoneTree::Node::operator std::string() const {
+    std::string out;
     if (left) out += *left;
     out += " ";
     out += symbol;
@@ -51,5 +51,5 @@ DeSimoneTree::Node::operator string() const {
 }
 
 std::ostream& operator<<(std::ostream& out, const DeSimoneTree::Node& node) {
-    return out << (string)node;
+    return out << (std::string)node;
 }
