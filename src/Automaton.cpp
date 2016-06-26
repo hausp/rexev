@@ -27,6 +27,10 @@ bool Automaton::is_minimum() const {
     return minimum;
 }
 
+bool Automaton::empty() const {
+    return k_acceptors.empty();
+}
+
 void Automaton::insert(const Key& k, bool initial, bool final) {
     states[k] = State(initial, final);
     keys.insert(k);

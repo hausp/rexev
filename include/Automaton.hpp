@@ -36,6 +36,8 @@ class Automaton {
     std::string get_name() const;
 
     bool is_minimum() const;
+
+    bool empty() const;
     
     /* Método para inserção de estado na máquina: label, inicial, final */
     void insert(const Key&, bool = false, bool = false);

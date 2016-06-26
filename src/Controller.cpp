@@ -4,6 +4,7 @@
 #include "Controller.hpp"
 #include "DeSimoneTree.hpp"
 #include "Regex.hpp"
+#include "IO.hpp"
 
 Controller::Controller(Interface& ui)
  : ui(ui), n_expr(0),
@@ -126,11 +127,15 @@ void Controller::intersect_automaton() {
 void Controller::regex_equivalence() {
     if (expr_selection.size() < 2) return;
     bool eq = false;
+    unsigned temp;
     for (auto key : expr_selection) {
         if (key == expr_selection.front()) {
         } else {
-           //eq = automata[key].minimize().equals(automata[key-1].minimize()); 
+            // Isso só pode ser feito caso não aja outros autômatos gerados por intersecção
+            eq = (!automata[key].automaton_intersection(automata[temp].complement()).empty()
+                    && !automata[key].complement().automaton_intersection(automata[temp]).empty());
         }
+        temp = key;
     }
     if (eq) {
         ui.show_general_message("Resultado",
@@ -167,11 +172,15 @@ void Controller::remove_automata_selection(unsigned value) {
 }
 
 void Controller::save() {
+    IO io;
     auto filename = ui.save_file_dialog();
+    io.wright_to_file(expressions, filename);
 }
 
 void Controller::open() {
+    IO io;
     auto filename = ui.open_file_dialog();
+    expressions = io.read_file(filename);
 }
 
 void Controller::close() {
