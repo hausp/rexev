@@ -28,6 +28,15 @@ std::string Regex::get_regex() const {
     return regex;
 }
 
+unsigned Regex::get_automaton_key() const {
+    return automaton_key;
+}
+
+void Regex::set_automaton_key(unsigned key) {
+    automaton_key = key;
+}
+
+
 Regex::operator std::string() {
     return regex;
 }

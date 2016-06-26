@@ -34,7 +34,6 @@ void Interface::init() {
     gtk_tree_selection_set_select_function(af_sel, signals::automata_selection, nullptr, nullptr);
     g_signal_connect(window, "delete-event", G_CALLBACK(signals::close), nullptr);
 
-
     g_signal_connect(add_button, "clicked", G_CALLBACK(signals::add_regex), nullptr);
     g_signal_connect(min_button, "clicked", G_CALLBACK(signals::minimize), nullptr);
     g_signal_connect(edit_button, "clicked", G_CALLBACK(signals::edit_regex), nullptr);
@@ -69,6 +68,16 @@ std::pair<std::string,std::string> Interface::show_add_dialog() {
     }
     gtk_widget_hide(dialog);
     return result;
+}
+
+std::pair<std::string,std::string> Interface::show_edit_dialog(const std::string& name,
+                                                              const std::string& regex) {
+    auto name_entry = GTK_ENTRY(gtk_builder_get_object(builder, "regex_name_entry"));
+    auto regex_text = GTK_WIDGET(gtk_builder_get_object(builder, "regex_text"));
+    auto text_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(regex_text));
+    gtk_entry_set_text(name_entry, name.c_str());
+    gtk_text_buffer_set_text(text_buffer, regex.c_str(), -1);
+    return show_add_dialog();
 }
 
 void Interface::hide_add_dialog() {
@@ -133,19 +142,21 @@ void Interface::show_general_message(const char* primary, const char* secondary)
 }
 
 void Interface::put_regex(const std::string& name, unsigned id) {
-    auto model = GTK_LIST_STORE(gtk_builder_get_object(builder, "exp_table"));
+    auto model = GTK_TREE_MODEL(gtk_builder_get_object(builder, "exp_table"));
     GtkTreeIter iter;
-    gtk_list_store_insert(model, &iter, -1);
-    gtk_list_store_set(model, &iter, 0, name.c_str(), 1, id, -1);
-    //select_expression(id);
+    if (!gtk_tree_model_get_iter_from_string(model, &iter, std::to_string(id).c_str())) {
+        gtk_list_store_insert(GTK_LIST_STORE(model), &iter, id);
+    }
+    gtk_list_store_set(GTK_LIST_STORE(GTK_LIST_STORE(model)), &iter, 0, name.c_str(), 1, id, -1);
 }
 
 void Interface::put_automaton(const std::string& name, unsigned id) {
-    auto model = GTK_LIST_STORE(gtk_builder_get_object(builder, "automata_table"));
+    auto model = GTK_TREE_MODEL(gtk_builder_get_object(builder, "automata_table"));
     GtkTreeIter iter;
-    gtk_list_store_insert(model, &iter, -1);
-    gtk_list_store_set(model, &iter, 0, name.c_str(), 1, id, -1);
-    //select_automaton(id);
+    if (!gtk_tree_model_get_iter_from_string(model, &iter, std::to_string(id).c_str())) {
+        gtk_list_store_insert(GTK_LIST_STORE(model), &iter, id);
+    }
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, name.c_str(), 1, id, -1);
 }
 
 void Interface::show_regex(const char* exp) {

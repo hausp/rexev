@@ -30,10 +30,13 @@ void Controller::add_regex() {
             if (success) {
                 automata[n_atm] = expressions[n_expr].to_automaton();
                 automata[n_atm].set_name(result.first);
+                expressions[n_expr].set_automaton_key(n_atm);
+
                 ui.put_regex(result.first, n_expr);
                 ui.select_regex(n_expr);
                 ui.put_automaton(result.first, n_atm);
                 ui.select_automaton(n_atm);
+
                 n_atm++;
                 n_expr++;
             }
@@ -43,7 +46,39 @@ void Controller::add_regex() {
 }
 
 void Controller::edit_regex() {
-    
+    if (!expr_selection.empty()) {
+        auto key = expr_selection.front();
+        auto& selected = expressions[key];
+        std::pair<std::string,std::string> result;
+        bool success = false;
+        while(!success) {
+            result = ui.show_edit_dialog(selected.get_alias(), selected.get_regex());
+            success = true;
+            if (result.first.size() == 0) {
+                result.first = "RGX" + std::to_string(key);
+            }
+            if (result.second.size() > 0) {
+                try {
+                    expressions[key] = Regex(result.second, result.first);
+                } catch (std::exception& e) {
+                    ui.show_error_message("Erro!", e.what());
+                    success = false;
+                }
+                if (success) {
+                    auto atm_key = expressions[key].get_automaton_key();
+                    automata[atm_key] = expressions[key].to_automaton();
+                    automata[atm_key].set_name(result.first);
+                    ui.put_regex(result.first, key);
+                    ui.select_regex(key);
+                    ui.put_automaton(result.first, atm_key);
+                    ui.select_automaton(atm_key);
+                }
+            }
+        }
+        ui.hide_add_dialog();
+    } else {
+        
+    }
 }
 
 void Controller::minimize_automaton() {

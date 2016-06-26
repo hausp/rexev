@@ -14,6 +14,8 @@ class Regex {
 
     std::string get_alias() const;
     std::string get_regex() const;
+    unsigned get_automaton_key() const;
+    void set_automaton_key(unsigned);
     Automaton to_automaton();
     operator std::string();
 
@@ -21,6 +23,7 @@ class Regex {
     std::string regex;
     std::string alias;
     DeSimoneTree tree;
+    unsigned automaton_key;
 };
 
 #endif /* REGEX_HPP */

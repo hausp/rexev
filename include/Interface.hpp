@@ -13,6 +13,7 @@ class Interface {
     Interface();
     void show();
     std::pair<std::string,std::string> show_add_dialog();
+    std::pair<std::string,std::string> show_edit_dialog(const std::string&, const std::string&);
     void hide_add_dialog();
     void show_error_message(const char*, const char*);
     void show_general_message(const char*, const char*);
