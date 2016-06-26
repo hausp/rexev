@@ -11,7 +11,7 @@ IO::~IO() {
 
 }
 
-void IO::wright_to_file(const std::unordered_map<unsigned, Regex>& my_regexes, const std::string& filename) {
+void IO::write_to_file(const std::unordered_map<unsigned, Regex>& my_regexes, const std::string& filename) {
 	std::ofstream io_entity;
 	io_entity.open(filename, std::ofstream::out | std::ofstream::app);
 	for (auto& re : my_regexes) {
@@ -36,16 +36,17 @@ std::unordered_map<unsigned, Regex> IO::read_file(const std::string& filename) {
 			if (c == '=') {
 				while (io_entity.good()) {
 					c = io_entity.get();
-					regex += c;
 					 if (c == '\n') {
 						regexes.insert(
 							std::make_pair(
 								i,
 								Regex(regex, name)
 							)
-						);
+						);	
+						ECHO (regex+" "+name);
 						break;
 					}
+					regex += c;
 				}
 			} else {
 				name += c;

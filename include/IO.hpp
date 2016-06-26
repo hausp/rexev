@@ -19,7 +19,7 @@ class IO {
  public:
  	IO();
  	~IO();
- 	void wright_to_file(const std::unordered_map<unsigned, Regex>&, const std::string&);
+ 	void write_to_file(const std::unordered_map<unsigned, Regex>&, const std::string&);
  	std::unordered_map<unsigned, Regex> read_file(const std::string&);
 
  private:
