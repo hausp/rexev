@@ -66,7 +66,8 @@ const Key& Automaton::operator()(const Key& k, const Entry e) const {
 
 Automaton Automaton::complement() const {
     Automaton complemented = *this;
-    complemented.k_acceptors = difference(keys, k_acceptors);
+    complemented.set_error_transitions();
+    complemented.k_acceptors = difference(complemented.keys, k_acceptors);
     complemented.set_name("¬(" + name + ")");
     return complemented;
 }
@@ -349,11 +350,13 @@ void Automaton::update_states(const PartitionSet& partitions) {
 }
 
 void Automaton::set_error_transitions() {
-    insert(k_error);
-    for (auto entry : alphabet) {
-        for (auto& pair : states) {
-            if (!pair.second.accepts(entry)) {
-                pair.second.make_transition(entry, k_error);
+    if (!keys.count(k_error)) {
+        insert(k_error);
+        for (auto entry : alphabet) {
+            for (auto& pair : states) {
+                if (!pair.second.accepts(entry)) {
+                    pair.second.make_transition(entry, k_error);
+                }
             }
         }
     }
